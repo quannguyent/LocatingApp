@@ -1,0 +1,148 @@
+@import '../../../../styles/variables';
+
+.footer-container {
+    align-self: flex-end;
+    position: relative;
+    width: 100wh;
+    height: auto;
+    background-color: $color-black;
+
+    .footer-left-side {
+        margin: rem(44px) rem(32px) 0 rem(32px);
+
+        @media (min-width: 768px) {
+            margin: rem(44px) rem(100px) rem(50px) rem(144px);
+        }
+
+        .logo-img {
+            width: rem(48px);
+            cursor: pointer;
+        }
+
+        .footer-title-container {
+            margin-top: rem(20px);
+
+            .footer-title {
+                font-family: $font-euclid-medium;
+                font-weight: $fw-medium;
+                color: $color-white;
+                font-size: rem(18px);
+                line-height: rem(28px);
+            }
+        }
+
+        .footer-description-container {
+            margin-top: rem(8px);
+            max-width: 100%;
+            display: inline-block;
+
+            .footer-description {
+                font-family: $font-euclid-regular;
+                font-weight: $fw-normal;
+                color: $color-gray;
+                font-size: rem(12px);
+                line-height: rem(20px);
+            }
+        }
+
+        .social-connect {
+            margin-top: rem(20px);
+
+            .logo-social {
+                margin-right: rem(12px);
+                width: rem(32px);
+            }
+        }
+    }
+
+    .footer-right-side {
+        margin: rem(32px) rem(32px) 0 rem(32px);
+        display: flex;
+        flex-direction: column;
+
+        @media (min-width: 768px) {
+            margin: rem(112px) rem(140px) 0 rem(16px);
+            flex-direction: unset;
+        }
+
+        .footer-menu {
+            display: inline-block;
+            vertical-align: top;
+
+            &-item {
+                margin-bottom: rem(16px);
+                width: max-content;
+
+                &-text {
+                    font-family: $font-euclid-medium;
+                    font-weight: $fw-medium;
+                    color: $color-gray !important;
+                    font-size: rem(14px);
+                    line-height: rem(20px);
+
+                    &:hover {
+                        color: $color-red !important;
+                        border-bottom: none !important;
+                    }
+
+                    &.ant-menu-item-selected {
+                        color: $color-red !important;
+                        border-bottom: none !important;
+                    }
+                }
+            }
+        }
+
+        .footer-info {
+            margin-left: 0;
+            margin-top: rem(32px);
+            vertical-align: top;
+
+            @media (min-width: 768px) {
+                margin-top: unset;
+                margin-left: rem(136px);
+            }
+
+            &-container {
+                margin: 0;
+
+                .footer-info-text {
+                    vertical-align: top;
+                    font-family: $font-euclid-medium;
+                    font-weight: $fw-medium;
+                    color: $color-gray;
+                    font-size: rem(18px);
+                    line-height: rem(20px);
+                    margin-bottom: rem(16px);
+
+                    &.email {
+                        text-decoration: underline !important;
+                    }
+
+                    &.address {
+                        font-family: $font-euclid-regular;
+                        font-weight: $fw-normal;
+                        color: $color-gray;
+                        font-size: rem(16px);
+                        line-height: rem(24px);
+                    }
+                }
+            }
+        }
+    }
+
+    .footer-end {
+        width: 100%;
+        height: rem(40px);
+        background-color: rgba($color-white, 0.1);
+        line-height: rem(40px);
+        text-align: center;
+
+        .footer-copyright-text {
+            font-family: $font-euclid-regular;
+            font-weight: $fw-normal;
+            color: rgba($color-gray, 0.72);
+            font-size: $f10;
+        }
+    }
+}

@@ -1,0 +1,130 @@
+@import '../../../../../styles/variables';
+
+.modal-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0 !important;
+    padding: 0;
+    display: none;
+    max-width: unset;
+    width: 100% !important;
+    height: 100%;
+
+    .ant-modal {
+        &-content {
+            height: 100%;
+        }
+
+        &-body {
+            height: 100%;
+            padding: rem(20px) rem(40px);
+        }
+    }
+
+    .logo {
+        margin-bottom: rem(40px);
+        
+        img {
+            cursor: pointer;
+        }
+    }
+
+    .ant-menu-item {
+        &:not(:last-child) {
+            margin-bottom: rem(24px);
+        }
+
+        &:hover,
+        &:focus,
+        &-selected {
+            a, span {
+                color: $color-red !important;
+                border-bottom: none;
+            }
+
+            &::after {
+                content: unset;
+            }
+        }
+    }
+
+    .create-collective {
+        justify-content: center;
+        margin: rem(40px) 0 rem(20px);
+    }
+
+    .close-icon {
+        cursor: pointer;
+        width: 12px;
+        height: 12px;
+    }
+
+    .ant-menu {
+        &-inline {
+            border: none;
+        }
+
+        &-submenu {
+            margin-bottom: rem(24px);
+
+            &-selected {
+                color: $color-black;
+            }
+
+            &-title:hover {
+                color: $color-red !important;
+            }
+
+            &-arrow {
+                right: 0;
+            }
+        }
+    }
+
+    .menu-item-custom,
+    .ant-menu-submenu-title {
+        height: unset !important;
+        padding: 0 !important;
+        margin-top: 0;
+        font: $fw-semiBold rem(20px) $font-euclid-semibold;
+        line-height: rem(24px) !important;
+        background-color: transparent !important;
+    }
+
+    .market-submenu {
+        margin-bottom: 0 !important;
+        margin-top: rem(12px) !important;
+
+        &__text {
+            display: block;
+            width: 100%;
+            color: $color-brown !important;
+            font: $fw-medium rem(14px) $font-euclid-medium;
+
+            &:hover,
+            &-active {
+                color: $color-red !important;
+            }
+        }
+    }
+
+    .sign-up-menu {
+        font: $fw-medium rem(14px) $font-euclid-medium;
+
+        a {
+            font: $fw-medium rem(14px) $font-euclid-medium;
+            color: $color-black;
+
+            &:hover {
+                color: $color-red;
+            }
+        }
+    }
+}
+
+@media (max-width: 575px) {
+    .modal-menu {
+        display: block;
+    }
+}

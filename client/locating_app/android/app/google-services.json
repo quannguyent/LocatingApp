@@ -1,0 +1,143 @@
+{
+  "project_info": {
+    "project_number": "630923146670",
+    "firebase_url": "https://earthquake-app-637bc.firebaseio.com",
+    "project_id": "earthquake-app-637bc",
+    "storage_bucket": "earthquake-app-637bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630923146670:android:f81f57e3aa7fe5a056843f",
+        "android_client_info": {
+          "package_name": "com.example.flutter.locating_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "630923146670-nrs2tlet7b0rpvldvin5egg6khsjupfr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter.locating_app",
+            "certificate_hash": "c08b729b85000acfec30d6260bc24c0c980aa463"
+          }
+        },
+        {
+          "client_id": "630923146670-o7a02d9bl8hr08tvsdv50nc6hful90h5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNrQF9evA_ZStKh3M1z-JgR7Q-PG5YlMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630923146670-o7a02d9bl8hr08tvsdv50nc6hful90h5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "630923146670-3mj2ribkjaum5cggcmaq2aq3o4k69n2h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterEarthquakeNetwork"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630923146670:android:7c78c9f0ef8e96df56843f",
+        "android_client_info": {
+          "package_name": "com.example.flutter_earthquake_network"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "630923146670-3e02cc6ohpusja1tu7rj64qeqbfd8frm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_earthquake_network",
+            "certificate_hash": "c08b729b85000acfec30d6260bc24c0c980aa463"
+          }
+        },
+        {
+          "client_id": "630923146670-o7a02d9bl8hr08tvsdv50nc6hful90h5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNrQF9evA_ZStKh3M1z-JgR7Q-PG5YlMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630923146670-o7a02d9bl8hr08tvsdv50nc6hful90h5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "630923146670-3mj2ribkjaum5cggcmaq2aq3o4k69n2h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterEarthquakeNetwork"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630923146670:android:dfd0342a7d02ba9b56843f",
+        "android_client_info": {
+          "package_name": "com.example.lightning_map"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "630923146670-koqe0c2nltri482ktqb5ghrf0sjm2v14.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lightning_map",
+            "certificate_hash": "c08b729b85000acfec30d6260bc24c0c980aa463"
+          }
+        },
+        {
+          "client_id": "630923146670-o7a02d9bl8hr08tvsdv50nc6hful90h5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNrQF9evA_ZStKh3M1z-JgR7Q-PG5YlMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630923146670-o7a02d9bl8hr08tvsdv50nc6hful90h5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "630923146670-3mj2ribkjaum5cggcmaq2aq3o4k69n2h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterEarthquakeNetwork"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

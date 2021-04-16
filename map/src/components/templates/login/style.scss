@@ -1,0 +1,206 @@
+@import '../../../styles/variables';
+
+.login-page {
+    height: 100vh;
+
+    .app-introduce-content {
+        height: 100%;
+        flex-direction: column;
+        justify-content: center;
+
+        .logo-img {
+            margin: rem(52px) rem(0px) rem(0px) rem(60px);
+            width: rem(48px);
+
+            cursor: pointer;
+        }
+
+        .introduce-box {
+            margin: rem(45px) rem(100px) rem(100px) rem(60px);
+
+            .text-box {
+                .header {
+                    font-family: $font-euclid-medium;
+                    font-weight: $fw-medium;
+                    font-size: rem(42px);
+                    line-height: rem(48px);
+                }
+
+                .header-2 {
+                    margin-top: rem(20px);
+                    line-height: rem(24px);
+                    line-height: rem(24px);
+                }
+            }
+        }
+
+        .slide {
+            width: 100%;
+        }
+
+        .slide-block {
+            position: relative;
+
+            .swiper-slide {
+                width: rem(200px);
+            }
+
+            .img-slide {
+                display: inline-block;
+
+                img {
+                    width: rem(200px);
+                    height: rem(200px);
+                    border-radius: rem(3px);
+                }
+            }
+        }
+    }
+
+    .app-login-content {
+        padding: 0 rem(120px);
+        display: flex;
+        align-items: center;
+        // flex-direction: column;
+        height: 100%;
+        background-color: $color-bg;
+
+        .ant-form {
+            width: 100%;
+
+            .form-header {
+                font: $fw-semiBold rem(24px) $font-euclid-semibold ;
+                line-height: rem(32px);
+                margin-bottom: rem(32px);
+                text-align: center;
+            }
+
+            .ant-form-item {
+                margin-bottom: rem(0px);
+
+                .forgot-password {
+                    font: $fw-normal rem(14px) $font-euclid-regular;
+                    color: $color-red;
+                    line-height: rem(24px);
+                    float: right;
+                }
+
+                .signin-button {
+                    font: $fw-bold rem(16px) $font-euclid-bold;
+                    line-height: rem(28px);
+                    letter-spacing: rem(2px);
+                    width: 100%;
+                    height: rem(52px);
+                    border-radius: rem(8px);
+                    margin-top: rem(20px);
+                    background-color: $color-black;
+                    color: $color-white;
+
+                    &:hover {
+                        border: inherit;
+                    }
+                }
+            }
+
+            .ant-divider-with-text-center {
+                font: $fw-medium rem(14px) $font-euclid-medium;
+                line-height: rem(20px);
+                margin: 0rem;
+                margin-top: rem(20px);
+
+                &::before,
+                &::after {
+                    border-top: rem(1px) solid #c0c0c0;
+                }
+            }
+        }
+
+        .app-social {
+            justify-content: center;
+            display: flex;
+
+            .logo-img {
+                width: rem(32px);
+            }
+
+            .app-social-item {
+                margin: rem(8px);
+            }
+        }
+
+        .signup-recommend {
+            text-align: center;
+            margin-top: rem(100px);
+            margin-bottom: rem(34px);
+
+            .normal-text {
+                font: $fw-normal rem(16px) $font-euclid-regular;
+                line-height: rem(24px);
+            }
+
+            .sign-up-text {
+                font: $fw-medium rem(16px) $font-euclid-semibold;
+                line-height: rem(24px);
+                color: $color-red;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .login-page {
+        .app-introduce-content {
+            padding-bottom: rem(32px);
+
+            .introduce-box {
+                margin: 0 rem(32px) !important;
+            }
+
+            .text-box {
+                .header {
+                    font: $fw-semiBold rem(24px) $font-euclid-semibold !important;
+                    line-height: rem(28px);
+                }
+
+                .header-2 {
+                    font: $fw-normal rem(12px) $font-euclid-regular !important;
+                    margin-top: rem(4px) !important;
+                    line-height: rem(18px);
+                }
+            }
+
+            .slide {
+                margin-top: rem(16px);
+                width: 100%;
+            }
+
+            .slide-block {
+                position: relative;
+
+                .swiper-slide {
+                    width: rem(92px) !important;
+                }
+
+                .img-slide {
+                    display: inline-block;
+
+                    img {
+                        width: rem(92px) !important;
+                        height: rem(92px) !important;
+                        border-radius: rem(3px);
+                    }
+                }
+            }
+        }
+
+        .app-login-content {
+            padding: rem(28px) !important;
+
+            .form-header {
+                margin-bottom: rem(12px) !important;
+                font: $fw-medium rem(18px) $font-euclid-medium !important;
+                line-height: rem(28px) !important;
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+  "culture": "vi",
+    "texts": {
+        "Menu:Home": "Trang chủ",
+        "Welcome": "Chào mừng bạn",
+        "LongWelcomeMessage": "Chào mừng bạn đến ứng dụng. Đây là một dự án khởi nghiệp dựa trên khung ABP. Để biết thêm thông tin, hãy truy cập abp.io.",
+        "Notification": "Thông báo",
+        "UserArrived": "đã đến khu vực!",
+        "UserLeft": "đã rời khỏi khu vực!",
+        "CallForHelp": "Có thông báo khẩn cấp từ"
+    }
+}
