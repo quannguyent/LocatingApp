@@ -1,2 +1,0 @@
-Loaded env from F:\geophysics-apps\locating_app\map\.env.production
-Loaded env from F:\geophysics-apps\locating_app\map\.env

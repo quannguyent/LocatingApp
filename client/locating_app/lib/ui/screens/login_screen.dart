@@ -253,14 +253,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
                             if (userName.isNotEmpty && passWord.isNotEmpty) {
                               print(_username.text.toString());
-                              BlocProvider.of<LoginBloc>(context).add(
-                                LoginPressedEvent(
-                                  user: User(
-                                    _username.text,
-                                    _password.text,
-                                  ),
-                                ),
-                              );
+
+                              Navigator.pushNamed(context, Routes.home);
+
+                              // BlocProvider.of<LoginBloc>(context).add(
+                              //   LoginPressedEvent(
+                              //     user: User(
+                              //       _username.text,
+                              //       _password.text,
+                              //     ),
+                              //   ),
+                              // );
                             }
                           },
                         ),

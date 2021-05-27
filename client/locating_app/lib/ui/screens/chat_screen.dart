@@ -23,10 +23,11 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    ProfileUserModel user ;user= ModalRoute.of(context).settings.arguments;
+    ProfileUserModel user;
+    user = ModalRoute.of(context).settings.arguments;
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomPadding: false,
+        // resizeToAvoidBottomPadding: false,
         body: BlocProvider<ChatBloc>(
           create: (context) => ChatBloc(null),
           child: Container(
@@ -306,8 +307,7 @@ class _BodyWidgetState extends State<BodyWidget> {
             child: Container(
               height: 0.9 * DeviceUtil.getDeviceHeight(context),
               child: Scaffold(
-                resizeToAvoidBottomPadding:
-                    false, // this avoids the overflow error
+                // resizeToAvoidBottomPadding: false, // this avoids the overflow error
                 body: Container(
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom,
