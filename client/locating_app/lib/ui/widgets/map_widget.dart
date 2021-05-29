@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_compass/flutter_compass.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'package:wemapgl/wemapgl.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
 import 'package:locaing_app/data/network/network.dart';
@@ -25,17 +27,17 @@ class MapWidget extends StatefulWidget {
   _MapState createState() => _MapState();
 }
 
-class _MapState extends State<MapWidget>
-    with AutomaticKeepAliveClientMixin<MapWidget> {
+class _MapState extends State<MapWidget> {
   @override
-  bool get wantKeepAlive => true;
+  // bool get wantKeepAlive => true;
+  WeMapController mapController;
 
-  Completer<GoogleMapController> _controller = Completer();
-  MapType mapType;
-  Set<Marker> _markers = Set();
+  // Completer<GoogleMapController> _controller = Completer();
+  // MapType mapType;
+  // Set<Marker> _markers = Set();
   static double initZoom = 15.5;
   double _direction;
-  BitmapDescriptor userIcon;
+  // BitmapDescriptor userIcon;
   final DrawMap _drawMap = DrawMap();
 
   final double sides = 3.0;
@@ -43,6 +45,11 @@ class _MapState extends State<MapWidget>
   Uint8List markerRectangle;
   Uint8List markerImage;
   LatLng _myLocation;
+  WeMapPlace place;
+
+  void _onMapCreated(WeMapController controller) {
+    mapController = controller;
+  }
 
   final connection = HubConnectionBuilder()
       .withUrl(
@@ -95,8 +102,8 @@ class _MapState extends State<MapWidget>
       }
     });
     Common.getCoordinates().then((value) {
-      _myLocation = LatLng(value.latitude, value.longitude);
-      _drawMap.drawTriangle(100, 100).then((value) => markerRectangle = value);
+      // _myLocation = LatLng(value.latitude, value.longitude);
+      // _drawMap.drawTriangle(100, 100).then((value) => markerRectangle = value);
       String userName =
           BlocProvider.of<ProfileBloc>(context).state.profileUser.userName;
       String imageUrl =
@@ -184,68 +191,86 @@ class _MapState extends State<MapWidget>
       body: markerIcon != null
           ? BlocBuilder<SettingBloc, SettingState>(
               builder: (context, state) {
-                switch (state.mapType) {
-                  case "Normal":
-                    {
-                      mapType = MapType.normal;
-                      break;
-                    }
-                  case "Satellite":
-                    {
-                      mapType = MapType.satellite;
-                      break;
-                    }
-                  case "Terrain":
-                    {
-                      mapType = MapType.terrain;
-                      break;
-                    }
-                }
+                // switch (state.mapType) {
+                //   case "Normal":
+                //     {
+                //       mapType = MapType.normal;
+                //       break;
+                //     }
+                //   case "Satellite":
+                //     {
+                //       mapType = MapType.satellite;
+                //       break;
+                //     }
+                //   case "Terrain":
+                //     {
+                //       mapType = MapType.terrain;
+                //       break;
+                //     }
+                // }
                 return Stack(
                   children: [
                     BlocConsumer<TrackingBloc, TrackingState>(
                       listener: (context, state) {
                         if (state is TrackingSuccess) {
-                          setState(() {
-                            _markers.clear();
-                            _markers = Set.from(state.markers);
-                            _markers.addAll([
-                              Marker(
-                                markerId: MarkerId('marker_user'),
-                                icon: BitmapDescriptor.fromBytes(markerIcon),
-                                anchor: Offset(0.5, 0.5),
-                                position: _myLocation,
-                              ),
-                              Marker(
-                                markerId: MarkerId('marker_rotation'),
-                                icon: BitmapDescriptor.fromBytes(markerRectangle),
-                                anchor: Offset(0.5, 1.75),
-                                rotation: _direction,
-                                position: _myLocation,
-                              ),
-                            ]);
-                          });
+                          // setState(() {
+                          //   _markers.clear();
+                          //   _markers = Set.from(state.markers);
+                          //   _markers.addAll([
+                          //     Marker(
+                          //       markerId: MarkerId('marker_user'),
+                          //       icon: BitmapDescriptor.fromBytes(markerIcon),
+                          //       anchor: Offset(0.5, 0.5),
+                          //       position: _myLocation,
+                          //     ),
+                          //     Marker(
+                          //       markerId: MarkerId('marker_rotation'),
+                          //       icon:
+                          //           BitmapDescriptor.fromBytes(markerRectangle),
+                          //       anchor: Offset(0.5, 1.75),
+                          //       rotation: _direction,
+                          //       position: _myLocation,
+                          //     ),
+                          //   ]);
+                          // });
                         }
                       },
                       builder: (context, trackingState) {
+                        // return Container(
+                        //   child: GoogleMap(
+                        //     markers: _markers,
+                        //     mapType: mapType,
+                        //     zoomControlsEnabled: false,
+                        //     initialCameraPosition: CameraPosition(
+                        //       target: _myLocation,
+                        //       zoom: initZoom,
+                        //     ),
+                        //     onMapCreated: (GoogleMapController controller) {
+                        //       _controller.complete(controller);
+                        //     },
+                        //     gestureRecognizers:
+                        //         <Factory<OneSequenceGestureRecognizer>>[
+                        //       new Factory<OneSequenceGestureRecognizer>(
+                        //         () => new EagerGestureRecognizer(),
+                        //       ),
+                        //     ].toSet(),
+                        //   ),
+                        // );
                         return Container(
-                          child: GoogleMap(
-                            markers: _markers,
-                            mapType: mapType,
-                            zoomControlsEnabled: false,
-                            initialCameraPosition: CameraPosition(
-                              target: _myLocation,
-                              zoom: initZoom,
-                            ),
-                            onMapCreated: (GoogleMapController controller) {
-                              _controller.complete(controller);
+                          child: WeMap(
+                            onMapClick: (point, latlng, _place) async {
+                              place = await _place;
                             },
-                            gestureRecognizers:
-                                <Factory<OneSequenceGestureRecognizer>>[
-                              new Factory<OneSequenceGestureRecognizer>(
-                                () => new EagerGestureRecognizer(),
-                              ),
-                            ].toSet(),
+                            onPlaceCardClose: () {
+                              // print("Place Card closed");
+                            },
+                            reverse: true,
+                            onMapCreated: _onMapCreated,
+                            initialCameraPosition: const CameraPosition(
+                              target: LatLng(21.036029, 105.782950),
+                              zoom: 16.0,
+                            ),
+                            destinationIcon: "assets/symbols/destination.png",
                           ),
                         );
                       },
@@ -256,18 +281,18 @@ class _MapState extends State<MapWidget>
                         color: Colors.grey[500].withOpacity(0.6),
                         icon: Icons.map_outlined,
                         padding: 8,
-                        iconColor: mapType != MapType.satellite
-                            ? Colors.white
-                            : AppTheme.yellowRed,
+                        // iconColor: mapType != MapType.satellite
+                        //     ? Colors.white
+                        //     : AppTheme.yellowRed,
                         onTap: () {
-                          if (mapType != MapType.satellite)
-                            BlocProvider.of<SettingBloc>(context).add(
-                              ChangeMapType("Satellite"),
-                            );
-                          if (mapType == MapType.satellite)
-                            BlocProvider.of<SettingBloc>(context).add(
-                              ChangeMapType("Normal"),
-                            );
+                          // if (mapType != MapType.satellite)
+                          //   BlocProvider.of<SettingBloc>(context).add(
+                          //     ChangeMapType("Satellite"),
+                          //   );
+                          // if (mapType == MapType.satellite)
+                          //   BlocProvider.of<SettingBloc>(context).add(
+                          //     ChangeMapType("Normal"),
+                          //   );
                         }),
                     itemMap(
                       top: 110,

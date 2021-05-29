@@ -33,7 +33,7 @@ dependencies:
   flutter_bloc: ^6.1.0
   shared_preferences: ^0.5.12+4
   equatable: ^1.2.5
-  location: ^3.2.4
+  location: ^2.5.4
   geocoder: ^0.2.1
   geolocator: ^6.2.1
   raw_gnss: ^0.1.2
@@ -76,6 +76,8 @@ dev_dependencies:
   json_serializable: ^3.2.0
   build_runner: ^1.0.0
   share: ^0.6.5+3
+  wemapgl:
+    path: ../WeMap-Flutter-SDK-master
 
 dependency_overrides:
   intl: ^0.17.0-nullsafety.2

@@ -130,9 +130,9 @@ class Common {
       }
     }
     _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
+    if (_permissionGranted == PermissionStatus.DENIED) {
       _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
+      if (_permissionGranted != PermissionStatus.GRANTED) {
         enable = false;
       }
     }
@@ -140,9 +140,9 @@ class Common {
     if (enable) {
       // myLocation = await location.getLocation();
       // return LatLng(myLocation.latitude, myLocation.longitude);
-      geolocator.Position position = await geolocator.Geolocator
-          .getCurrentPosition(
-          desiredAccuracy: geolocator.LocationAccuracy.best);
+      geolocator.Position position =
+          await geolocator.Geolocator.getCurrentPosition(
+              desiredAccuracy: geolocator.LocationAccuracy.best);
       return LatLng(position.latitude, position.longitude);
     } else {
       String currentLocation = await Common.getCurrentLocation();
