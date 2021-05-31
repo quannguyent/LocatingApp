@@ -7,13 +7,13 @@ class ApiConstant {
     return url;
   }
 
-  static final APIHOST = "http://citechi.ddns.net:8000/api/v1/";
+  static final APIHOST = "http://112.213.88.49:8088/rpc/locating-app/";
   // static final APIHOST = "http://192.168.1.140:8000/api/v1/";
   static final apiHostLogin = "auth/login/";
   static final FACEBOOK = "facebook";
   static final GOOGLE = "google";
-  static String REGISTER = "user/register";
-  static String AUTHENTICATION = "auth/";
+  static String REGISTER = "account/signup";
+  static String AUTHENTICATION = "account/login";
   static String PROFILE_USER = "user/me";
   static String VERIFY_CODE = "user/verification";
   static String FORGOT_PASSWORD = "user/forgot_password";

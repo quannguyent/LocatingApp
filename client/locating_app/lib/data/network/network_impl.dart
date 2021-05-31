@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:locaing_app/utils/common.dart';
 import 'package:quiver/collection.dart';
-
+import 'dart:convert';
 import 'api_response.dart';
 import 'network.dart';
 
@@ -50,19 +50,26 @@ class Network {
       String contentType = Headers.jsonContentType}) async {
     try {
       String accessToken = await Common.getToken();
+      var headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+
+      if (accessToken != '') {
+        headers['Authorization'] = 'Bearer $accessToken';
+      }
+
       Response response = await _dio.post(
         url,
         data: body,
         queryParameters: params,
-        options: Options(responseType: ResponseType.json, headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $accessToken',
-        }),
+        options: Options(responseType: ResponseType.json, headers: headers),
       );
+
+      print('response');
+      print(response);
       return getApiResponse(response);
-    } on DioError catch (e) {
-      print("DioError: ${e.toString()}");
+    } catch (e) {
       return getError(e);
     }
   }
@@ -151,9 +158,9 @@ class Network {
 
     return Response<ApiResponse>(
       data: ApiResponse.success(
-        resultCode: result["code"],
+        resultCode: 1,
         message: result["message"],
-        data: result["data"],
+        data: result,
       ),
     );
   }

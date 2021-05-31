@@ -14,7 +14,6 @@ class LoginBloc extends BaseBloc {
       yield LoadingState();
       String token;
       Login login = new Login();
-      ;
       if (event.token == null) {
         String tokenFB = await login.loginFacebook();
         token = tokenFB;
@@ -88,7 +87,9 @@ class LoginBloc extends BaseBloc {
         ApiResponse response = await login.login(user.username, user.password);
         if (response.resultCode == 1) {
           Map<String, dynamic> data = response.data;
-          String token = data['access_token'];
+
+          String token = data['token'];
+
           if (token != null) {
             await Common.saveToken(token);
             yield LoadedState(data: token);

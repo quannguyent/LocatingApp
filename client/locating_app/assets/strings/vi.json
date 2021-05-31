@@ -76,8 +76,7 @@
     "confirm_password": "Xác nhận lại mật khẩu",
     "create": "Tạo tài khoản",
     "have_an_account": "Bạn đã có tài khoản? ",
-    "first_name": "Họ",
-    "last_name": "Tên",
+    "display_name": "Tên hiển thị",
     "verify": "Xác minh",
     "des_verify": "Nhập mã chúng tôi vừa gửi cho bạn vào địa chỉ email của bạn.",
     "back": "Trở lại",
@@ -90,6 +89,7 @@
   },
   "profile": "Tài khoản",
   "error": {
+    "register" : "Đăng ký không thành công",
     "connect_fail" : "Kiểm tra kết nối mạng của bạn",
     "error_email": "Example@gmail.com",
     "not_null": "Thiếu thông tin",
@@ -119,6 +119,9 @@
     "account_does_not_contain_phone" : "Tài khoản không chứa số điện thoại",
     "phone_already_exists": "Số điện thoại đã được sử dụng",
     "over_num_of_allowed_attemps": "Nhập quá số lần cho phép"
+  },
+  "success": {
+    "register": "Đăng ký thành công"
   },
   "profile_user": {
     "update": "Cập nhật",

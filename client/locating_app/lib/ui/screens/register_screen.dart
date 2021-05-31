@@ -1,4 +1,5 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,17 +30,16 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   TextEditingController _email = new TextEditingController();
   TextEditingController _phone = new TextEditingController();
   TextEditingController _password = new TextEditingController();
-  TextEditingController _firstName = new TextEditingController();
-  TextEditingController _lastName = new TextEditingController();
+  TextEditingController _displayName = new TextEditingController();
   TextEditingController _confirmPassword = new TextEditingController();
   String errorUserName;
   String errorEmail;
-  String errorFirstName;
-  String errorLastName;
+  String errorDisplayName;
   String errorPhone;
   String errorPassWord;
   String errorConfirmPassword;
   double radius = 30;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget logoWidget() {
     return Container(
@@ -96,7 +96,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
   Widget bodyWidget() {
     return Container(
-      margin: EdgeInsets.only(top: 60),
+      margin: EdgeInsets.only(top: 20),
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -109,8 +109,52 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                //   Container(
+                //     margin: EdgeInsets.only(left: 24, right: 24, bottom: 20),
+                //     child: 
+                //       TextFormField(
+                //         style: TextStyle(
+                //           fontSize: 18,
+                //         ),
+                //         cursorColor: AppTheme.buildLightTheme().primaryColor,
+                //         decoration: InputDecoration(
+                //           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                //           prefixIcon: Padding(
+                //             child: Icon(Icons.mail_outline, size: 24, color: errorEmail == null ? AppTheme.blue : AppTheme.red),
+                //             padding: const EdgeInsetsDirectional.only(start: 16, end: 12)
+                //           ),
+                //           hintText: _email.text.isEmpty
+                //              Language.of(context).getText(
+                //                 "register.email"
+                //               )
+                //             : null,
+                //           hintStyle: TextStyle(
+                //             fontSize: 16,
+                //             fontWeight: FontWeight.w300,
+                //             color: AppTheme.deactivatedText.withOpacity(0.6)),
+                //           errorText: errorEmail != null ? Language.of(context).getText(errorEmail) : null,
+                //           border: OutlineInputBorder(
+                //             borderRadius: BorderRadius.circular(30),
+                //             borderSide: BorderSide(
+                //                 width: 0, 
+                //                 style: BorderStyle.none,
+                //             ),
+                //           ),
+                //           filled: true,
+                //           fillColor: AppTheme.white,
+                //         ),
+                //         controller: _email,
+                //         onChanged: (value) {
+                //           if (value.isNotEmpty) {
+                //             setState(() {
+                //               errorEmail = null;
+                //             });
+                //           }
+                //         },
+                //       ),
+                //     ),
                   Container(
-                    margin: EdgeInsets.only(left: 40, right: 40),
+                    margin: EdgeInsets.only(left: 24, right: 24),
                     child: ItemTextField(
                       Icons.mail_outline,
                       "register.email",
@@ -120,40 +164,17 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 40, right: 40),
-                    //color: Colors.red,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: ItemTextField(
-                            Icons.perm_contact_calendar_outlined,
-                            "register.first_name",
-                            _firstName,
-                            errorText: errorFirstName,
-                            hideText: false,
-                            width: DeviceUtil.getDeviceWidth(context) / 2 - 50,
-                            widthTextInput: 110,
-                          ),
-                          // margin: EdgeInsets.only(right: 10),
-                        ),
-                        Container(
-                          //margin: EdgeInsets.only(right: 30),
-                          child: ItemTextField(
-                            Icons.perm_contact_calendar_outlined,
-                            "register.last_name",
-                            _lastName,
-                            errorText: errorLastName,
-                            hideText: false,
-                            width: DeviceUtil.getDeviceWidth(context) / 2 - 50,
-                            widthTextInput: 110,
-                          ),
-                        ),
-                      ],
+                    margin: EdgeInsets.only(left: 24, right: 24),
+                    child: ItemTextField(
+                      Icons.perm_identity,
+                      "register.display_name",
+                      _displayName,
+                      errorText: errorDisplayName,
+                      hideText: false,
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 40, right: 40),
+                    margin: EdgeInsets.only(left: 24, right: 24),
                     child: ItemTextField(
                       Icons.perm_identity,
                       "register.user_name",
@@ -163,7 +184,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 40, right: 40),
+                    margin: EdgeInsets.only(left: 24, right: 24),
                     child: ItemTextField(
                       Icons.call,
                       "register.phone_number",
@@ -174,7 +195,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 40, right: 40),
+                    margin: EdgeInsets.only(left: 24, right: 24),
                     child: ItemTextField(
                       Icons.lock_outline,
                       "register.password",
@@ -184,7 +205,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 40, right: 40),
+                    margin: EdgeInsets.only(left: 24, right: 24),
                     child: ItemTextField(
                       Icons.lock_outline,
                       "register.confirm_password",
@@ -271,12 +292,31 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<RegisterBloc, BaseState>(
+    return Scaffold(
+      key: _scaffoldKey,
+      body: BlocConsumer<RegisterBloc, BaseState>(
       listener: (context, state) {
         if (state is LoadedState<UserRegister>) {
-          Navigator.pushNamed(context, Routes.verifyCodeScreen,
-              arguments: state.data,);
-        }
+          _scaffoldKey.currentState.showSnackBar(
+            new SnackBar(
+              content: new Text(
+                Language.of(context).getText("success.register"),
+              ),
+            ),
+          );
+
+          Future.delayed(const Duration(seconds: 2), () {
+            Navigator.pushNamed(context, Routes.login);
+          });
+        } else if (state is ErrorState<String>) {
+            _scaffoldKey.currentState.showSnackBar(
+              new SnackBar(
+                content: new Text(
+                  Language.of(context).getText("error." + state.data),
+                ),
+              ),
+            );
+          }
       },
       builder: (context, state) {
         return Scaffold(
@@ -304,11 +344,12 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           title: "register.create",
                           onPress: () {
                             String userName = "",
-                                email = "",
-                                password = "",
-                                confirmPassword = "",
-                                lastName = "",
-                                firstName = "",phone="";
+                              email = "",
+                              password = "",
+                              confirmPassword = "",
+                              displayName = "",
+                              phone="";
+
                             setState(() {
                               if (_username.text.isEmpty) {
                                 errorUserName = "error.not_null";
@@ -340,25 +381,18 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                 errorEmail = Common.validateEmail(_email.text);
                                 email = _email.text;
                               }
-                              if (_lastName.text.isEmpty) {
-                                errorLastName = "error.not_null";
+                              if (_displayName.text.isEmpty) {
+                                errorDisplayName = "error.not_null";
                               } else {
-                                errorLastName = null;
-                                lastName = _lastName.text;
-                              }
-                              if (_firstName.text.isEmpty) {
-                                errorFirstName = "error.not_null";
-                              } else {
-                                errorFirstName = null;
-                                firstName = _firstName.text;
+                                errorDisplayName = null;
+                                displayName = _displayName.text;
                               }
 
                               if (_password.text != _confirmPassword.text) {
                                 errorConfirmPassword = "error.password_error";
                               }
                               if (userName.isNotEmpty &&
-                                  firstName.isNotEmpty &&
-                                  lastName.isNotEmpty &&
+                                  displayName.isNotEmpty &&
                                   email.isNotEmpty &&
                                   EmailValidator.validate(email) == true &&
                                   password.isNotEmpty &&
@@ -368,8 +402,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   userName,
                                   email,
                                   password,
-                                  firstName,
-                                  lastName,
+                                  displayName,
                                   phone,
                                 );
                                 BlocProvider.of<RegisterBloc>(context).add(
@@ -408,6 +441,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           ),
         );
       },
+      ),
     );
   }
 

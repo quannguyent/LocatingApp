@@ -13,12 +13,12 @@ class RegisterBloc extends BaseBloc {
       yield LoadingState();
       try {
         RegisterRepository registerRepository = new RegisterRepository();
-        ApiResponse response =
-        await registerRepository.registerUser(event.user);
+        ApiResponse response = await registerRepository.registerUser(event.user);
+
         if (response.resultCode == 1) {
           yield LoadedState(data: event.user);
         } else {
-          yield ErrorState(data: response.message.toString());
+          yield ErrorState(data: 'register');
         }
       } catch (e) {
         print(e.toString());

@@ -76,8 +76,7 @@
     "confirm_password": "Confirm Password",
     "create": "CREATE",
     "have_an_account": "Already have an account?",
-    "first_name": "First Name",
-    "last_name": "Last Name",
+    "display_name": "Display Name",
     "verify": "Verification",
     "des_verify": "Enter the code we just sent you on your email address.",
     "back": "Back",
@@ -90,6 +89,7 @@
   },
   "profile": "Account",
   "error": {
+    "register" : "Register failed",
     "connect_fail" : "Check your internet",
     "error_email": "Example@gmail.com",
     "not_null": "Entry required",
@@ -119,6 +119,9 @@
     "account_does_not_contain_phone" : "Account does not contain phone",
     "phone_already_exists": "Phone already exists",
     "over_num_of_allowed_attemps": "Over num of allowed attemps"
+  },
+  "success": {
+    "register": "Register successfully"
   },
   "profile_user": {
     "update": "Update",
