@@ -39,7 +39,7 @@ class _MapState extends State<MapWidget> {
   double _direction;
   // BitmapDescriptor userIcon;
   final DrawMap _drawMap = DrawMap();
-
+  CameraTargetBounds _cameraTargetBounds = CameraTargetBounds.unbounded;
   final double sides = 3.0;
   Uint8List markerIcon;
   Uint8List markerRectangle;
@@ -80,6 +80,21 @@ class _MapState extends State<MapWidget> {
       BlocProvider.of<TrackingBloc>(context)
           .add(GetTrackingFriend(logs: locationsLogs, profiles: profile));
     });
+  }
+
+  cameraFocus() async {
+    LatLng currentLocation;
+    currentLocation = await Common.getCoordinates();
+    mapController.moveCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: 270.0,
+          target: LatLng(currentLocation.latitude, currentLocation.longitude),
+          tilt: 30.0,
+          zoom: 17.0,
+        ),
+      ),
+    );
   }
 
   @override
@@ -133,6 +148,7 @@ class _MapState extends State<MapWidget> {
       builder: (builder) => BlocConsumer<ProfileBloc, ProfileState>(
         builder: (context, state) {
           return CustomBottomSheet(
+            cameraFocus: cameraFocus,
             nameUser: state.profileUser.userName,
             linkImage: state.profileUser.avatar_url != null
                 ? state.profileUser.avatar_url
@@ -264,7 +280,10 @@ class _MapState extends State<MapWidget> {
                             onPlaceCardClose: () {
                               // print("Place Card closed");
                             },
+                            myLocationTrackingMode:
+                                MyLocationTrackingMode.Tracking,
                             reverse: true,
+                            myLocationEnabled: true,
                             onMapCreated: _onMapCreated,
                             initialCameraPosition: const CameraPosition(
                               target: LatLng(21.036029, 105.782950),

@@ -148,14 +148,15 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         bottom: false,
         child: Scaffold(
           backgroundColor: AppTheme.nearlyWhite,
-          body: DrawerUserController(
-            screenIndex: drawerIndex,
-            drawerWidth: MediaQuery.of(context).size.width * 0.75,
-            onDrawerCall: (DrawerIndex drawerIndexdata) {
-              changeIndex(drawerIndexdata);
-            },
-            screenView: screenView ?? LoadingApp.loading1(),
-          ),
+          // body: DrawerUserController(
+          //   screenIndex: drawerIndex,
+          //   drawerWidth: MediaQuery.of(context).size.width * 0.75,
+          //   onDrawerCall: (DrawerIndex drawerIndexdata) {
+          //     changeIndex(drawerIndexdata);
+          //   },
+          //   screenView: screenView ?? LoadingApp.loading1(),
+          // ),
+          body: HomeScreen(),
         ),
       ),
     );
