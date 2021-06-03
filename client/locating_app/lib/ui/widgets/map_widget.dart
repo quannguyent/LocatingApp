@@ -7,7 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:location/location.dart' as locationLib;
+import 'package:http/http.dart' as http;
 import 'package:wemapgl/wemapgl.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
@@ -46,7 +47,9 @@ class _MapState extends State<MapWidget> {
   Uint8List markerImage;
   LatLng _myLocation;
   WeMapPlace place;
-
+  locationLib.Location location;
+  locationLib.LocationData currentLocation;
+  Timer timer;
   void _onMapCreated(WeMapController controller) {
     mapController = controller;
   }
@@ -58,6 +61,10 @@ class _MapState extends State<MapWidget> {
             logging: (level, message) => {},
           ))
       .build();
+  void sendCurrentLocationLoop() async {
+    final uri = Uri.parse(
+        "http://112.213.88.49:8088/rpc/locating-app/location-log/create");
+  }
 
   _realTimeTracking() async {
     String userId = await Common.getUserId();
@@ -108,7 +115,10 @@ class _MapState extends State<MapWidget> {
     // TODO: implement initState
     super.initState();
     BlocProvider.of<SettingBloc>(context).add(RequireLoadSetting());
-
+    location = new locationLib.Location();
+    location.onLocationChanged().listen((locationLib.LocationData currentLoc) {
+      currentLocation = currentLoc;
+    });
     FlutterCompass.events.listen((event) {
       if (mounted) {
         setState(() {

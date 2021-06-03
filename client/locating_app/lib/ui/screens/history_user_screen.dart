@@ -9,7 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:wemapgl/wemapgl.dart';
 import 'package:intl/intl.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
@@ -26,23 +27,26 @@ class HistoryUserScreen extends StatefulWidget {
 }
 
 class _HistoryUserScreenState extends State<HistoryUserScreen> {
-  Completer<GoogleMapController> _controller = Completer();
-  Set<Marker> listMarkers = Set();
+  // Completer<GoogleMapController> _controller = Completer();
+  // Set<Marker> listMarkers = Set();
   double zoom = 16;
+  WeMapController mapController;
   LatLng cameraTarget = LatLng(21.066933, 105.789319);
-  Set<Polyline> _polyLines = {};
+  // Set<Polyline> _polyLines = {};
   List<LatLng> _listPolyLines = [];
   List<String> _location = [];
   double heightBottomSheet;
   Uint8List markerIcon;
   String uuidFiend;
-  Set<Circle> _circles = HashSet<Circle>();
+  WeMapPlace place;
 
-  Future<LatLngBounds> _getVisibleRegion() async {
-    final GoogleMapController googleMapController = await _controller.future;
-    final LatLngBounds bounds = await googleMapController.getVisibleRegion();
-    return bounds;
-  }
+  // Set<Circle> _circles = HashSet<Circle>();
+
+  // Future<LatLngBounds> _getVisibleRegion() async {
+  //   final GoogleMapController googleMapController = await _controller.future;
+  //   // final LatLngBounds bounds = await googleMapController.getVisibleRegion();
+  //   return bounds;
+  // }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
@@ -54,64 +58,65 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
         .asUint8List();
   }
 
-  void loadData(List<LogLocationModel> listLogs) async {
-    LatLng start = new LatLng(listLogs[0].lat, listLogs[0].lng);
-    LatLng end = new LatLng(
-        listLogs[listLogs.length - 1].lat, listLogs[listLogs.length - 1].lng);
-    listMarkers.clear();
-    _listPolyLines.clear();
-    _polyLines.clear();
-    listMarkers.add(Marker(
-      anchor: Offset(0.5, 0.5),
-      markerId: MarkerId("marker_id_start"),
-      position: start,
-      icon: BitmapDescriptor.defaultMarker,
-    ));
-    listMarkers.add(Marker(
-      anchor: Offset(0.5, 0.5),
-      markerId: MarkerId("marker_id_end"),
-      position: end,
-      icon: BitmapDescriptor.fromBytes(markerIcon),
-    ));
-    listLogs.forEach((element) {
-      _listPolyLines.add(LatLng(element.lat, element.lng));
-    });
+  // void loadData(List<LogLocationModel> listLogs) async {
+  //   LatLng start = new LatLng(listLogs[0].lat, listLogs[0].lng);
+  //   LatLng end = new LatLng(
+  //       listLogs[listLogs.length - 1].lat, listLogs[listLogs.length - 1].lng);
+  //   // listMarkers.clear();
+  //   _listPolyLines.clear();
+  //   _polyLines.clear();
+  //   listMarkers.add(Marker(
+  //     anchor: Offset(0.5, 0.5),
+  //     markerId: MarkerId("marker_id_start"),
+  //     position: start,
+  //     icon: BitmapDescriptor.defaultMarker,
+  //   ));
+  //   listMarkers.add(Marker(
+  //     anchor: Offset(0.5, 0.5),
+  //     markerId: MarkerId("marker_id_end"),
+  //     position: end,
+  //     icon: BitmapDescriptor.fromBytes(markerIcon),
+  //   ));
+  //   listLogs.forEach((element) {
+  //     _listPolyLines.add(LatLng(element.lat, element.lng));
+  //   });
 
-    _polyLines.add(
-      // ve duong di
-      Polyline(
-          polylineId: PolylineId('polylineId'),
-          color: AppTheme.green.withOpacity(0.5),
-          width: 5,
-          points: _listPolyLines),
-    );
-  }
+  //   _polyLines.add(
+  //     // ve duong di
+  //     Polyline(
+  //         polylineId: PolylineId('polylineId'),
+  //         color: AppTheme.green.withOpacity(0.5),
+  //         width: 5,
+  //         points: _listPolyLines),
+  //   );
+  // }
 
-  void _getLogLocation(DateTime dateTime) async {
-    final LatLngBounds bounds = await _getVisibleRegion();
+  // void _getLogLocation(DateTime dateTime) async {
+  //   // final LatLngBounds bounds = await _getVisibleRegion();
 
-    double endTime = 0;
-    double startTime = 0;
-    if (dateTime == DateTime.now()) {
-      endTime = dateTime.millisecondsSinceEpoch / 1000;
-      DateTime temp = new DateTime(
-          dateTime.year, dateTime.month, dateTime.day, 0, 0, 0, 0, 0);
-      startTime = temp.millisecondsSinceEpoch / 1000;
-    } else {
-      endTime = dateTime.millisecondsSinceEpoch / 1000 + 3600 * 24;
-      startTime = dateTime.millisecondsSinceEpoch / 1000;
-    }
+  //   double endTime = 0;
+  //   double startTime = 0;
+  //   if (dateTime == DateTime.now()) {
+  //     endTime = dateTime.millisecondsSinceEpoch / 1000;
+  //     DateTime temp = new DateTime(
+  //         dateTime.year, dateTime.month, dateTime.day, 0, 0, 0, 0, 0);
+  //     startTime = temp.millisecondsSinceEpoch / 1000;
+  //   } else {
+  //     endTime = dateTime.millisecondsSinceEpoch / 1000 + 3600 * 24;
+  //     startTime = dateTime.millisecondsSinceEpoch / 1000;
+  //   }
 
-    BlocProvider.of<LogLocationBloc>(context).add(GetLogRequested(
-      userId: uuidFiend,
-      startTime: startTime,
-      endTime: endTime,
-      topRightLat: bounds.northeast.latitude,
-      topRightLng: bounds.northeast.longitude,
-      bottomLeftLat: bounds.southwest.latitude,
-      bottomLeftLng: bounds.southwest.longitude,
-    ));
-  }
+  // BlocProvider.of<LogLocationBloc>(context).add(GetLogRequested(
+  //   userId: uuidFiend,
+  //   startTime: startTime,
+  //   endTime: endTime,
+  //   topRightLat: bounds.northeast.latitude,
+  //   topRightLng: bounds.northeast.longitude,
+  //   bottomLeftLat: bounds.southwest.latitude,
+  //   bottomLeftLng: bounds.southwest.longitude,
+  // ));
+  // }
+
   DateTime selectedDate = DateTime.now();
   bool _decideWhichDayToEnable(DateTime day) {
     if ((day.isBefore(DateTime.now().add(Duration(days: 0))) &&
@@ -133,10 +138,9 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
       setState(() {
         selectedDate = picked;
       });
-      _getLogLocation(picked);
+      // _getLogLocation(picked);
     }
   }
-
 
   @override
   void initState() {
@@ -161,11 +165,11 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
           builder: (context, state) {
             if (state is LogLocationLoadSuccess) {
               if (state.listLogs != null) {
-                loadData(state.listLogs);
+                // loadData(state.listLogs);
               } else {
-                 listMarkers.clear();
+                // listMarkers.clear();
                 _listPolyLines.clear();
-                _polyLines.clear();
+                // _polyLines.clear();
               }
             }
             return markerIcon != null
@@ -174,35 +178,26 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
                     children: [
                       BlocConsumer<PlaceBloc, PlaceState>(
                         builder: (context, state) {
-                          return GoogleMap(
-                            circles: _circles,
-                            polylines: _polyLines,
-                            markers: listMarkers,
-                            initialCameraPosition: CameraPosition(
-                              target: cameraTarget,
-                              zoom: zoom,
+                          return WeMap(
+                            onMapClick: (point, latlng, _place) async {
+                              place = await _place;
+                            },
+                            onPlaceCardClose: () {
+                              // print("Place Card closed");
+                            },
+                            reverse: true,
+                            onMapCreated: (WeMapController controller) {
+                              mapController = controller;
+                            },
+                            initialCameraPosition: const CameraPosition(
+                              target: LatLng(21.036029, 105.782950),
+                              zoom: 16.0,
                             ),
-                            onMapCreated: (GoogleMapController controller) {
-                              _controller.complete(controller);
-                              _getLogLocation(selectedDate);
-                            },
-                            // onCameraMove: (CameraPosition position) {
-                            //   _getLogLocation(selectedDate);
-                            // },
-                            onCameraIdle: () {
-                              _getLogLocation(selectedDate);
-                            },
-                            gestureRecognizers:
-                                <Factory<OneSequenceGestureRecognizer>>[
-                              new Factory<OneSequenceGestureRecognizer>(
-                                () => new EagerGestureRecognizer(),
-                              ),
-                            ].toSet(),
+                            destinationIcon: "assets/symbols/destination.png",
                           );
                         },
                         listener: (context, state) {
-                          if (state is PlaceLoadSuccess) {
-                          }
+                          if (state is PlaceLoadSuccess) {}
                         },
                       ),
                       Positioned(

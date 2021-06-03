@@ -27,7 +27,6 @@ class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
           listPlaces: listPlaces,
           messageSuccess: 'get',
         );
-
       } catch (err) {
         yield PlaceLoadFailure.fromOldState(state, messageSuccess: null);
       }
@@ -131,7 +130,7 @@ class PlaceBloc extends Bloc<PlaceEvent, PlaceState> {
         );
       }
     }
-    if(event is ClearMarkerCircle){
+    if (event is ClearMarkerCircle) {
       yield PlaceInitial();
     }
   }
@@ -176,9 +175,8 @@ class PlaceRequested extends PlaceEvent {
   PlaceRequested({this.friendId});
 }
 
-class ClearMarkerCircle extends PlaceEvent{
+class ClearMarkerCircle extends PlaceEvent {}
 
-}
 class AddPlace extends PlaceEvent {
   final String name;
   final String address;
@@ -253,8 +251,14 @@ class PlaceState {
   List<PlaceModel> listPlaces;
   Map<MarkerId, Marker> marker;
   Map<CircleId, Circle> circles;
-  String messageSuccess;LatLng targetMap;
-  PlaceState({this.listPlaces, this.messageSuccess, this.marker, this.circles,this.targetMap});
+  String messageSuccess;
+  LatLng targetMap;
+  PlaceState(
+      {this.listPlaces,
+      this.messageSuccess,
+      this.marker,
+      this.circles,
+      this.targetMap});
 }
 
 class PlaceInitial extends PlaceState {
@@ -264,23 +268,23 @@ class PlaceInitial extends PlaceState {
           messageSuccess: null,
           marker: <MarkerId, Marker>{},
           circles: <CircleId, Circle>{},
-    targetMap: null,
+          targetMap: null,
         );
 }
 
 class PlaceLoadInProgress extends PlaceState {
-  PlaceLoadInProgress.fromOldState(PlaceState oldStare,
-      {List<PlaceModel> listPlaces,
-      Map<MarkerId, Marker> marker,
-      Map<CircleId, Circle> circles,
-        LatLng targetMap,
-      })
-      : super(
+  PlaceLoadInProgress.fromOldState(
+    PlaceState oldStare, {
+    List<PlaceModel> listPlaces,
+    Map<MarkerId, Marker> marker,
+    Map<CircleId, Circle> circles,
+    LatLng targetMap,
+  }) : super(
           listPlaces: listPlaces ?? oldStare.listPlaces,
           messageSuccess: null,
           marker: marker ?? oldStare.marker,
           circles: circles ?? oldStare.circles,
-    targetMap:  targetMap ?? oldStare.targetMap,
+          targetMap: targetMap ?? oldStare.targetMap,
         );
 }
 
@@ -291,13 +295,13 @@ class PlaceLoadSuccess extends PlaceState {
     String messageSuccess,
     Map<MarkerId, Marker> marker,
     Map<CircleId, Circle> circles,
-        LatLng targetMap,
+    LatLng targetMap,
   }) : super(
           listPlaces: listPlaces ?? oldStare.listPlaces,
           messageSuccess: messageSuccess,
           marker: marker ?? oldStare.marker,
           circles: circles ?? oldStare.circles,
-    targetMap: targetMap?? oldStare.targetMap,
+          targetMap: targetMap ?? oldStare.targetMap,
         );
 }
 
@@ -308,12 +312,12 @@ class PlaceLoadFailure extends PlaceState {
     String messageSuccess,
     Map<MarkerId, Marker> marker,
     Map<CircleId, Circle> circles,
-        LatLng targetMap,
+    LatLng targetMap,
   }) : super(
           listPlaces: listPlaces ?? oldState.listPlaces,
           messageSuccess: messageSuccess,
           marker: marker ?? oldState.marker,
           circles: circles ?? oldState.circles,
-    targetMap: targetMap?? oldState.targetMap,
+          targetMap: targetMap ?? oldState.targetMap,
         );
 }
