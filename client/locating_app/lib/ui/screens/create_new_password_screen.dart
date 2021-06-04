@@ -27,13 +27,12 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ArgumentVerify argumentVerify = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppTheme.white,
       body: BlocConsumer<ForgotPasswordBloc, BaseState>(
         listener: (context, state) {
-          if (state is UpdatePasswordSuccess) {
+          if (state is RecoverPasswordSuccess) {
             showDialog(barrierDismissible: false,
                 context: context,
                 builder: (context) {
@@ -46,20 +45,17 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                     },
                   );
                 });
-            // _scaffoldKey.currentState.showSnackBar(
-            //   new SnackBar(
-            //     content: new Text(
-            //       "cap nhat mat khau thanh cong",
-            //     ),
-            //   ),
-            // );
+
+                Future.delayed(const Duration(seconds: 2), () {
+                  Navigator.pushNamed(context, Routes.login);
+                });
           }
           if (state is ErrorState<String>) {
             showDialog(
                 context: context,
                 builder: (context) {
                   return DialogWidget(
-                    title: "error."+state.data,
+                    title: "error." + state.data,
                     button: "oK",
                   );
                 });
@@ -197,12 +193,7 @@ class _CreateNewPasswordState extends State<CreateNewPasswordScreen> {
                           }
                           if (password.text == confirmPassword.text) {
                             BlocProvider.of<ForgotPasswordBloc>(context).add(
-                              UpdatePassword(
-                                argumentVerify.email,
-                                password.text,
-                                confirmPassword.text,
-                                argumentVerify.code,
-                              ),
+                              RecoverPassword(password.text),
                             );
                           }
                         });

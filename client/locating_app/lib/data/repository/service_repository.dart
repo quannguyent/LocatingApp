@@ -17,10 +17,36 @@ class ServiceRepository {
   }
 
   Future<ApiResponse> forgotPassword(String email) async {
-    var body = {"email": "$email", "app_name": "${Constants.APP_NAME}"};
+    var body = {'email': '$email'};
+
     Response<ApiResponse> response = await Network.instance.post(
       url: ApiConstant.APIHOST + ApiConstant.FORGOT_PASSWORD,
-      body: jsonEncode(body),
+      body: body,
+    );
+    return response.data;
+  }
+
+  Future<ApiResponse> verifyOtpCode(String email, String code) async {
+    var body = {
+      'email': '$email',
+      'code': '$code',
+    };
+
+    Response<ApiResponse> response = await Network.instance.post(
+      url: ApiConstant.APIHOST + ApiConstant.VERIFY_OTP_CODE,
+      body: body,
+    );
+    return response.data;
+  }
+
+  Future<ApiResponse> recoverPassword(String newPassword) async {
+    var body = {
+      "new_password": "$newPassword",
+    };
+
+    Response<ApiResponse> response = await Network.instance.post(
+      url: ApiConstant.APIHOST + ApiConstant.RESET_PASSWORD,
+      body: body,
     );
     return response.data;
   }

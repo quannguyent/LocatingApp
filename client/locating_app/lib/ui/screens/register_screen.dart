@@ -44,9 +44,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   Widget logoWidget() {
     return Container(
       width: DeviceUtil.getDeviceWidth(context),
-      height: DeviceUtil.getDeviceHeight(context) / 4,
       alignment: Alignment.bottomLeft,
-      padding: EdgeInsets.only(left: 24, bottom: 24),
+      padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppTheme.white,
         borderRadius: BorderRadius.only(bottomRight: Radius.circular(50)),
@@ -66,11 +65,11 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           Container(
             margin: EdgeInsets.only(top: 10),
             child: Text(
-              Language.of(context).getText("register.let_start"),
+              Language.of(context).getText("app_name"),
               style: TextStyle(
                 // h5 -> headline
                 fontWeight: FontWeight.bold,
-                fontSize: 30,
+                fontSize: 32,
                 letterSpacing: 0.27,
                 color: AppTheme.blue,
               ),
@@ -79,7 +78,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
           Container(
             margin: EdgeInsets.only(top: 12),
             child: Text(
-              Language.of(context).getText("register.create_account"),
+              Language.of(context).getText("home.welcome_back"),
               style: TextStyle(
                 // h5 -> headline
                 fontWeight: FontWeight.w500,
@@ -226,65 +225,22 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   Widget bottomWidget() {
     return Container(
       width: DeviceUtil.getDeviceWidth(context),
-      margin: EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: 10, top: 24),
       alignment: Alignment.center,
-      child: Column(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(right: 15),
-                  child: InkWell(
-                    onTap: () {
-                      BlocProvider.of<LoginBloc>(context).add(LoginFaceBookEvent());
-                    },
-                    child: Container(
-                      child: itemLogin(
-                        FontAwesomeIcons.facebook,
-                        "Facebook",
-                        Color(0xff0984e3),
-                      ),
-                      margin: EdgeInsets.only(right: 20),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    BlocProvider.of<LoginBloc>(context).add(LoginGoogleEvent());
-                  },
-                  child: itemLogin(
-                    FontAwesomeIcons.google,
-                    "Google",
-                    Colors.redAccent,
-                  ),
-                )
-              ],
+          Text(Language.of(context).getText("register.have_an_account")),
+          InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              Language.of(context).getText("home.login"),
+              style: TextStyle(color: Colors.blue),
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 40),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(Language.of(context).getText("register.have_an_account")),
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    Language.of(context).getText("home.login"),
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ],
-            ),
-          )
         ],
       ),
     );
@@ -335,11 +291,11 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                         child: logoWidget(),
                       ),
                       Container(
-                        margin: EdgeInsets.only(bottom: 20),
+                        margin: EdgeInsets.only(bottom: 8),
                         child: bodyWidget(),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
+                        margin: EdgeInsets.only(left: 24, right: 24),
                         child: ItemButton(
                           title: "register.create",
                           onPress: () {
@@ -414,7 +370,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(top: 20),
                         child: bottomWidget(),
                       ),
                       BlocConsumer<RegisterBloc, BaseState>(

@@ -85,11 +85,18 @@
     "resend": "RESEND",
     "verify_success":"Verify Success",
     "phone_number": "Phone number",
-    "type_phone_number": "Enter your phone number"
+    "type_phone_number": "Enter your phone number",
+    "resend_otp": "We have resent OTP code to your email"
+  },
+  "login": {
+    "not_have_an_account": "Don't have an account?"
   },
   "profile": "Account",
   "error": {
+    "login": "Login failed",
     "register" : "Register failed",
+    "forgot_password" : "Email hasn't been registered",
+    "verify_otp" : "This code isn't same as the code was sent to your email",
     "connect_fail" : "Check your internet",
     "error_email": "Example@gmail.com",
     "not_null": "Entry required",

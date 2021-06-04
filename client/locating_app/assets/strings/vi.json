@@ -85,11 +85,18 @@
     "resend": "Gửi lại",
     "verify_success":"Xác minh thành công",
     "phone_number": "Số điện thoại",
-    "type_phone_number": "Nhập số điện thoại của bạn"
+    "type_phone_number": "Nhập số điện thoại của bạn",
+    "resend_otp": "Chúng tôi đã gửi lại mã OTP vào email của bạn"
+  },
+  "login": {
+    "not_have_an_account": "Bạn chưa có tài khoản?"
   },
   "profile": "Tài khoản",
   "error": {
+    "login": "Đăng nhập không thành công",
     "register" : "Đăng ký không thành công",
+    "forgot_password" : "Email chưa được đăng kí",
+    "verify_otp" : "Mã OTP không chính xác",
     "connect_fail" : "Kiểm tra kết nối mạng của bạn",
     "error_email": "Example@gmail.com",
     "not_null": "Thiếu thông tin",

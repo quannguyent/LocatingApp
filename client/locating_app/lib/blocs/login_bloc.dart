@@ -85,6 +85,7 @@ class LoginBloc extends BaseBloc {
         Login login = new Login();
         User user = event.user;
         ApiResponse response = await login.login(user.username, user.password);
+
         if (response.resultCode == 1) {
           Map<String, dynamic> data = response.data;
 
@@ -97,7 +98,7 @@ class LoginBloc extends BaseBloc {
             yield ErrorState(data: "error");
           }
         } else {
-          yield ErrorState(data: response.message.toString());
+          yield ErrorState(data: 'login');
         }
       } catch (e) {
         print(e.toString());
