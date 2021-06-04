@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:locaing_app/utils/common.dart';
 import 'package:quiver/collection.dart';
-
+import 'dart:convert';
 import 'api_response.dart';
 import 'network.dart';
 
@@ -60,6 +60,7 @@ class Network {
           'Authorization': 'Bearer $accessToken',
         }),
       );
+      print("xxxxx response 2 2312312 : ${response.statusCode}");
       return getApiResponse(response);
     } on DioError catch (e) {
       print("DioError: ${e.toString()}");
@@ -135,7 +136,7 @@ class Network {
       case DioErrorType.SEND_TIMEOUT:
       case DioErrorType.DEFAULT:
         return Response<ApiResponse>(
-            data: ApiResponse.errorLocal("error_api.connect"),
+          data: ApiResponse.errorLocal("error_api.connect"),
         );
       default:
         return Response<ApiResponse>(data: ApiResponse.error(e.message));
@@ -143,7 +144,8 @@ class Network {
   }
 
   Response<ApiResponse> getApiResponse(Response response) {
-    var result = response.data;
+    var result = response;
+    print("xxxx result ${result}");
     if (result == null) {
       return Response<ApiResponse>(
           data: ApiResponse.success(resultCode: 1, data: response.data));
@@ -151,9 +153,9 @@ class Network {
 
     return Response<ApiResponse>(
       data: ApiResponse.success(
-        resultCode: result["code"],
-        message: result["message"],
-        data: result["data"],
+        resultCode: result.statusCode == 200 ? 1 : 0,
+        message: result.statusMessage,
+        data: result.data,
       ),
     );
   }

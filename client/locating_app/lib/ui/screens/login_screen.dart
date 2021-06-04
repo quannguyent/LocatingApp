@@ -256,14 +256,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               Navigator.pushNamed(context, Routes.home);
 
-                              // BlocProvider.of<LoginBloc>(context).add(
-                              //   LoginPressedEvent(
-                              //     user: User(
-                              //       _username.text,
-                              //       _password.text,
-                              //     ),
-                              //   ),
-                              // );
+                              BlocProvider.of<LoginBloc>(context).add(
+                                LoginPressedEvent(
+                                  user: User(
+                                    _username.text,
+                                    _password.text,
+                                  ),
+                                ),
+                              );
                             }
                           },
                         ),

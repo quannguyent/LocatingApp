@@ -31,7 +31,7 @@ class Login {
   Future<String> loginGoogle() async {
     String token;
     GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
-    if(googleSignInAccount==null)return null;
+    if (googleSignInAccount == null) return null;
     GoogleSignInAuthentication googleSignInAuthentication =
         await googleSignInAccount.authentication;
     AuthCredential credential = GoogleAuthProvider.getCredential(
@@ -90,30 +90,34 @@ class Login {
   Future<ApiResponse> login(String username, password) async {
     Map<String, String> headers = {"Content-type": "application/json"};
     model.User user = new model.User(username, password);
-    String tokenFirebase = await Common.getTokenFirebase();
-    String idDevice = await PlatformDeviceId.getDeviceId;
+    // String tokenFirebase = await Common.getTokenFirebase();
+    // String idDevice = await PlatformDeviceId.getDeviceId;
     String appName = Constants.APP_NAME;
     Response<ApiResponse> response = await Network.instance.post(
       url: ApiConstant.APIHOST + ApiConstant.AUTHENTICATION,
       body: {
         "username": user.username,
         "password": user.password,
-        "app_name": appName,
-        "token_firebase": tokenFirebase,
-        "device_id": idDevice,
+        // "app_name": appName,
+        // "token_firebase": tokenFirebase,
+        // "device_id": idDevice,
       },
     );
     return response.data;
   }
 
   Future<ApiResponse> logInToServer(String token,
-      {bool isFacebook, bool isGoogle, bool isAddEmailOrPhone,String phone,String email}) async {
+      {bool isFacebook,
+      bool isGoogle,
+      bool isAddEmailOrPhone,
+      String phone,
+      String email}) async {
     String method;
     String tokenFirebase = await Common.getTokenFirebase();
     String idDevice = await PlatformDeviceId.getDeviceId;
     String appName = Constants.APP_NAME;
     var body;
-    var body1 ={
+    var body1 = {
       "credentials": {
         "token_auth": "$token",
         "app_name": "$appName",
@@ -121,7 +125,7 @@ class Login {
         "device_id": "$idDevice",
       }
     };
-    var bodyFB ={
+    var bodyFB = {
       "credentials": {
         "token_auth": "$token",
         "app_name": "$appName",
@@ -131,7 +135,7 @@ class Login {
       "email": "$email",
       "phone": "$phone"
     };
-    var bodyG ={
+    var bodyG = {
       "credentials": {
         "token_auth": "$token",
         "app_name": "$appName",
@@ -140,17 +144,16 @@ class Login {
       },
       "phone": "$phone"
     };
-    if(isAddEmailOrPhone==null) body=body1;
+    if (isAddEmailOrPhone == null) body = body1;
     if (isFacebook != null) {
       method = ApiConstant.FACEBOOK;
-      if(isAddEmailOrPhone!=null){
-        body= bodyFB;
+      if (isAddEmailOrPhone != null) {
+        body = bodyFB;
       }
-    }
-    else {
+    } else {
       if (isGoogle != null) method = ApiConstant.GOOGLE;
-      if(isAddEmailOrPhone!=null){
-        body= bodyG;
+      if (isAddEmailOrPhone != null) {
+        body = bodyG;
       }
     }
     Response<ApiResponse> response = await Network.instance.post(

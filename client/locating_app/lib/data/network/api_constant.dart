@@ -7,14 +7,14 @@ class ApiConstant {
     return url;
   }
 
-  static final APIHOST = "http://112.213.88.49:8088/rpc/locating-app";
+  static final APIHOST = "http://112.213.88.49:8088/rpc/locating-app/";
   // static final APIHOST = "http://192.168.1.140:8000/api/v1/";
   static final apiHostLogin = "auth/login/";
   static final FACEBOOK = "facebook";
   static final GOOGLE = "google";
   static String REGISTER = "user/register";
-  static String AUTHENTICATION = "auth/";
-  static String PROFILE_USER = "user/me";
+  static String AUTHENTICATION = "account/login";
+  static String PROFILE_USER = "profile/get";
   static String VERIFY_CODE = "user/verification";
   static String FORGOT_PASSWORD = "user/forgot_password";
   static String RESET_PASSWORD = "user/reset_password";
@@ -34,7 +34,7 @@ class ApiConstant {
   static final String GET_PROFILE_UUID = "user/filter-by-user-id/";
   static final String CALL_FOR_HELP = "locating/call-for-help";
 
-  static final String HUB = "http://citechi.ddns.net:44323/";
+  static final String HUB = "http://112.213.88.49:8088/rpc/locating-app/";
   static final String LOCATION = "location-hub";
   static final String chat = "conversation-hub";
 

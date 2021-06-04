@@ -68,7 +68,8 @@ class _MapState extends State<MapWidget> {
 
   _realTimeTracking() async {
     String userId = await Common.getUserId();
-
+    String token = await Common.getToken();
+    print("xxxxxxxxxxxxxxxx token : ${token}");
     await connection.start();
 
     connection.invoke("RegisterFriendLocation", args: [userId]);
