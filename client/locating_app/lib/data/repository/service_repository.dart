@@ -11,8 +11,8 @@ class ServiceRepository {
   ServiceRepository();
 
   Future<ApiResponse> getProfileUser({String token}) async {
-    Response<ApiResponse> response = await Network.instance
-        .get(url: ApiConstant.APIHOST + ApiConstant.PROFILE_USER, token: token);
+    Response<ApiResponse> response = await Network.instance.post(
+        url: ApiConstant.APIHOST + ApiConstant.PROFILE_USER, token: token);
     return response.data;
   }
 

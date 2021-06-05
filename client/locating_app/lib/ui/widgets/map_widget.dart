@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_compass/flutter_compass.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as locationLib;
 import 'package:http/http.dart' as http;
 import 'package:wemapgl/wemapgl.dart';
@@ -30,15 +29,9 @@ class MapWidget extends StatefulWidget {
 
 class _MapState extends State<MapWidget> {
   @override
-  // bool get wantKeepAlive => true;
   WeMapController mapController;
-
-  // Completer<GoogleMapController> _controller = Completer();
-  // MapType mapType;
-  // Set<Marker> _markers = Set();
   static double initZoom = 15.5;
   double _direction;
-  // BitmapDescriptor userIcon;
   final DrawMap _drawMap = DrawMap();
   CameraTargetBounds _cameraTargetBounds = CameraTargetBounds.unbounded;
   final double sides = 3.0;
@@ -49,6 +42,8 @@ class _MapState extends State<MapWidget> {
   WeMapPlace place;
   locationLib.Location location;
   locationLib.LocationData currentLocation;
+  final String _defaultAvatarUrl = "assets/images/default_avatar.png";
+
   Timer timer;
   void _onMapCreated(WeMapController controller) {
     mapController = controller;
@@ -90,6 +85,29 @@ class _MapState extends State<MapWidget> {
     });
   }
 
+  Future<void> addImageFromAsset(
+      String name, String assetName, double lat, double long) async {
+    final ByteData bytes = await rootBundle.load(assetName);
+    final Uint8List list =
+        await _drawMap.getBytesFromAsset(_defaultAvatarUrl, 150, 150);
+    await mapController.addImage(name, list);
+    mapController.addSymbol(
+      SymbolOptions(
+        geometry: LatLng(lat, long),
+        iconImage: name,
+      ),
+    );
+  }
+
+  void _onStyleLoaded(LatLng myLoc) {
+    String imageUrl =
+        BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar_url;
+    if (imageUrl == null) {
+      addImageFromAsset(
+          "assetImage", _defaultAvatarUrl, myLoc.latitude, myLoc.longitude);
+    } else {}
+  }
+
   cameraFocus() async {
     LatLng currentLocation;
     currentLocation = await Common.getCoordinates();
@@ -128,10 +146,11 @@ class _MapState extends State<MapWidget> {
       }
     });
     Common.getCoordinates().then((value) {
-      // _myLocation = LatLng(value.latitude, value.longitude);
+      _myLocation = LatLng(value.latitude, value.longitude);
       // _drawMap.drawTriangle(100, 100).then((value) => markerRectangle = value);
       String userName =
           BlocProvider.of<ProfileBloc>(context).state.profileUser.userName;
+      print("xxxxxx username in map_widget $userName");
       String imageUrl =
           BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar_url;
       if (imageUrl != null) {
@@ -291,10 +310,19 @@ class _MapState extends State<MapWidget> {
                             onPlaceCardClose: () {
                               // print("Place Card closed");
                             },
-                            myLocationTrackingMode:
-                                MyLocationTrackingMode.Tracking,
-                            reverse: true,
-                            myLocationEnabled: true,
+                            onStyleLoadedCallback: () {
+                              if (_myLocation != null) {
+                                mapController.moveCamera(
+                                  CameraUpdate.newCameraPosition(
+                                    CameraPosition(
+                                      target: _myLocation,
+                                      zoom: 16.0,
+                                    ),
+                                  ),
+                                );
+                                _onStyleLoaded(_myLocation);
+                              }
+                            },
                             onMapCreated: _onMapCreated,
                             initialCameraPosition: const CameraPosition(
                               target: LatLng(21.036029, 105.782950),

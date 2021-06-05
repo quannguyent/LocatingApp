@@ -19,6 +19,7 @@ class ApiConstant {
   static String FORGOT_PASSWORD = "user/forgot_password";
   static String RESET_PASSWORD = "user/reset_password";
   static String UPDATE_USER = "user/";
+  static String GET_HISTORY_LOCATION = "location-log/list";
   static final String SETTING = "user/setting";
   static String UPDATE_LOCATION = "user/update_location";
   static String SHARE_LOCATION = "locating/user/share/";

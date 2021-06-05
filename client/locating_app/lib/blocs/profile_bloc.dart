@@ -31,8 +31,7 @@ class UpdateProfileEvent extends ProfileEvent {
     this.newPassword,
     this.retypeNewPassword,
     this.id,
-      this.phoneNumber,
-      {
+    this.phoneNumber, {
     this.image,
   });
 }
@@ -127,7 +126,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is GetProfileEvent) {
       yield LoadingProfile.fromOldState(state);
       try {
-        ApiResponse response = await serviceRepository.getProfileUser();
+        String token = await Common.getToken();
+        ApiResponse response =
+            await serviceRepository.getProfileUser(token: token);
+        print("xxxxxx response in profile_bloc $response");
         if (response.resultCode == 1) {
           ProfileUserModel profileUserModel =
               ProfileUserModel.fromJson(response.data);

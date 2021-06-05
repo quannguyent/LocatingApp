@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
@@ -9,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:locaing_app/data/network/api_constant.dart';
 import 'package:wemapgl/wemapgl.dart';
 import 'package:intl/intl.dart';
 import 'package:locaing_app/blocs/blocs.dart';
@@ -20,6 +21,7 @@ import 'package:locaing_app/res/resources.dart';
 import 'package:locaing_app/ui/widgets/widgets.dart';
 import 'package:locaing_app/utils/common.dart';
 import 'package:locaing_app/utils/device.dart';
+import 'package:http/http.dart' as http;
 
 class HistoryUserScreen extends StatefulWidget {
   @override
@@ -37,16 +39,38 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
   List<String> _location = [];
   double heightBottomSheet;
   Uint8List markerIcon;
-  String uuidFiend;
+  String userId;
   WeMapPlace place;
-
+  List<List<double>> coordinates = [];
   // Set<Circle> _circles = HashSet<Circle>();
+  dynamic geometries = {
+    "type": "GeometryCollection",
+    "geometries": [
+      {
+        "type": "LineString",
+        "coordinates": [
+          [106.8310546875, 13.004557745339769],
+          [107.061767578125, 11.40464884161848],
+          [105.93017578125, 10.17437402751379],
+        ]
+      }
+    ]
+  };
+  Future<LatLngBounds> _getVisibleRegion() async {
+    final LatLngBounds bounds = await mapController.getVisibleRegion();
+    print("xxxx bounds $bounds");
+    return bounds;
+  }
 
-  // Future<LatLngBounds> _getVisibleRegion() async {
-  //   final GoogleMapController googleMapController = await _controller.future;
-  //   // final LatLngBounds bounds = await googleMapController.getVisibleRegion();
-  //   return bounds;
-  // }
+  void _addPolyline(dynamic a) {
+    mapController.addGeoJSON(GeoJSONOptions(
+      geojson: jsonEncode(a),
+      type: GeoJSONOptions.POLYLINE,
+      lineColor: "#ff0000",
+      lineWidth: 2,
+      lineOpacity: 1,
+    ));
+  }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
@@ -91,31 +115,60 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
   //   );
   // }
 
-  // void _getLogLocation(DateTime dateTime) async {
-  //   // final LatLngBounds bounds = await _getVisibleRegion();
+  void _getLogLocation(DateTime dateTime) async {
+    print("xxxx this id userId $userId");
+    if (userId == null) {
+      userId = await Common.getUserId();
+    }
+    String token = await Common.getToken();
+    // final LatLngBounds bounds = await _getVisibleRegion();
 
-  //   double endTime = 0;
-  //   double startTime = 0;
-  //   if (dateTime == DateTime.now()) {
-  //     endTime = dateTime.millisecondsSinceEpoch / 1000;
-  //     DateTime temp = new DateTime(
-  //         dateTime.year, dateTime.month, dateTime.day, 0, 0, 0, 0, 0);
-  //     startTime = temp.millisecondsSinceEpoch / 1000;
-  //   } else {
-  //     endTime = dateTime.millisecondsSinceEpoch / 1000 + 3600 * 24;
-  //     startTime = dateTime.millisecondsSinceEpoch / 1000;
-  //   }
+    double endTime = 0;
+    double startTime = 0;
+    if (dateTime == DateTime.now()) {
+      endTime = dateTime.millisecondsSinceEpoch / 1000;
+      DateTime temp = new DateTime(
+          dateTime.year, dateTime.month, dateTime.day, 0, 0, 0, 0, 0);
+      startTime = temp.millisecondsSinceEpoch / 1000;
+    } else {
+      endTime = dateTime.millisecondsSinceEpoch / 1000 + 3600 * 24;
+      startTime = dateTime.millisecondsSinceEpoch / 1000;
+    }
+    var response = await http.post(
+      ApiConstant.APIHOST + ApiConstant.GET_HISTORY_LOCATION,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(
+        {
+          "appUserId": {
+            "equal": userId,
+          },
+        },
+      ),
+    );
+    List resBody = jsonDecode(response.body);
 
-  // BlocProvider.of<LogLocationBloc>(context).add(GetLogRequested(
-  //   userId: uuidFiend,
-  //   startTime: startTime,
-  //   endTime: endTime,
-  //   topRightLat: bounds.northeast.latitude,
-  //   topRightLng: bounds.northeast.longitude,
-  //   bottomLeftLat: bounds.southwest.latitude,
-  //   bottomLeftLng: bounds.southwest.longitude,
-  // ));
-  // }
+    resBody.forEach((element) {
+      List<double> b = [];
+      b.add(element["latitude"]);
+      b.add(element["longtitude"]);
+      print("xxxxx b ${element["latitude"]}");
+      coordinates.add(b);
+    });
+    geometries["geometries"]["coordinates"] = [...coordinates];
+    // BlocProvider.of<LogLocationBloc>(context).add(GetLogRequested(
+    //   userId: uuidFiend,
+    //   // startTime: startTime,
+    //   // endTime: endTime,
+    //   topRightLat: bounds.northeast.latitude,
+    //   topRightLng: bounds.northeast.longitude,
+    //   bottomLeftLat: bounds.southwest.latitude,
+    //   bottomLeftLng: bounds.southwest.longitude,
+    // ));
+  }
 
   DateTime selectedDate = DateTime.now();
   bool _decideWhichDayToEnable(DateTime day) {
@@ -138,7 +191,7 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
       setState(() {
         selectedDate = picked;
       });
-      // _getLogLocation(picked);
+      _getLogLocation(picked);
     }
   }
 
@@ -147,16 +200,12 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
     // TODO: implement initState
     super.initState();
     heightBottomSheet = 300;
-    getBytesFromAsset(AppImages.MARKER, 70).then((value) {
-      setState(() {
-        markerIcon = value;
-      });
-    });
+    _getLogLocation(DateTime.now());
   }
 
   @override
   Widget build(BuildContext context) {
-    uuidFiend = ModalRoute.of(context).settings.arguments;
+    userId = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: Container(
         width: DeviceUtil.getDeviceHeight(context),
@@ -172,59 +221,60 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
                 // _polyLines.clear();
               }
             }
-            return markerIcon != null
-                ? Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      BlocConsumer<PlaceBloc, PlaceState>(
-                        builder: (context, state) {
-                          return WeMap(
-                            onMapClick: (point, latlng, _place) async {
-                              place = await _place;
-                            },
-                            onPlaceCardClose: () {
-                              // print("Place Card closed");
-                            },
-                            reverse: true,
-                            onMapCreated: (WeMapController controller) {
-                              mapController = controller;
-                            },
-                            initialCameraPosition: const CameraPosition(
-                              target: LatLng(21.036029, 105.782950),
-                              zoom: 16.0,
-                            ),
-                            destinationIcon: "assets/symbols/destination.png",
-                          );
-                        },
-                        listener: (context, state) {
-                          if (state is PlaceLoadSuccess) {}
-                        },
+            return Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                BlocConsumer<PlaceBloc, PlaceState>(
+                  builder: (context, state) {
+                    return WeMap(
+                      onMapClick: (point, latlng, _place) async {
+                        place = await _place;
+                      },
+                      onPlaceCardClose: () {
+                        // print("Place Card closed");
+                      },
+                      onStyleLoadedCallback: () async {
+                        await _addPolyline(geometries);
+                      },
+                      reverse: true,
+                      onMapCreated: (WeMapController controller) {
+                        mapController = controller;
+                      },
+                      initialCameraPosition: const CameraPosition(
+                        target: LatLng(21.036029, 105.782950),
+                        zoom: 16.0,
                       ),
-                      Positioned(
-                        top: 20,
-                        left: 20,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            child: Icon(
-                              Icons.arrow_back_ios,
-                              color: Colors.blue,
-                              size: 18,
-                            ),
-                          ),
-                        ),
+                      destinationIcon: "assets/symbols/destination.png",
+                    );
+                  },
+                  listener: (context, state) {
+                    if (state is PlaceLoadSuccess) {}
+                  },
+                ),
+                Positioned(
+                  top: 20,
+                  left: 20,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.blue,
+                        size: 18,
                       ),
-                      state is LogLocationLoadSuccess
-                          ? bottomSheetHistory(
-                              listLogs: state.listLogs,
-                              locations: state.locations,
-                              isLoad: false)
-                          : bottomSheetHistory(isLoad: true),
-                    ],
-                  )
-                : SizedBox();
+                    ),
+                  ),
+                ),
+                // state is LogLocationLoadSuccess
+                //     ? bottomSheetHistory(
+                //         listLogs: state.listLogs,
+                //         locations: state.locations,
+                //         isLoad: false)
+                //     : bottomSheetHistory(isLoad: true),
+              ],
+            );
           },
         ),
       ),

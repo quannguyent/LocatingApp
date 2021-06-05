@@ -8,7 +8,7 @@ import 'package:background_locator/settings/ios_settings.dart';
 import 'package:background_locator/settings/locator_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
 import 'package:locaing_app/data/repository/repository.dart';
@@ -19,6 +19,7 @@ import 'package:locaing_app/ui/screens/screens.dart';
 import 'package:locaing_app/ui/widgets/widgets.dart';
 import 'package:locaing_app/utils/common.dart';
 import 'dart:math' as math;
+import 'package:wemapgl/wemapgl.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
   @override
