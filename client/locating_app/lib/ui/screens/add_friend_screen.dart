@@ -267,8 +267,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   Widget itemListView(
       {String displayName, String usernanameme, ProfileUserModel profile}) {
     if (profile != null) {
-      if (profile.avatar_url != null) {
-        avatar = NetworkImage(profile.avatar_url);
+      if (profile.avatar != null) {
+        avatar = NetworkImage(profile.avatar);
       } else {
         avatar = AssetImage(AppImages.DEFAULT_AVATAR);
       }
@@ -314,7 +314,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 0),
                                 child: Text(
-                                  profile.userName,
+                                  profile.username,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w100,

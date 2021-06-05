@@ -95,6 +95,8 @@
   "error": {
     "login": "Login failed",
     "register" : "Register failed",
+    "update_password" : "Update password failed",
+    "update_profile" : "Update profile failed",
     "forgot_password" : "Email hasn't been registered",
     "verify_otp" : "This code isn't same as the code was sent to your email",
     "connect_fail" : "Check your internet",
@@ -110,7 +112,8 @@
     "update_failure": "update failure",
     "email_not_found": "Email not found",
     "verify_code_incorrect": "Verify code incorrect",
-    "password_dont_match": "Password dont match",
+    "password_dont_match": "Password doesn't match",
+    "password_not_change": "Password doesn't change",
     "code_expired": "Code expired",
     "mail_has_not_been_sent": "Email has not been sent",
     "password_incorrect": "Password incorrect",
@@ -128,7 +131,8 @@
     "over_num_of_allowed_attemps": "Over num of allowed attemps"
   },
   "success": {
-    "register": "Register successfully"
+    "register": "Register successfully",
+    "update_profile": "Update profile successfully"
   },
   "profile_user": {
     "update": "Update",

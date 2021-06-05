@@ -30,7 +30,7 @@ class RegisterBloc extends BaseBloc {
       try {
         RegisterRepository registerRepository = new RegisterRepository();
         ApiResponse response = await registerRepository.verifyCode(
-            event.email, event.userName, event.code);
+            event.email, event.username, event.code);
         if (response.resultCode == 1) {
           yield LoadedState(data: response.message.toString());
         } else {
@@ -48,7 +48,7 @@ class RegisterEvent extends BaseEvent {
   RegisterEvent(this.user);
 }
 class VerifyCode extends BaseEvent {
-  String email, userName, code;
+  String email, username, code;
 
-  VerifyCode(this.email, this.userName, this.code);
+  VerifyCode(this.email, this.username, this.code);
 }

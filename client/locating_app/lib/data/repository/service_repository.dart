@@ -10,9 +10,9 @@ import '../network/network.dart';
 class ServiceRepository {
   ServiceRepository();
 
-  Future<ApiResponse> getProfileUser({String token}) async {
+  Future<ApiResponse> getProfileUser() async {
     Response<ApiResponse> response = await Network.instance
-        .get(url: ApiConstant.APIHOST + ApiConstant.PROFILE_USER, token: token);
+        .post(url: ApiConstant.APIHOST + ApiConstant.PROFILE_USER);
     return response.data;
   }
 
@@ -51,67 +51,68 @@ class ServiceRepository {
     return response.data;
   }
 
-  Future<ApiResponse> updatePassword(String email, String verifyCode,
-      String newPassword, String retypeNewPassword) async {
+  Future<ApiResponse> updatePassword(
+    String oldPassword,
+    String newPassword
+  ) async {
     var body = {
-      "email": "$email",
-      "verify_code": "$verifyCode",
-      "new_password": "$newPassword",
-      "retype_password": "$retypeNewPassword"
+      "oldPassword": "$oldPassword",
+      "newPassword": "$newPassword",
     };
     Response<ApiResponse> response = await Network.instance.post(
-      url: ApiConstant.APIHOST + ApiConstant.RESET_PASSWORD,
-      body: jsonEncode(body),
+      url: ApiConstant.APIHOST + ApiConstant.CHANGE_PASSWORD,
+      body: body,
     );
     return response.data;
   }
 
-  Future<Map<String, dynamic>> updateProfile(
+  Future<ApiResponse> updateProfile(
+    String username,
     String email,
-    String firstName,
-    String lastName,
+    String displayname,
     String status,
     String phoneNumber,
-    String oldPassword,
-    String newPassword,
-    String retypeNewPassword,
-    String id, {
-    File image,
-  }) async {
-    var streamReponse;
-    String accessToken = await Common.getToken();
-    var response = await http.MultipartRequest(
-        "PUT", Uri.parse(ApiConstant.APIHOST + ApiConstant.UPDATE_USER + id));
-    response.headers['Authorization'] = "Bearer $accessToken";
-    response.headers['Content-Type'] = 'multipart/form-data';
-    response.fields["email"] = "$email";
-    response.fields["first_name"] = "$firstName";
-    response.fields["last_name"] = "$lastName";
-    response.fields["status"] = "$status";
-    response.fields["phone"] = "$phoneNumber";
-    response.fields["old_password"] = "$oldPassword";
-    response.fields["new_password"] = "$newPassword";
-    response.fields["retype_password"] = "$retypeNewPassword";
+    int sexId,
+    {
+      File image,
+    }
+  ) async {
+    var body = {
+      'username': '$username',
+      'email': '$email',
+      'displayName': '$displayname',
+      'phone': '$phoneNumber',
+      'sexId': sexId
+    };
+
+    var response = await Network.instance.post(
+      url: ApiConstant.APIHOST + ApiConstant.UPDATE_PROFILE,
+      body: body,
+    );
+
+    return response.data;
+
     if (image != null) {
       var multipartFile = await http.MultipartFile.fromPath(
-        "avatar_image",
+        "avatar",
         image.path,
       );
-      response.files.add(multipartFile);
-    }
-    try {
-      streamReponse = await response.send();
 
-      final responseRequest = await http.Response.fromStream(streamReponse);
-      if (responseRequest.statusCode != 200) {
-        return null;
-      }
-      final Map<String, dynamic> responseData =
-          jsonDecode(responseRequest.body);
-      return responseData;
-    } catch (e) {
-      print(e.toString());
+      print(multipartFile);
     }
+    // try {
+    //   streamReponse = await response.send();
+
+    //   final responseRequest = await http.Response.fromStream(streamReponse);
+    //   if (responseRequest.statusCode != 200) {
+    //     return null;
+    //   }
+    //   final Map<String, dynamic> responseData =
+    //       jsonDecode(responseRequest.body);
+    //   return responseData;
+    // } catch (e) {
+    //   print(e.toString());
+    // }
   }
 
   Future<ApiResponse> shareLocation(String id) async {

@@ -17,11 +17,11 @@ class TrackingRepository {
     for (var friend in profiles) {
       LogLocationModel log = _mapLocation[friend.uuid];
       Uint8List avatar;
-      String imageUrl = friend.avatar_url;
+      String imageUrl = friend.avatar;
       if (log != null) {
-        if (friend.avatar_url == null) {
-          String userName = friend.userName.substring(0, 4);
-          avatar = await drawMap.drawCircle(200, 200, userName);
+        if (friend.avatar == null) {
+          String username = friend.username.substring(0, 4);
+          avatar = await drawMap.drawCircle(200, 200, username);
         } else {
           avatar = await drawMap.loadAvatarUser( imageUrl, 200);
         }

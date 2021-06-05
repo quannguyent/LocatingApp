@@ -1,12 +1,12 @@
 class UserRegister {
-  String userName;
+  String username;
   String email;
   String password;
   String displayName;
   String phone;
 
   UserRegister(
-      this.userName,
+      this.username,
       this.email,
       this.password,
       this.displayName,
@@ -15,7 +15,7 @@ class UserRegister {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = new Map();
-    map["username"] = this.userName;
+    map["username"] = this.username;
     map["email"] = this.email;
     map["password"] = this.password;
     map["displayName"] = this.displayName;

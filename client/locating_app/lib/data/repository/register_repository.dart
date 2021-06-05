@@ -14,7 +14,7 @@ class RegisterRepository {
   }
 
   Future<ApiResponse> verifyCode(
-      String email, String userName, String code) async {
+      String email, String username, String code) async {
     var body = {"email": "$email", "verify_code": "$code"};
     Response<ApiResponse> response = await Network.instance.post(
       url: ApiConstant.APIHOST + ApiConstant.VERIFY_CODE,

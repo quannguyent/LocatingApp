@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:locaing_app/utils/common.dart';
 import '../../blocs/blocs.dart';
 import '../../localizations.dart';
 import '../../res/resources.dart';
@@ -32,21 +33,20 @@ class ProfileWidget extends StatefulWidget {
 
 class _ProfileWidgetState extends State<ProfileWidget> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _username = new TextEditingController();
   TextEditingController _email = new TextEditingController();
   TextEditingController _password = new TextEditingController();
-  TextEditingController _firstName = new TextEditingController();
-  TextEditingController _lastName = new TextEditingController();
+  TextEditingController _displayname = new TextEditingController();
   TextEditingController _confirmPassword = new TextEditingController();
   TextEditingController _newPassword = new TextEditingController();
   TextEditingController _phoneNumber = new TextEditingController();
-  String errorUserName;
   String errorEmail;
-  String errorFirstName;
-  String errorLastName;
+  String errorDisplayname;
   String errorPassWord;
   String errorConfirmPassword;
-  String errorNewPassword;  String errorPhoneNumber;
+  String errorNewPassword;
+  String errorPhoneNumber;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   double radius = 30;
   File _image;
@@ -54,9 +54,8 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   Widget logoWidget() {
     return Container(
       width: DeviceUtil.getDeviceWidth(context),
-      height: DeviceUtil.getDeviceHeight(context) / 4,
       alignment: Alignment.bottomLeft,
-      padding: EdgeInsets.only(left: 24, bottom: 24),
+      padding: EdgeInsets.only(left: 24, bottom: 24, top: 32),
       decoration: BoxDecoration(
         color: AppTheme.white,
         borderRadius: BorderRadius.only(bottomRight: Radius.circular(50)),
@@ -95,10 +94,10 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is GetProfileState) {
-          if (state.profileUser.avatar_url != null) {
+          if (state.profileUser.avatar != null) {
             setState(() {
               _image = null;
-              avatar = NetworkImage(state.profileUser.avatar_url);
+              avatar = NetworkImage(state.profileUser.avatar);
             });
           } else {
             setState(() {
@@ -110,7 +109,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       },
       builder: (context, state) {
         return Container(
-          margin: EdgeInsets.only(top: 60),
+          margin: EdgeInsets.only(top: 32),
           alignment: Alignment.center,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -150,7 +149,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
+                        margin: EdgeInsets.only(left: 24, right: 24),
                         child: ItemTextField(
                           Icons.mail_outline,
                           "register.email",
@@ -161,42 +160,17 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
-                        //color: Colors.red,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              child: ItemTextField(
-                                Icons.perm_contact_calendar_outlined,
-                                "register.first_name",
-                                _firstName,
-                                errorText: errorFirstName,
-                                hideText: false,
-                                width:
-                                    DeviceUtil.getDeviceWidth(context) / 2 - 50,
-                                widthTextInput: 110,
-                              ),
-                              // margin: EdgeInsets.only(right: 10),
-                            ),
-                            Container(
-                              //margin: EdgeInsets.only(right: 30),
-                              child: ItemTextField(
-                                Icons.perm_contact_calendar_outlined,
-                                "register.last_name",
-                                _lastName,
-                                errorText: errorLastName,
-                                hideText: false,
-                                width:
-                                    DeviceUtil.getDeviceWidth(context) / 2 - 50,
-                                widthTextInput: 110,
-                              ),
-                            ),
-                          ],
+                        margin: EdgeInsets.only(left: 24, right: 24),
+                        child: ItemTextField(
+                          Icons.perm_contact_calendar_outlined,
+                          "register.display_name",
+                          _displayname,
+                          errorText: errorDisplayname,
+                          hideText: false,
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
+                        margin: EdgeInsets.only(left: 24, right: 24),
                         child: ItemTextField(
                           Icons.phone,
                           "register.phone",
@@ -206,7 +180,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
+                        margin: EdgeInsets.only(left: 24, right: 24),
                         child: ItemTextField(
                           Icons.lock_outline,
                           "profile_user.old_password",
@@ -216,17 +190,17 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
+                        margin: EdgeInsets.only(left: 24, right: 24),
                         child: ItemTextField(
                           Icons.lock_outline,
                           "profile_user.new_password",
                           _newPassword,
-                          errorText: errorConfirmPassword,
+                          errorText: errorNewPassword,
                           hideText: true,
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
+                        margin: EdgeInsets.only(left: 24, right: 24),
                         child: ItemTextField(
                           Icons.lock_outline,
                           "register.confirm_password",
@@ -261,20 +235,10 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           _email.text =
               BlocProvider.of<ProfileBloc>(context).state.profileUser.email ??
                   "";
-          _lastName.text = BlocProvider.of<ProfileBloc>(context)
+          _displayname.text = BlocProvider.of<ProfileBloc>(context)
                   .state
                   .profileUser
-                  .lastName ??
-              "";
-          _firstName.text = BlocProvider.of<ProfileBloc>(context)
-                  .state
-                  .profileUser
-                  .firstName ??
-              "";
-          _username.text = BlocProvider.of<ProfileBloc>(context)
-                  .state
-                  .profileUser
-                  .userName ??
+                  .displayName ??
               "";
 
           _phoneNumber.text = BlocProvider.of<ProfileBloc>(context)
@@ -286,6 +250,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       },
       builder: (context, state) {
         return Scaffold(
+          key: _scaffoldKey,
           body: Stack(
             children: [
               Container(
@@ -306,62 +271,111 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         child: bodyWidget(),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
+                        margin: EdgeInsets.only(left: 24, right: 24),
                         child: ItemButton(
                           title: "profile_user.update",
                           onPress: () async {
-                            String userName = "",
-                                email = "",
-                                password = "",
-                                newPassword = "",
-                                confirmPassword = "",
-                                lastName = "",phoneNumber="",
-                                firstName = "";
+                            String email = "",
+                              password = "",
+                              newPassword = "",
+                              confirmPassword = "",
+                              displayname = "",
+                              phoneNumber="";
+
                             setState(() {
+                              var isChangeBasicInfo = false;
                               if (_email.text.isEmpty) {
                                 errorEmail = "error.not_null";
                               } else {
                                 errorEmail = null;
                                 email = _email.text;
+
+                                if (email != state.profileUser.email) {
+                                  isChangeBasicInfo = true;
+                                }
                               }
-                              if (_lastName.text.isEmpty) {
-                                errorLastName = "error.not_null";
+                              if (_displayname.text.isEmpty) {
+                                errorDisplayname = "error.not_null";
                               } else {
-                                errorLastName = null;
-                                lastName = _lastName.text;
+                                errorDisplayname = null;
+                                displayname = _displayname.text;
+
+                                if (displayname != state.profileUser.displayName) {
+                                  isChangeBasicInfo = true;
+                                }
                               }
                               if (_phoneNumber.text.isEmpty) {
                                 errorPhoneNumber = "error.not_null";
                               } else {
                                 errorPhoneNumber = null;
                                 phoneNumber = _phoneNumber.text;
+
+                                if (phoneNumber != state.profileUser.phone) {
+                                  isChangeBasicInfo = true;
+                                }
                               }
-                              if (_firstName.text.isEmpty) {
-                                errorFirstName = "error.not_null";
-                              } else {
-                                errorFirstName = null;
-                                firstName = _firstName.text;
+
+                              password = _password.text ?? '';
+                              newPassword = _newPassword.text ?? '';
+                              confirmPassword = _confirmPassword.text;
+                              var isValidPass = true;
+                              var isChangePass = false;
+
+                              if (password.isNotEmpty) {
+                                isChangePass = true;
+
+                                if (newPassword.isEmpty && confirmPassword.isEmpty) {
+                                  isValidPass = false;
+                                  errorNewPassword = 'error.not_null';
+                                  errorConfirmPassword = 'error.not_null';
+                                } else if (newPassword != confirmPassword) {
+                                  isValidPass = false;
+                                  errorConfirmPassword = 'error.password_dont_match';
+                                } else if (password != newPassword) {
+                                  errorNewPassword = null;
+                                  errorConfirmPassword = null;
+                                } else {
+                                  isValidPass = false;
+                                  errorNewPassword = 'error.password_not_change';
+                                  errorConfirmPassword = null;
+                                }
                               }
-                              if (firstName.isNotEmpty &&
-                                  lastName.isNotEmpty &&
-                                  email.isNotEmpty &&phoneNumber.isNotEmpty&&
-                                  EmailValidator.validate(email) == true) {
-                                BlocProvider.of<ProfileBloc>(context)
+
+                              print(newPassword);
+
+                              if (displayname.isNotEmpty 
+                                && email.isNotEmpty
+                                && phoneNumber.isNotEmpty
+                                && EmailValidator.validate(email)
+                                && isValidPass
+                                && (isChangeBasicInfo || isChangePass)) {
+                                  BlocProvider
+                                    .of<ProfileBloc>(context)
                                     .add(UpdateProfileEvent(
-                                  _email.text,
-                                  _firstName.text,
-                                  _lastName.text,
-                                  state.profileUser.status,
-                                  _phoneNumber.text,
-                                  _password.text ?? _password.text,
-                                  _newPassword.text ?? _newPassword.text,
-                                  _confirmPassword.text ??
-                                      _confirmPassword.text,
-                                  state.profileUser.id,
-                                  image: _image != null ? _image : null,
-                                ));
+                                      isChangeBasicInfo ? state.profileUser.username : '',
+                                      _email.text,
+                                      _displayname.text,
+                                      state.profileUser.status,
+                                      phoneNumber,
+                                      password,
+                                      newPassword,
+                                      state.profileUser.sexId,
+                                      image: _image != null ? _image : null,
+                                    ));
+                                } else {
+                                  showDialog(
+                                    barrierDismissible: true,
+                                    context: context,
+                                    builder: (context) {
+                                      return DialogWidget(
+                                        title: "success.update_profile",
+                                        success: true,
+                                      );
+                                    }
+                                  );
+                                }
                               }
-                            });
+                            );
                           },
                         ),
                       ),
@@ -387,17 +401,25 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         listener: (context, state) {
                           if (state is UpdateProfile) {
                             FocusScope.of(context).requestFocus(FocusNode());
-                            state.success != null
-                                ? showDialog(
-                                    barrierDismissible: true,
-                                    context: context,
-                                    builder: (context) {
-                                      return DialogWidget(
-                                        title: "profile_user.update_success",
-                                        success: true,
-                                      );
-                                    })
-                                : print("done");
+
+                            if (state.success != null) {
+                              showDialog(
+                                barrierDismissible: true,
+                                context: context,
+                                builder: (context) {
+                                  return DialogWidget(
+                                    title: "profile_user.update_success",
+                                    success: true,
+                                  );
+                                }
+                              );
+
+                              if (_password.text.isNotEmpty) {
+                                _password.text = '';
+                                _newPassword.text = '';
+                                _confirmPassword.text = '';
+                              } 
+                            }
                           }
                         },
                         builder: (context, state) {

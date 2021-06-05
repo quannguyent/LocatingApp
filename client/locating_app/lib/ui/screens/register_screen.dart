@@ -32,7 +32,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   TextEditingController _password = new TextEditingController();
   TextEditingController _displayName = new TextEditingController();
   TextEditingController _confirmPassword = new TextEditingController();
-  String errorUserName;
+  String errorusername;
   String errorEmail;
   String errorDisplayName;
   String errorPhone;
@@ -178,7 +178,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                       Icons.perm_identity,
                       "register.user_name",
                       _username,
-                      errorText: errorUserName,
+                      errorText: errorusername,
                       hideText: false,
                     ),
                   ),
@@ -299,7 +299,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                         child: ItemButton(
                           title: "register.create",
                           onPress: () {
-                            String userName = "",
+                            String username = "",
                               email = "",
                               password = "",
                               confirmPassword = "",
@@ -308,10 +308,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
                             setState(() {
                               if (_username.text.isEmpty) {
-                                errorUserName = "error.not_null";
+                                errorusername = "error.not_null";
                               } else {
-                                errorUserName = null;
-                                userName = _username.text;
+                                errorusername = null;
+                                username = _username.text;
                               }
                               if (_password.text.isEmpty) {
                                 errorPassWord = "error.not_null";
@@ -347,7 +347,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                               if (_password.text != _confirmPassword.text) {
                                 errorConfirmPassword = "error.password_error";
                               }
-                              if (userName.isNotEmpty &&
+                              if (username.isNotEmpty &&
                                   displayName.isNotEmpty &&
                                   email.isNotEmpty &&
                                   EmailValidator.validate(email) == true &&
@@ -355,7 +355,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   password == confirmPassword &&
                                   confirmPassword.isNotEmpty) {
                                 UserRegister user = new UserRegister(
-                                  userName,
+                                  username,
                                   email,
                                   password,
                                   displayName,

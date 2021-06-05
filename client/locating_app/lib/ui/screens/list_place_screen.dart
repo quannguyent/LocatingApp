@@ -87,15 +87,15 @@ class _ListPlaceScreenState extends State<ListPlaceScreen>
     // TODO: implement initState
     super.initState();
     user = BlocProvider.of<HomeBloc>(context).state.user;
-    print(user.userName);
+    print(user.username);
     BlocProvider.of<PlaceBloc>(context).add(PlaceRequested(friendId: user.uuid));
     setState(() {
-      if (user.avatar_url != null) {
-        _drawMap.loadAvatarUser(user.avatar_url, 150).then((value) {
+      if (user.avatar != null) {
+        _drawMap.loadAvatarUser(user.avatar, 150).then((value) {
           markerIcon = value;
         });
       } else {
-        _drawMap.drawCircle(150, 150, user.avatar_url).then((value) {
+        _drawMap.drawCircle(150, 150, user.avatar).then((value) {
           markerIcon = value;
         });
       }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:locaing_app/data/model/model.dart';
 import 'package:locaing_app/ui/screens/screens.dart';
+import 'package:locaing_app/utils/common.dart';
 import '../constants.dart';
 import '../localizations.dart';
 import '../res/resources.dart';

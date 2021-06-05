@@ -97,10 +97,10 @@ class _MapState extends State<MapWidget>
     Common.getCoordinates().then((value) {
       _myLocation = LatLng(value.latitude, value.longitude);
       _drawMap.drawTriangle(100, 100).then((value) => markerRectangle = value);
-      String userName =
-          BlocProvider.of<ProfileBloc>(context).state.profileUser.userName;
+      String username =
+          BlocProvider.of<ProfileBloc>(context).state.profileUser.username;
       String imageUrl =
-          BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar_url;
+          BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar;
       if (imageUrl != null) {
         _drawMap.loadAvatarUser(imageUrl, 200).then((value) {
           setState(() {
@@ -109,7 +109,7 @@ class _MapState extends State<MapWidget>
           _realTimeTracking();
         });
       } else {
-        _drawMap.drawCircle(200, 200, userName).then((value) {
+        _drawMap.drawCircle(200, 200, username).then((value) {
           setState(() {
             markerIcon = value;
           });
@@ -126,9 +126,9 @@ class _MapState extends State<MapWidget>
       builder: (builder) => BlocConsumer<ProfileBloc, ProfileState>(
         builder: (context, state) {
           return CustomBottomSheet(
-            nameUser: state.profileUser.userName,
-            linkImage: state.profileUser.avatar_url != null
-                ? state.profileUser.avatar_url
+            nameUser: state.profileUser.username,
+            linkImage: state.profileUser.avatar != null
+                ? state.profileUser.avatar
                 : null,
             isMe: true,
             copyText: () {
@@ -159,8 +159,8 @@ class _MapState extends State<MapWidget>
         return BlocConsumer<PlaceBloc, PlaceState>(
           builder: (context, state) {
             return CustomBottomSheetFriend(
-              nameUser: user.userName,
-              linkImage: user.avatar_url != null ? user.avatar_url : null,
+              nameUser: user.username,
+              linkImage: user.avatar != null ? user.avatar : null,
               isCloseFriend: user.friendship,
               user: user,
             );
@@ -450,13 +450,13 @@ class _MapState extends State<MapWidget>
                           backgroundImage: BlocProvider.of<FriendBloc>(context)
                                       .state
                                       .listCloseFriend[i]
-                                      .avatar_url !=
+                                      .avatar !=
                                   null
                               ? NetworkImage(
                                   BlocProvider.of<FriendBloc>(context)
                                       .state
                                       .listCloseFriend[i]
-                                      .avatar_url)
+                                      .avatar)
                               : AssetImage(AppImages.DEFAULT_AVATAR),
                         ),
                       ),

@@ -12,14 +12,19 @@ class ApiConstant {
   static final apiHostLogin = "auth/login/";
   static final FACEBOOK = "facebook";
   static final GOOGLE = "google";
+
+  // Profile
   static String REGISTER = "account/signup";
   static String AUTHENTICATION = "account/login";
-  static String PROFILE_USER = "user/me";
+  static String PROFILE_USER = "profile/get";
   static String VERIFY_CODE = "user/verification";
   static String FORGOT_PASSWORD = "profile/forgot-password";
   static String VERIFY_OTP_CODE = "profile/verify-otp-code";
   static String RESET_PASSWORD = "profile/recovery-password";
-  static String UPDATE_USER = "user/";
+  static String UPDATE_PROFILE = "profile/update";
+  static String SAVE_IMAGE = "profile/save-image";
+  static String CHANGE_PASSWORD = "profile/change-password";
+
   static final String SETTING = "user/setting";
   static String UPDATE_LOCATION = "user/update_location";
   static String SHARE_LOCATION = "locating/user/share/";

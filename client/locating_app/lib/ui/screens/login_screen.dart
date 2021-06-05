@@ -193,14 +193,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: ItemButton(
                                 title: "home.login",
                                 onPress: () {
-                                  String userName = _username.text;
+                                  String username = _username.text;
                                   String passWord = _password.text;
                                   setState(() {
                                     if (_username.text.isEmpty) {
                                       errorUser = "error.not_null";
                                     } else {
                                       errorUser = null;
-                                      //  userName = _username.text;
+                                      //  username = _username.text;
                                     }
                                     if (_password.text.isEmpty) {
                                       errorPassword = "error.not_null";
@@ -209,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       //password = _password.text;
                                     }
                                   });
-                                  if (userName.isNotEmpty && passWord.isNotEmpty) {
+                                  if (username.isNotEmpty && passWord.isNotEmpty) {
                                     BlocProvider.of<LoginBloc>(context).add(
                                       LoginPressedEvent(
                                         user: User(
