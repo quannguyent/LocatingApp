@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
+import 'package:locaing_app/data/model/history_location.dart';
 import 'package:wemapgl/wemapgl.dart';
 
 import 'package:intl/intl.dart';
@@ -221,6 +222,21 @@ class Common {
     var time = '';
     time = format.format(date);
     return time;
+  }
+
+  static Future<List<String>> getLocations(
+      List<HistoryLocation> listLogs) async {
+    print("xxxxx 123123123 ${listLogs[0].lat}");
+    List<String> locations = [];
+    for (int i = 0; i < listLogs.length; i++) {
+      var coordinates = new Coordinates(listLogs[i].lat, listLogs[i].lng);
+      var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      var first = addresses.first;
+      locations.add("${first.addressLine}");
+    }
+    print("xxxx locations ${locations[0]}");
+    return locations;
   }
 
   static String validateEmail(value) {

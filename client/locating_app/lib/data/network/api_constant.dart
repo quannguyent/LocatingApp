@@ -27,7 +27,7 @@ class ApiConstant {
   static String LOG_LOCATION = "locating/location-log";
   static String LAST_LOG = "locating/user/last-log/";
   static final String ADD_FRIEND = "locating/user-relationship";
-  static final String GET_LIST_FRIEND = "locating/user-relationship";
+  static final String GET_LIST_FRIEND = "friend/list-friend";
   static final String SET_CLOSE_FRIEND = "locating/user-relationship/close";
   static final DELETE_FRIEND = "locating/user-relationship";
   static final String SEND_CHAT = "locating/conversation/send-message";

@@ -32,7 +32,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<FriendBloc>(context).add(GetListFriend());
   }
 
   void setDrawerListArray() {
@@ -62,7 +61,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    // setDrawerListArray();
+    setDrawerListArray();
     return Scaffold(
       backgroundColor: AppTheme.notWhite.withOpacity(0.5),
       body: Column(
@@ -99,33 +98,33 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                   )
                                   .value /
                               360),
-                          // child: Container(
-                          //   height: 120,
-                          //   width: 120,
-                          //   decoration: BoxDecoration(
-                          //     shape: BoxShape.circle,
-                          //     boxShadow: <BoxShadow>[
-                          //       BoxShadow(
-                          //         color: AppTheme.grey.withOpacity(0.6),
-                          //         //   offset: const Offset(2.0, 4.0),
-                          //         blurRadius: 8,
-                          //       ),
-                          //     ],
-                          //   ),
-                          //   child: BlocConsumer<ProfileBloc, ProfileState>(
-                          //     listener: (context, state) {},
-                          //     builder: (context, state) {
-                          //       return CircleAvatar(
-                          //         backgroundColor: Colors.white,
-                          //         backgroundImage:
-                          //             state.profileUser.avatar_url == null
-                          //                 ? AssetImage(AppImages.LOGO_VIETNAM)
-                          //                 : NetworkImage(
-                          //                     state.profileUser.avatar_url),
-                          //       );
-                          //     },
-                          //   ),
-                          // ),
+                          child: Container(
+                            height: 120,
+                            width: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                  color: AppTheme.grey.withOpacity(0.6),
+                                  //   offset: const Offset(2.0, 4.0),
+                                  blurRadius: 8,
+                                ),
+                              ],
+                            ),
+                            child: BlocConsumer<ProfileBloc, ProfileState>(
+                              listener: (context, state) {},
+                              builder: (context, state) {
+                                return CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  backgroundImage:
+                                      state.profileUser.avatar_url == null
+                                          ? AssetImage(AppImages.LOGO_VIETNAM)
+                                          : NetworkImage(
+                                              state.profileUser.avatar_url),
+                                );
+                              },
+                            ),
+                          ),
                         ),
                       );
                     },
@@ -134,75 +133,75 @@ class _HomeDrawerState extends State<HomeDrawer> {
               ),
             ),
           ),
-          // const SizedBox(
-          //   height: 4,
-          // ),
-          // Divider(
-          //   height: 1,
-          //   color: AppTheme.grey.withOpacity(0.6),
-          // ),
-          // Expanded(
-          //   flex: 9,
-          //   child: ListView.builder(
-          //     physics: const BouncingScrollPhysics(),
-          //     padding: const EdgeInsets.all(0.0),
-          //     itemCount: drawerList.length,
-          //     itemBuilder: (BuildContext context, int index) {
-          //       return inkwell(drawerList[index]);
-          //     },
-          //   ),
-          // ),
-          // Expanded(
-          //   flex: 2,
-          //   child: Container(
-          //     padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-          //     child: InkWell(
-          //       onTap: () async {
-          //         onStop();
-          //         Login a = new Login();
-          //         a.signOutFacebook();
-          //         a.signOutGoogle();
-          //         IsolateNameServer.removePortNameMapping("LocatorIsolate");
-          //         await BackgroundLocator.updateNotificationText();
-          //         await BackgroundLocator.unRegisterLocationUpdate()
-          //             .then((value) {
-          //           Common.removeToken();
-          //           FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-          //           _firebaseMessaging.deleteInstanceID();
-          //           Navigator.popUntil(
-          //               context, ModalRoute.withName(Routes.login));
-          //         });
-          //       },
-          //       child: Row(
-          //         children: <Widget>[
-          //           Container(
-          //             width: 6.0,
-          //             height: 46.0,
-          //           ),
-          //           const Padding(
-          //             padding: EdgeInsets.all(4.0),
-          //           ),
-          //           Icon(
-          //             Icons.wifi_tethering,
-          //             color: AppTheme.nearlyBlack,
-          //           ),
-          //           const Padding(
-          //             padding: EdgeInsets.all(4.0),
-          //           ),
-          //           Text(
-          //             Language.of(context).getText("home.logout"),
-          //             style: TextStyle(
-          //               fontWeight: FontWeight.w500,
-          //               fontSize: 16,
-          //               color: AppTheme.nearlyBlack,
-          //             ),
-          //             textAlign: TextAlign.left,
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // )
+          const SizedBox(
+            height: 4,
+          ),
+          Divider(
+            height: 1,
+            color: AppTheme.grey.withOpacity(0.6),
+          ),
+          Expanded(
+            flex: 9,
+            child: ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.all(0.0),
+              itemCount: drawerList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return inkwell(drawerList[index]);
+              },
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Container(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+              child: InkWell(
+                onTap: () async {
+                  onStop();
+                  Login a = new Login();
+                  a.signOutFacebook();
+                  a.signOutGoogle();
+                  IsolateNameServer.removePortNameMapping("LocatorIsolate");
+                  await BackgroundLocator.updateNotificationText();
+                  await BackgroundLocator.unRegisterLocationUpdate()
+                      .then((value) {
+                    Common.removeToken();
+                    FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+                    _firebaseMessaging.deleteInstanceID();
+                    Navigator.popUntil(
+                        context, ModalRoute.withName(Routes.login));
+                  });
+                },
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      width: 6.0,
+                      height: 46.0,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(4.0),
+                    ),
+                    Icon(
+                      Icons.wifi_tethering,
+                      color: AppTheme.nearlyBlack,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(4.0),
+                    ),
+                    Text(
+                      Language.of(context).getText("home.logout"),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: AppTheme.nearlyBlack,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

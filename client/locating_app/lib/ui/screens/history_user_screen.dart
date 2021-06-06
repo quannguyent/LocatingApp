@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:locaing_app/data/model/history_location.dart';
 import 'package:locaing_app/data/network/api_constant.dart';
 import 'package:wemapgl/wemapgl.dart';
 import 'package:intl/intl.dart';
@@ -41,19 +42,15 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
   Uint8List markerIcon;
   String userId;
   WeMapPlace place;
-  List<List<double>> coordinates = [];
+  // List<HistoryLocation> coordinates = [];
+  List<String> locationsString = [];
+  List<HistoryLocation> historyLog = [];
+
   // Set<Circle> _circles = HashSet<Circle>();
-  dynamic geometries = {
+  Map<String, dynamic> geometries = {
     "type": "GeometryCollection",
     "geometries": [
-      {
-        "type": "LineString",
-        "coordinates": [
-          [106.8310546875, 13.004557745339769],
-          [107.061767578125, 11.40464884161848],
-          [105.93017578125, 10.17437402751379],
-        ]
-      }
+      {"type": "LineString", "coordinates": []}
     ]
   };
   Future<LatLngBounds> _getVisibleRegion() async {
@@ -62,14 +59,21 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
     return bounds;
   }
 
-  void _addPolyline(dynamic a) {
-    mapController.addGeoJSON(GeoJSONOptions(
-      geojson: jsonEncode(a),
-      type: GeoJSONOptions.POLYLINE,
-      lineColor: "#ff0000",
-      lineWidth: 2,
-      lineOpacity: 1,
-    ));
+  void _addPolyline() {
+    List<LatLng> a = [];
+
+    historyLog.forEach((element) {
+      LatLng temp = new LatLng(element.lat, element.lng);
+      a.add(temp);
+    });
+    mapController.addLine(
+      LineOptions(
+        geometry: [...a],
+        lineColor: "#ff0000",
+        lineWidth: 7.0,
+        lineOpacity: 0.5,
+      ),
+    );
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -116,12 +120,12 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
   // }
 
   void _getLogLocation(DateTime dateTime) async {
-    print("xxxx this id userId $userId");
     if (userId == null) {
       userId = await Common.getUserId();
     }
     String token = await Common.getToken();
     // final LatLngBounds bounds = await _getVisibleRegion();
+    print("xxxx this id userId $userId");
 
     double endTime = 0;
     double startTime = 0;
@@ -150,15 +154,21 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
       ),
     );
     List resBody = jsonDecode(response.body);
-
+    List<HistoryLocation> temp2 = [];
     resBody.forEach((element) {
-      List<double> b = [];
-      b.add(element["latitude"]);
-      b.add(element["longtitude"]);
-      print("xxxxx b ${element["latitude"]}");
-      coordinates.add(b);
+      HistoryLocation temp = new HistoryLocation(
+          lat: element["latitude"],
+          lng: element["longtitude"],
+          createAt: element["createdAt"]);
+      print("xxxxxx 12312312323132123 ${temp.lat}");
+      temp2.add(temp);
     });
-    geometries["geometries"]["coordinates"] = [...coordinates];
+    locationsString = await Common.getLocations(temp2);
+    setState(() {
+      historyLog = [...temp2];
+    });
+    _addPolyline();
+    // print("xxxx location String $locationsString");
     // BlocProvider.of<LogLocationBloc>(context).add(GetLogRequested(
     //   userId: uuidFiend,
     //   // startTime: startTime,
@@ -200,7 +210,9 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
     // TODO: implement initState
     super.initState();
     heightBottomSheet = 300;
-    _getLogLocation(DateTime.now());
+    if (mounted) {
+      // _getLogLocation(DateTime.now());
+    }
   }
 
   @override
@@ -208,86 +220,92 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
     userId = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: Container(
-        width: DeviceUtil.getDeviceHeight(context),
-        height: DeviceUtil.getDeviceHeight(context),
-        child: BlocBuilder<LogLocationBloc, LogLocationState>(
-          builder: (context, state) {
-            if (state is LogLocationLoadSuccess) {
-              if (state.listLogs != null) {
-                // loadData(state.listLogs);
-              } else {
-                // listMarkers.clear();
-                _listPolyLines.clear();
-                // _polyLines.clear();
-              }
-            }
-            return Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                BlocConsumer<PlaceBloc, PlaceState>(
-                  builder: (context, state) {
-                    return WeMap(
-                      onMapClick: (point, latlng, _place) async {
-                        place = await _place;
-                      },
-                      onPlaceCardClose: () {
-                        // print("Place Card closed");
-                      },
-                      onStyleLoadedCallback: () async {
-                        await _addPolyline(geometries);
-                      },
-                      reverse: true,
-                      onMapCreated: (WeMapController controller) {
-                        mapController = controller;
-                      },
-                      initialCameraPosition: const CameraPosition(
-                        target: LatLng(21.036029, 105.782950),
-                        zoom: 16.0,
-                      ),
-                      destinationIcon: "assets/symbols/destination.png",
-                    );
-                  },
-                  listener: (context, state) {
-                    if (state is PlaceLoadSuccess) {}
-                  },
+          width: DeviceUtil.getDeviceHeight(context),
+          height: DeviceUtil.getDeviceHeight(context),
+          // child: BlocBuilder<LogLocationBloc, LogLocationState>(
+          // builder: (context, state) {
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              // BlocConsumer<PlaceBloc, PlaceState>(
+              //   builder: (context, state) {
+              // return WeMap(
+              WeMap(
+                onMapClick: (point, latlng, _place) async {
+                  place = await _place;
+                },
+                onPlaceCardClose: () {
+                  // print("Place Card closed");
+                },
+                onStyleLoadedCallback: () async {
+                  // await _addPolyline();
+                },
+                reverse: true,
+                onMapCreated: (WeMapController controller) {
+                  mapController = controller;
+                  _getLogLocation(DateTime.now());
+                },
+                onCameraIdle: () async {
+                  // await _addPolyline();
+                },
+                initialCameraPosition: const CameraPosition(
+                  target: LatLng(21.036029, 105.782950),
+                  zoom: 16.0,
                 ),
-                Positioned(
-                  top: 20,
-                  left: 20,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.blue,
-                        size: 18,
-                      ),
+                destinationIcon: "assets/symbols/destination.png",
+                // ),
+                // },
+                // listener: (context, state) {
+                //   if (state is PlaceLoadSuccess) {}
+                // },
+              ),
+              Positioned(
+                top: 20,
+                left: 20,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.blue,
+                      size: 18,
                     ),
                   ),
                 ),
-                // state is LogLocationLoadSuccess
-                //     ? bottomSheetHistory(
-                //         listLogs: state.listLogs,
-                //         locations: state.locations,
-                //         isLoad: false)
-                //     : bottomSheetHistory(isLoad: true),
-              ],
-            );
-          },
-        ),
-      ),
+              ),
+              // state is LogLocationLoadSuccess
+              //     ? bottomSheetHistory(
+              //         listLogs: state.listLogs,
+              //         locations: state.locations,
+              //         isLoad: false)
+              //     : bottomSheetHistory(isLoad: true),
+              historyLog.length > 0
+                  ? bottomSheetHistory(
+                      listLogs: historyLog,
+                      locations: locationsString,
+                      isLoad: false)
+                  : bottomSheetHistory(
+                      listLogs: historyLog,
+                      locations: locationsString,
+                      isLoad: true),
+            ],
+          )
+          // },
+          // ),
+          ),
     );
   }
 
   Widget bottomSheetHistory(
-      {List<LogLocationModel> listLogs, List<String> locations, bool isLoad}) {
+      {List<HistoryLocation> listLogs, List<String> locations, bool isLoad}) {
     String dateOfWeek = Language.of(context)
         .getText("history_location.${DateFormat('EEEE').format(selectedDate)}");
     String dateOfMonth = DateFormat('d').format(selectedDate);
     String month = Language.of(context)
         .getText("history_location.${DateFormat('MMM').format(selectedDate)}");
+    print("xxxx locationsssss $locations , listlong ${listLogs.length}");
     return Container(
       padding: EdgeInsets.only(
         top: 20,
@@ -381,7 +399,7 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
               )),
           isLoad
               ? Expanded(child: Center(child: LoadingApp.loading1()))
-              : listLogs != null
+              : listLogs.length > 0
                   ? Expanded(
                       child: Container(
                         child: ListView.builder(
@@ -406,8 +424,8 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
     );
   }
 
-  Widget itemCardHistory(LogLocationModel logLocationModel, String location) {
-    String time = Common.readTime(logLocationModel.createdAt.round());
+  Widget itemCardHistory(HistoryLocation logLocationModel, String location) {
+    // String time = Common.readTime(logLocationModel.createdAt.round());
     String distance = location;
     return Container(
       width: DeviceUtil.getDeviceWidth(context),
@@ -419,7 +437,8 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
           Container(
             margin: EdgeInsets.only(bottom: 4),
             child: Text(
-              time,
+              // time,
+              "12312312332",
               style: TextStyle(
                 color: AppTheme.deactivatedText,
                 fontSize: 12,

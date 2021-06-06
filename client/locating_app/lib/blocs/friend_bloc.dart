@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:locaing_app/data/model/model.dart';
 import 'package:locaing_app/data/network/api_response.dart';
 import 'package:locaing_app/data/repository/repository.dart';
+import 'package:locaing_app/utils/common.dart';
 
 class FriendEvent {}
 
@@ -29,8 +30,7 @@ class PhoneExistRequested extends FriendEvent {
   String uuidMe;
   List<String> phones;
   bool isSearch;
-  PhoneExistRequested(
-      {this.phones, this.uuidMe, this.isSearch});
+  PhoneExistRequested({this.phones, this.uuidMe, this.isSearch});
 }
 
 class PhoneExistMoreRequested extends FriendEvent {
@@ -183,11 +183,13 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       yield LoadingFriend.fromOldState(state);
       try {
         ApiResponse response = await ServiceRepository().getListFriend();
+        print("xxxx response listfriend ${response.data}");
         if (response.resultCode == 1) {
           List<ProfileUserModel> listFriend = (response.data as List)
               .map((e) => ProfileUserModel.fromJson(e))
               .toList();
           listFriendAll = listFriend;
+          print("xxxxx friendListall $listFriendAll");
           List<ProfileUserModel> listCloseFriend = (response.data as List)
               .map((e) => ProfileUserModel.fromJson(e))
               .toList();

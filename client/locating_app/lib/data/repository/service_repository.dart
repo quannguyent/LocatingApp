@@ -105,9 +105,12 @@ class ServiceRepository {
   }
 
   Future<ApiResponse> getListFriend() async {
-    Response<ApiResponse> response = await Network.instance.get(
-      url: ApiConstant.GET_LIST_FRIEND,
-    );
+    String userId = await Common.getUserId();
+    String token = await Common.getToken();
+    Response<ApiResponse> response = await Network.instance.post(
+        url: ApiConstant.APIHOST + ApiConstant.GET_LIST_FRIEND,
+        token: token,
+        body: jsonEncode({"appUserId": userId}));
     return response.data;
   }
 

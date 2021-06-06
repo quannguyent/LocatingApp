@@ -43,7 +43,7 @@ class _MapState extends State<MapWidget> {
   locationLib.Location location;
   locationLib.LocationData currentLocation;
   final String _defaultAvatarUrl = "assets/images/default_avatar.png";
-
+  bool _satelliteEnabled = false;
   Timer timer;
   void _onMapCreated(WeMapController controller) {
     mapController = controller;
@@ -205,6 +205,7 @@ class _MapState extends State<MapWidget> {
 
   void showBottomSheetFriend(ProfileUserModel user) {
     BlocProvider.of<HomeBloc>(context).add(SelectFriend(user: user));
+    print("xxxx user in map $user");
     showMaterialModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
@@ -237,23 +238,6 @@ class _MapState extends State<MapWidget> {
       body: markerIcon != null
           ? BlocBuilder<SettingBloc, SettingState>(
               builder: (context, state) {
-                // switch (state.mapType) {
-                //   case "Normal":
-                //     {
-                //       mapType = MapType.normal;
-                //       break;
-                //     }
-                //   case "Satellite":
-                //     {
-                //       mapType = MapType.satellite;
-                //       break;
-                //     }
-                //   case "Terrain":
-                //     {
-                //       mapType = MapType.terrain;
-                //       break;
-                //     }
-                // }
                 return Stack(
                   children: [
                     BlocConsumer<TrackingBloc, TrackingState>(
@@ -282,26 +266,6 @@ class _MapState extends State<MapWidget> {
                         }
                       },
                       builder: (context, trackingState) {
-                        // return Container(
-                        //   child: GoogleMap(
-                        //     markers: _markers,
-                        //     mapType: mapType,
-                        //     zoomControlsEnabled: false,
-                        //     initialCameraPosition: CameraPosition(
-                        //       target: _myLocation,
-                        //       zoom: initZoom,
-                        //     ),
-                        //     onMapCreated: (GoogleMapController controller) {
-                        //       _controller.complete(controller);
-                        //     },
-                        //     gestureRecognizers:
-                        //         <Factory<OneSequenceGestureRecognizer>>[
-                        //       new Factory<OneSequenceGestureRecognizer>(
-                        //         () => new EagerGestureRecognizer(),
-                        //       ),
-                        //     ].toSet(),
-                        //   ),
-                        // );
                         return Container(
                           child: WeMap(
                             onMapClick: (point, latlng, _place) async {
@@ -323,6 +287,12 @@ class _MapState extends State<MapWidget> {
                                 _onStyleLoaded(_myLocation);
                               }
                             },
+                            gestureRecognizers:
+                                <Factory<OneSequenceGestureRecognizer>>[
+                              new Factory<OneSequenceGestureRecognizer>(
+                                () => new EagerGestureRecognizer(),
+                              ),
+                            ].toSet(),
                             onMapCreated: _onMapCreated,
                             initialCameraPosition: const CameraPosition(
                               target: LatLng(21.036029, 105.782950),
@@ -339,18 +309,19 @@ class _MapState extends State<MapWidget> {
                         color: Colors.grey[500].withOpacity(0.6),
                         icon: Icons.map_outlined,
                         padding: 8,
-                        // iconColor: mapType != MapType.satellite
-                        //     ? Colors.white
-                        //     : AppTheme.yellowRed,
+                        iconColor: _satelliteEnabled != true
+                            ? Colors.white
+                            : AppTheme.yellowRed,
                         onTap: () {
-                          // if (mapType != MapType.satellite)
-                          //   BlocProvider.of<SettingBloc>(context).add(
-                          //     ChangeMapType("Satellite"),
-                          //   );
-                          // if (mapType == MapType.satellite)
-                          //   BlocProvider.of<SettingBloc>(context).add(
-                          //     ChangeMapType("Normal"),
-                          //   );
+                          setState(() {
+                            if (_satelliteEnabled == false) {
+                              _satelliteEnabled = true;
+                              mapController.addSatelliteLayer();
+                            } else {
+                              _satelliteEnabled = false;
+                              mapController.removeSatelliteLayer();
+                            }
+                          });
                         }),
                     itemMap(
                       top: 110,
@@ -473,6 +444,8 @@ class _MapState extends State<MapWidget> {
   }
 
   Widget bottomListFriend() {
+    print(
+        "xxxxx ${BlocProvider.of<FriendBloc>(context).state.listCloseFriend}");
     return Row(
       children: [
         itemFriend(

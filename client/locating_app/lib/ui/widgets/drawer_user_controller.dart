@@ -98,6 +98,7 @@ class _DrawerUserControllerState extends State<DrawerUserController>
 
   @override
   Widget build(BuildContext context) {
+    print("xxxxxxx running");
     return Scaffold(
       backgroundColor: AppTheme.white,
       body: SingleChildScrollView(
@@ -114,31 +115,31 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                 width: widget.drawerWidth,
                 //we divided first drawer Width with HomeDrawer and second full-screen Width with all home screen, we called screen View
                 height: MediaQuery.of(context).size.height,
-                // child: AnimatedBuilder(
-                //   animation: iconAnimationController,
-                //   builder: (BuildContext context, Widget child) {
-                //     return Transform(
-                //       //transform we use for the stable drawer  we, not need to move with scroll view
-                //       transform: Matrix4.translationValues(
-                //         scrollController.offset,
-                //         0.0,
-                //         0.0,
-                //       ),
-                //       child: HomeDrawer(
-                //         screenIndex: widget.screenIndex == null
-                //             ? DrawerIndex.HOME
-                //             : widget.screenIndex,
-                //         iconAnimationController: iconAnimationController,
-                //         callBackIndex: (DrawerIndex indexType) {
-                //           onDrawerClick();
-                //           try {
-                //             widget.onDrawerCall(indexType);
-                //           } catch (e) {}
-                //         },
-                //       ),
-                //     );
-                //   },
-                // ),
+                child: AnimatedBuilder(
+                  animation: iconAnimationController,
+                  builder: (BuildContext context, Widget child) {
+                    return Transform(
+                      //transform we use for the stable drawer  we, not need to move with scroll view
+                      transform: Matrix4.translationValues(
+                        scrollController.offset,
+                        0.0,
+                        0.0,
+                      ),
+                      child: HomeDrawer(
+                        screenIndex: widget.screenIndex == null
+                            ? DrawerIndex.HOME
+                            : widget.screenIndex,
+                        iconAnimationController: iconAnimationController,
+                        callBackIndex: (DrawerIndex indexType) {
+                          onDrawerClick();
+                          try {
+                            widget.onDrawerCall(indexType);
+                          } catch (e) {}
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
@@ -221,6 +222,7 @@ class _DrawerUserControllerState extends State<DrawerUserController>
   }
 
   void onDrawerClick() {
+    print("xxxxx click click");
     //if scrollcontroller.offset != 0.0 then we set to closed the drawer(with animation to offset zero position) if is not 1 then open the drawer
     if (scrollController.offset != 0.0) {
       scrollController.animateTo(
