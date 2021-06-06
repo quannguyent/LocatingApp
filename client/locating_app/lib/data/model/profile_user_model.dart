@@ -11,7 +11,7 @@ class Sex {
   String code;
 }
 class ProfileUserModel {
-  @JsonKey(name: "id", defaultValue: "")
+  @JsonKey(name: "id", defaultValue: 0)
   int id;
 
   @JsonKey(name: "uuid", defaultValue: "")
@@ -63,7 +63,7 @@ class ProfileUserModel {
   });
 
   static ProfileUserModel fromJson(Map<dynamic, dynamic> json) => _$ProfileUserModelFromJson(json);
-      
+
 
   Map<String, dynamic> toJson() => _$ProfileUserModelToJson(this);
 }

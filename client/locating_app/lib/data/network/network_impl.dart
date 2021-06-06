@@ -150,7 +150,7 @@ class Network {
   }
 
   Response<ApiResponse> getApiResponse(Response response) {
-    var result = response.data;
+    var result = response;
     if (result == null) {
       return Response<ApiResponse>(
           data: ApiResponse.success(resultCode: 1, data: response.data));
@@ -158,9 +158,9 @@ class Network {
 
     return Response<ApiResponse>(
       data: ApiResponse.success(
-        resultCode: 1,
-        message: result["message"],
-        data: result,
+        resultCode: result.statusCode == 200 ? 1 : 0,
+        message: result.statusMessage,
+        data: result.data,
       ),
     );
   }
