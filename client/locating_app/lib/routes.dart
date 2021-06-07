@@ -35,6 +35,7 @@ class Routes {
   static const String profileScreen = "/profile_screen";
   static const String addPhoneNumber = "/add_phone_number";
   static const String listPlaceScreen = "/list_place_screen";
+  static const String listFriendRequestScreen = "/list_friend_request_screen";
 
 
   static String initScreen() => splashScreen;
@@ -66,6 +67,7 @@ class Routes {
     addPhoneNumber: (context) => AddEmailPhoneScreen(),
     placeScreen: (context) => PlaceScreen(),
     listPlaceScreen: (context) => ListPlaceScreen(),
+    listFriendRequestScreen: (context) => ListFriendRequestScreen(),
 
   };
 }

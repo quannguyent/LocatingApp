@@ -345,6 +345,17 @@ class _MapState extends State<MapWidget> {
                         Navigator.pushNamed(context, Routes.listFriendsScreen);
                       },
                     ),
+                    itemMap(
+                      top: 210,
+                      left: 10,
+                      color: AppTheme.blue.withOpacity(0.8),
+                      icon: Icons.emoji_people,
+                      iconColor: Colors.white,
+                      padding: 8,
+                      onTap: () {
+                        Navigator.pushNamed(context, Routes.listFriendRequestScreen);
+                      },
+                    ),
                     Positioned(
                       bottom: 90,
                       child: Container(
