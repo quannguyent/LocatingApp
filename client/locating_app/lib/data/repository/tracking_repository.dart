@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:locaing_app/data/model/model.dart';
+import 'package:locaing_app/utils/common.dart';
 
 import 'package:locaing_app/utils/utils.dart';
 
@@ -23,7 +24,7 @@ class TrackingRepository {
           String username = friend.username.substring(0, 4);
           avatar = await drawMap.drawCircle(200, 200, username);
         } else {
-          avatar = await drawMap.loadAvatarUser( imageUrl, 200);
+          avatar = await drawMap.loadAvatarUser(Common.getAvatarUrl(imageUrl), 200);
         }
         markers.add(Marker(
           markerId: MarkerId('${friend.uuid}'),

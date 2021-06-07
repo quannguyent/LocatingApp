@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
+import 'package:locaing_app/utils/common.dart';
 import 'package:locaing_app/utils/utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../localizations.dart';
@@ -269,7 +270,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       {String displayName, String usernanameme, ProfileUserModel profile}) {
     if (profile != null) {
       if (profile.avatar != null) {
-        avatar = NetworkImage(profile.avatar);
+        avatar = NetworkImage(Common.getAvatarUrl(profile.avatar));
       } else {
         avatar = AssetImage(AppImages.DEFAULT_AVATAR);
       }

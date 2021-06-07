@@ -97,7 +97,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
           if (state.profileUser.avatar != null) {
             setState(() {
               _image = null;
-              avatar = NetworkImage(state.profileUser.avatar);
+              avatar = NetworkImage(Common.getAvatarUrl(state.profileUser.avatar));
             });
           } else {
             setState(() {
@@ -136,7 +136,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                           size: 15,
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

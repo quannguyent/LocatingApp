@@ -8,6 +8,7 @@ import 'package:locaing_app/localizations.dart';
 import 'package:locaing_app/res/resources.dart';
 import 'package:locaing_app/routes.dart';
 import 'package:locaing_app/ui/widgets/widgets.dart';
+import 'package:locaing_app/utils/common.dart';
 import 'package:locaing_app/utils/utils.dart';
 
 class PlaceScreen extends StatelessWidget {
@@ -75,7 +76,7 @@ class PlaceScreen extends StatelessWidget {
     ImageProvider avatar;
     if (friend != null) {
       if (friend.avatar != null) {
-        avatar = NetworkImage(friend.avatar);
+        avatar = NetworkImage(Common.getAvatarUrl(friend.avatar));
       } else {
         avatar = AssetImage(AppImages.DEFAULT_AVATAR);
       }

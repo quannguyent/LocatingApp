@@ -12,6 +12,7 @@ import 'package:locaing_app/localizations.dart';
 import 'package:locaing_app/res/colors.dart';
 import 'package:locaing_app/res/images.dart';
 import 'package:locaing_app/ui/widgets/widgets.dart';
+import 'package:locaing_app/utils/common.dart';
 import 'package:locaing_app/utils/device.dart';
 import 'package:signalr_core/signalr_core.dart';
 
@@ -132,8 +133,7 @@ class _AppbarWidgetState extends State<AppbarWidget> {
                               margin: EdgeInsets.only(right: 8),
                               child: CircleAvatar(
                                 radius: 25,
-                                backgroundImage:
-                                    NetworkImage(widget.user.avatar),
+                                backgroundImage: NetworkImage(Common.getAvatarUrl(widget.user.avatar)),
                               ),
                             ),
                             (activeStatus == 1)
@@ -533,7 +533,7 @@ class _ItemchatState extends State<ItemChat> {
                         ? CircleAvatar(
                             radius: 15.0,
                             backgroundImage: widget.user.avatar != null
-                                ? NetworkImage(widget.user.avatar)
+                                ? NetworkImage(Common.getAvatarUrl(widget.user.avatar))
                                 : AssetImage(AppImages.DEFAULT_AVATAR),
                           )
                         : Container(

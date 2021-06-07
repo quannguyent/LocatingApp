@@ -6,6 +6,7 @@ import 'package:locaing_app/localizations.dart';
 import 'package:locaing_app/res/colors.dart';
 import 'package:locaing_app/res/images.dart';
 import 'package:locaing_app/ui/widgets/widgets.dart';
+import 'package:locaing_app/utils/common.dart';
 import 'package:locaing_app/utils/device.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -183,8 +184,9 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
                 margin: EdgeInsets.only(right: 16),
                 child: CircleAvatar(
                   radius: 25,
-                  backgroundImage: user.avatar != null
-                      ? NetworkImage(user.avatar)
+                  backgroundImage: 
+                  user.avatar != null
+                      ? NetworkImage(Common.getAvatarUrl(user.avatar))
                       : AssetImage(
                     AppImages.DEFAULT_AVATAR,
                   ),

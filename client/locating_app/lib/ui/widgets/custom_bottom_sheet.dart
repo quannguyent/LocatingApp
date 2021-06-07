@@ -99,7 +99,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                                   backgroundColor: AppTheme.white,
                                   backgroundImage: widget.linkImage == null
                                       ? AssetImage(AppImages.DEFAULT_AVATAR)
-                                      : NetworkImage(widget.linkImage),
+                                      : NetworkImage(Common.getAvatarUrl(widget.linkImage)),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(left: 5, top: 5),
@@ -460,7 +460,7 @@ class CustomBottomSheetFriend extends StatelessWidget {
                               backgroundColor: AppTheme.white,
                               backgroundImage: linkImage == null
                                   ? AssetImage(AppImages.DEFAULT_AVATAR)
-                                  : NetworkImage(linkImage),
+                                  : NetworkImage(Common.getAvatarUrl(linkImage)),
                             ),
                             Container(
                               margin: EdgeInsets.only(left: 5, top: 5),
