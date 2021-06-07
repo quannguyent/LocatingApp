@@ -65,11 +65,9 @@ class Network {
         queryParameters: params,
         options: Options(responseType: ResponseType.json, headers: headers),
       );
-
-      print('response');
-      print(response);
       return getApiResponse(response);
-    } catch (e) {
+    } on DioError catch (e) {
+      print("DioError: ${e.toString()}");
       return getError(e);
     }
   }
@@ -142,7 +140,7 @@ class Network {
       case DioErrorType.SEND_TIMEOUT:
       case DioErrorType.DEFAULT:
         return Response<ApiResponse>(
-            data: ApiResponse.errorLocal("error_api.connect"),
+          data: ApiResponse.errorLocal("error_api.connect"),
         );
       default:
         return Response<ApiResponse>(data: ApiResponse.error(e.message));

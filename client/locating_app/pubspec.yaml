@@ -69,7 +69,6 @@ dependencies:
   country_list_pick: ^1.0.1+2
   flutter_slidable: ^0.5.7
   map_launcher: 1.1.1
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -77,6 +76,9 @@ dev_dependencies:
   json_serializable: ^3.2.0
   build_runner: ^1.0.0
   share: ^0.6.5+3
+  wemapgl:
+    path: ../WeMap-Flutter-SDK-master
+
 dependency_overrides:
   intl: ^0.17.0-nullsafety.2
 

@@ -61,8 +61,12 @@ class LoginBloc extends BaseBloc {
       if (token != null) {
         ApiResponse response;
         if (event.isAddEmailOrPhone != null) {
-          response = await login.logInToServer(token,
-              isGoogle: true, isAddEmailOrPhone: true, phone: event.phone,);
+          response = await login.logInToServer(
+            token,
+            isGoogle: true,
+            isAddEmailOrPhone: true,
+            phone: event.phone,
+          );
         } else {
           response = await login.logInToServer(token, isGoogle: true);
         }
@@ -85,7 +89,7 @@ class LoginBloc extends BaseBloc {
         Login login = new Login();
         User user = event.user;
         ApiResponse response = await login.login(user.username, user.password);
-
+        print("xxxxxxxxxx res ${response.resultCode}");
         if (response.resultCode == 1) {
           Map<String, dynamic> data = response.data;
 
@@ -94,6 +98,7 @@ class LoginBloc extends BaseBloc {
           if (token != null) {
             await Common.saveToken(token);
             yield LoadedState(data: token);
+            String token2 = await Common.getToken();
           } else {
             yield ErrorState(data: "error");
           }

@@ -126,7 +126,6 @@ class ServiceRepository {
   }
 
   Future<ApiResponse> addFriend(int idFriend) async {
-    dev.debugger();
     String idMe = await Common.getUserId();
     var myID = int.parse("$idMe");
     // var friendID = int.parse("$idFriend") is int;

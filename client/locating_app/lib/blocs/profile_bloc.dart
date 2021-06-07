@@ -125,6 +125,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is GetProfileEvent) {
       yield LoadingProfile.fromOldState(state);
       try {
+        // String token = await Common.getToken();
+        // ApiResponse response =
+        // await serviceRepository.getProfileUser(token: token);
         ApiResponse response = await serviceRepository.getProfileUser();
         if (response.resultCode == 1) {
           ProfileUserModel profileUserModel = ProfileUserModel.fromJson(response.data);
@@ -188,7 +191,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             error: message
           );
         }
-        
+
       } catch (e) {
         print(e.toString());
       }

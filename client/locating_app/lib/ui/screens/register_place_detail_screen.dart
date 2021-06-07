@@ -5,7 +5,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:wemapgl/wemapgl.dart';
+
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
 import 'package:locaing_app/res/colors.dart';
@@ -29,11 +31,11 @@ class _RegisterPlaceDetailScreenState extends State<RegisterPlaceDetailScreen> {
   double sliderMin = 100;
   double sliderMax = 3000;
   double _zoomLevel;
-  Completer<GoogleMapController> _controller = Completer();
+  // Completer<GoogleMapController> _controller = Completer();
   LatLng _myLocation;
   String _address = '';
-  Set<Circle> _circles = HashSet<Circle>();
-  Set<Marker> _markers = HashSet<Marker>();
+  // Set<Circle> _circles = HashSet<Circle>();
+  // Set<Marker> _markers = HashSet<Marker>();
 
   double _radius;
   final double initRadius = 200;
@@ -44,48 +46,48 @@ class _RegisterPlaceDetailScreenState extends State<RegisterPlaceDetailScreen> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  void _setCircle(LatLng position) {
-    int circleIdCounter = 1;
-    final String circleId = 'circle_id_$circleIdCounter';
-    _circles.add(Circle(
-      circleId: CircleId(circleId),
-      center: position,
-      radius: _radius ?? initRadius,
-      fillColor: AppTheme.nearlyBlue.withOpacity(0.3),
-      strokeWidth: 0,
-    ));
-  }
+  // void _setCircle(LatLng position) {
+  //   int circleIdCounter = 1;
+  //   final String circleId = 'circle_id_$circleIdCounter';
+  //   _circles.add(Circle(
+  //     circleId: CircleId(circleId),
+  //     center: position,
+  //     radius: _radius ?? initRadius,
+  //     fillColor: AppTheme.nearlyBlue.withOpacity(0.3),
+  //     strokeWidth: 0,
+  //   ));
+  // }
 
-  void _setMarker(LatLng position) {
-    int markerIdCounter = 1;
-    final String markerId = 'circle_id_$markerIdCounter';
-    _markers.add(Marker(
-      markerId: MarkerId(markerId),
-      position: position,
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-    ));
-  }
+  // void _setMarker(LatLng position) {
+  //   int markerIdCounter = 1;
+  //   final String markerId = 'circle_id_$markerIdCounter';
+  //   _markers.add(Marker(
+  //     markerId: MarkerId(markerId),
+  //     position: position,
+  //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+  //   ));
+  // }
 
-  void _setMap(LatLng position) {
-    _myLocation = position;
-    _setMarker(position);
-    _setCircle(position);
-    _getLocation(position);
-  }
+  // void _setMap(LatLng position) {
+  //   _myLocation = position;
+  //   _setMarker(position);
+  //   _setCircle(position);
+  //   _getLocation(position);
+  // }
 
   void _onCameraMove(CameraPosition position) {
     centerPosition = position.target;
   }
 
-  void _onCameraIdle() {
-    if (centerPosition == null) {
-      _setMap(_myLocation);
-    } else {
-      _circles.clear();
-      _markers.clear();
-      _setMap(centerPosition);
-    }
-  }
+  // void _onCameraIdle() {
+  //   if (centerPosition == null) {
+  //     _setMap(_myLocation);
+  //   } else {
+  //     _circles.clear();
+  //     _markers.clear();
+  //     _setMap(centerPosition);
+  //   }
+  // }
 
   Future<String> _getLocation(LatLng position) async {
     String location = "";
@@ -121,20 +123,20 @@ class _RegisterPlaceDetailScreenState extends State<RegisterPlaceDetailScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.arguments.place != null) {
-      _radius = widget.arguments.place.rad;
-      _zoomLevel = getZoomLevel(_radius);
-      _myLocation =
-          LatLng(widget.arguments.place.lat, widget.arguments.place.lng);
-      _setMap(_myLocation);
-    } else {
-      _radius = initRadius;
-      _zoomLevel = initZoom;
-      Common.getCoordinates().then((value) {
-        _myLocation = value;
-        _setMap(_myLocation);
-      });
-    }
+    // if (widget.arguments.place != null) {
+    //   _radius = widget.arguments.place.rad;
+    //   _zoomLevel = getZoomLevel(_radius);
+    //   _myLocation =
+    //       LatLng(widget.arguments.place.lat, widget.arguments.place.lng);
+    //   _setMap(_myLocation);
+    // } else {
+    //   _radius = initRadius;
+    //   _zoomLevel = initZoom;
+    //   Common.getCoordinates().then((value) {
+    //     _myLocation = value;
+    //     _setMap(_myLocation);
+    //   });
+    // }
   }
 
   @override
@@ -206,35 +208,36 @@ class _RegisterPlaceDetailScreenState extends State<RegisterPlaceDetailScreen> {
             child: Stack(
               children: [
                 Container(
-                  child: _myLocation != null
-                      ? GoogleMap(
-                          markers: _markers,
-                          circles: _circles,
-                          myLocationButtonEnabled: false,
-                          zoomControlsEnabled: false,
-                          mapType: MapType.normal,
-                          initialCameraPosition: CameraPosition(
-                            target: _myLocation, // song gianh
-                            zoom: _zoomLevel,
-                          ),
-                          onMapCreated: (GoogleMapController controller) {
-                            _controller.complete(controller);
-                          },
-                          onCameraMove: _onCameraMove,
-                          onCameraIdle: _onCameraIdle,
-                          gestureRecognizers:
-                              <Factory<OneSequenceGestureRecognizer>>[
-                            new Factory<OneSequenceGestureRecognizer>(
-                              () => new EagerGestureRecognizer(),
-                            ),
-                          ].toSet(),
-                        )
-                      : Container(
-                          child: Center(
-                            child: LoadingApp.loading1(),
-                          ),
-                        ),
-                ),
+                    // child: _myLocation != null
+                    // ?
+                    // GoogleMap(
+                    //     markers: _markers,
+                    //     circles: _circles,
+                    //     myLocationButtonEnabled: false,
+                    //     zoomControlsEnabled: false,
+                    //     mapType: MapType.normal,
+                    //     initialCameraPosition: CameraPosition(
+                    //       target: _myLocation, // song gianh
+                    //       zoom: _zoomLevel,
+                    //     ),
+                    //     onMapCreated: (GoogleMapController controller) {
+                    //       _controller.complete(controller);
+                    //     },
+                    //     onCameraMove: _onCameraMove,
+                    //     onCameraIdle: _onCameraIdle,
+                    //     gestureRecognizers:
+                    //         <Factory<OneSequenceGestureRecognizer>>[
+                    //       new Factory<OneSequenceGestureRecognizer>(
+                    //         () => new EagerGestureRecognizer(),
+                    //       ),
+                    //     ].toSet(),
+                    //   )
+                    // :
+                    child: Container(
+                  child: Center(
+                    child: LoadingApp.loading1(),
+                  ),
+                )),
                 Positioned(
                   top: 10,
                   left: 10,
@@ -415,8 +418,8 @@ class _RegisterPlaceDetailScreenState extends State<RegisterPlaceDetailScreen> {
                   max: sliderMax,
                   value: _radius,
                   onChanged: (value) async {
-                    _circles.clear();
-                    _markers.clear();
+                    // _circles.clear();
+                    // _markers.clear();
                     if (value >= 100 && value < 250) {
                       _zoomLevel = 17;
                     } else if (value >= 250 && value < 300) {
@@ -429,18 +432,18 @@ class _RegisterPlaceDetailScreenState extends State<RegisterPlaceDetailScreen> {
                       _zoomLevel = 13;
                     }
 
-                    final complete = await _controller.future;
-                    complete.animateCamera(
-                      CameraUpdate.newCameraPosition(
-                        CameraPosition(
-                          target: _myLocation,
-                          zoom: _zoomLevel,
-                        ),
-                      ),
-                    );
+                    // final complete = await _controller.future;
+                    // complete.animateCamera(
+                    //   CameraUpdate.newCameraPosition(
+                    //     CameraPosition(
+                    //       target: _myLocation,
+                    //       zoom: _zoomLevel,
+                    //     ),
+                    //   ),
+                    // );
                     setState(() {
                       _radius = value;
-                      _setMap(_myLocation);
+                      // _setMap(_myLocation);
                     });
                   },
                 ),

@@ -11,7 +11,7 @@ class LogLocationBloc extends Bloc<LogLocationEvent, LogLocationState> {
   @override
   Stream<LogLocationState> mapEventToState(event) async* {
     if (event is GetLogRequested) {
-      print(" sdfdfd");
+      print("xxx location log 1");
       yield LogLocationLoadInProgress();
       try {
         final List<LogLocationModel> listLogs =

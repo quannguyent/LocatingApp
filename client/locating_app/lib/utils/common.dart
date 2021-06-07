@@ -1,9 +1,11 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:locaing_app/data/model/history_location.dart';
+import 'package:wemapgl/wemapgl.dart';
+
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
+import 'package:location/location.dart' as GPSService;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
@@ -112,10 +114,10 @@ class Common {
 
   static Future<LatLng> getCoordinates() async {
     bool serviceEnabled;
-    LocationData myLocation;
-    Location location = new Location();
+    GPSService.LocationData myLocation;
+    GPSService.Location location = new GPSService.Location();
     bool enable = true;
-    PermissionStatus _permissionGranted;
+    GPSService.PermissionStatus _permissionGranted;
 
     serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
@@ -130,9 +132,9 @@ class Common {
       }
     }
     _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
+    if (_permissionGranted == GPSService.PermissionStatus.DENIED) {
       _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
+      if (_permissionGranted != GPSService.PermissionStatus.GRANTED) {
         enable = false;
       }
     }
@@ -140,9 +142,9 @@ class Common {
     if (enable) {
       // myLocation = await location.getLocation();
       // return LatLng(myLocation.latitude, myLocation.longitude);
-      geolocator.Position position = await geolocator.Geolocator
-          .getCurrentPosition(
-          desiredAccuracy: geolocator.LocationAccuracy.best);
+      geolocator.Position position =
+          await geolocator.Geolocator.getCurrentPosition(
+              desiredAccuracy: geolocator.LocationAccuracy.best);
       return LatLng(position.latitude, position.longitude);
     } else {
       String currentLocation = await Common.getCurrentLocation();
@@ -155,8 +157,8 @@ class Common {
   static Future<String> getUserLocation() async {
     String locate = "";
     String latlng = "";
-    LocationData myLocation;
-    Location location = new Location();
+    GPSService.LocationData myLocation;
+    GPSService.Location location = new GPSService.Location();
     bool _serviceEnabled;
 
     _serviceEnabled = await location.serviceEnabled();
@@ -220,6 +222,21 @@ class Common {
     var time = '';
     time = format.format(date);
     return time;
+  }
+
+  static Future<List<String>> getLocations(
+      List<HistoryLocation> listLogs) async {
+    print("xxxxx 123123123 ${listLogs[0].lat}");
+    List<String> locations = [];
+    for (int i = 0; i < listLogs.length; i++) {
+      var coordinates = new Coordinates(listLogs[i].lat, listLogs[i].lng);
+      var addresses =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      var first = addresses.first;
+      locations.add("${first.addressLine}");
+    }
+    print("xxxx locations ${locations[0]}");
+    return locations;
   }
 
   static String validateEmail(value) {

@@ -5,8 +5,10 @@ import 'package:locaing_app/blocs/friend_bloc.dart';
 import 'package:locaing_app/blocs/friend_profile_bloc.dart';
 import 'blocs/blocs.dart';
 import 'ui/app.dart';
+import 'package:wemapgl/wemapgl.dart' as WEMAP;
 
 void main() async {
+  WEMAP.Configuration.setWeMapKey('GqfwrZUEfxbwbnQUhtBMFivEysYIxelQ');
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,

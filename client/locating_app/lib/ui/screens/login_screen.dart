@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget logoWidget() {
     return Container(
       width: DeviceUtil.getDeviceWidth(context),
+      // height: DeviceUtil.getDeviceHeight(context) / 4,
       alignment: Alignment.bottomLeft,
       padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -242,14 +243,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                               ),
-                            ), 
+                            ),
                           ],
                         ),
                         Container(
                           margin: EdgeInsets.only(left: 24, right: 24, bottom: 10, top: 24),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,                          
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(Language.of(context).getText("login.not_have_an_account") + ' '),
                               InkWell(

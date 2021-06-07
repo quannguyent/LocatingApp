@@ -62,7 +62,7 @@ class Login {
     var facebookLoginResult = await facebookLogin.logIn(['email']);
     switch (facebookLoginResult.status) {
       case FacebookLoginStatus.error:
-        { 
+        {
           print("login false");
           token = null;
           break;
@@ -108,7 +108,11 @@ class Login {
   }
 
   Future<ApiResponse> logInToServer(String token,
-      {bool isFacebook, bool isGoogle, bool isAddEmailOrPhone,String phone,String email}) async {
+      {bool isFacebook,
+      bool isGoogle,
+      bool isAddEmailOrPhone,
+      String phone,
+      String email}) async {
     String method;
     String tokenFirebase = await Common.getTokenFirebase();
     String idDevice = await PlatformDeviceId.getDeviceId;

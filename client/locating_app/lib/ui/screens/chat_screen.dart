@@ -23,7 +23,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    ProfileUserModel user ;user= ModalRoute.of(context).settings.arguments;
+    ProfileUserModel user;
+    user = ModalRoute.of(context).settings.arguments;
     return Scaffold(
         resizeToAvoidBottomInset: false,
         // resizeToAvoidBottomPadding: false,

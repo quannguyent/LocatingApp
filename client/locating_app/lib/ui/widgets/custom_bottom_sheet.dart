@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:geocoder/model.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
 import 'package:locaing_app/data/network/network.dart';
@@ -16,18 +16,21 @@ import 'package:locaing_app/utils/common.dart';
 import 'package:locaing_app/utils/device.dart';
 import 'package:location/location.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:wemapgl/wemapgl.dart';
 
 class CustomBottomSheet extends StatefulWidget {
   String nameUser, location, linkLocation, linkImage;
   bool isMe;
   Function copyText;
+  Function cameraFocus;
   CustomBottomSheet(
       {this.nameUser,
       this.location,
       this.linkLocation,
       this.linkImage,
       this.isMe,
-      this.copyText});
+      this.copyText,
+      this.cameraFocus});
 
   @override
   _CustomBottomSheetState createState() => _CustomBottomSheetState();
@@ -39,6 +42,9 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   Future<String> getAddressMeCurrent() async {
     LatLng myLocation;
     myLocation = await Common.getCoordinates();
+    print(
+        "xxxxxx thanhlog locatin : ${myLocation.latitude} ${myLocation.longitude}");
+
     final coordinates =
         new Coordinates(myLocation.latitude, myLocation.longitude);
     var addresses =
@@ -210,29 +216,34 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                       margin: EdgeInsets.only(left: 7, top: 15),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            Container(
-                              child: Icon(
-                                Icons.location_on_outlined,
-                                color: AppTheme.nearlyBlue,
+                        child: InkWell(
+                          onTap: () {
+                            widget.cameraFocus();
+                          },
+                          child: Row(
+                            children: [
+                              Container(
+                                child: Icon(
+                                  Icons.location_on_outlined,
+                                  color: AppTheme.nearlyBlue,
+                                ),
+                                margin: EdgeInsets.only(right: 10),
                               ),
-                              margin: EdgeInsets.only(right: 10),
-                            ),
-                            Text(
-                              widget.isMe == null
-                                  ? widget.location
-                                  : addressCurrent == null
-                                      ? " "
-                                      : addressCurrent,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w100,
-                                fontSize: 12,
-                                letterSpacing: 0.2,
-                                color: AppTheme.darkText,
+                              Text(
+                                widget.isMe == null
+                                    ? widget.location
+                                    : addressCurrent == null
+                                        ? " "
+                                        : addressCurrent,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w100,
+                                  fontSize: 12,
+                                  letterSpacing: 0.2,
+                                  color: AppTheme.darkText,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
