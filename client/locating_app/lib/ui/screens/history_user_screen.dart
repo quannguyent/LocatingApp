@@ -45,7 +45,8 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
   // List<HistoryLocation> coordinates = [];
   List<String> locationsString = [];
   List<HistoryLocation> historyLog = [];
-
+  bool noLog = false;
+  bool isRes = false;
   // Set<Circle> _circles = HashSet<Circle>();
   Map<String, dynamic> geometries = {
     "type": "GeometryCollection",
@@ -154,20 +155,30 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
       ),
     );
     List resBody = jsonDecode(response.body);
-    List<HistoryLocation> temp2 = [];
-    resBody.forEach((element) {
-      HistoryLocation temp = new HistoryLocation(
-          lat: element["latitude"],
-          lng: element["longtitude"],
-          createAt: element["createdAt"]);
-      print("xxxxxx 12312312323132123 ${temp.lat}");
-      temp2.add(temp);
-    });
-    locationsString = await Common.getLocations(temp2);
-    setState(() {
-      historyLog = [...temp2];
-    });
-    _addPolyline();
+    print("xxxxxx resbody ${resBody}");
+    if (resBody.length > 0) {
+      List<HistoryLocation> temp2 = [];
+      resBody.forEach((element) {
+        HistoryLocation temp = new HistoryLocation(
+            lat: element["latitude"],
+            lng: element["longtitude"],
+            createAt: element["createdAt"]);
+        print("xxxxxx 12312312323132123 ${temp.lat}");
+        temp2.add(temp);
+      });
+      locationsString = await Common.getLocations(temp2);
+      setState(() {
+        historyLog = [...temp2];
+        isRes = true;
+      });
+      _addPolyline();
+    } else {
+      setState(() {
+        noLog = true;
+        isRes = true;
+      });
+    }
+
     // print("xxxx location String $locationsString");
     // BlocProvider.of<LogLocationBloc>(context).add(GetLogRequested(
     //   userId: uuidFiend,
@@ -281,7 +292,7 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
               //         locations: state.locations,
               //         isLoad: false)
               //     : bottomSheetHistory(isLoad: true),
-              historyLog.length > 0
+              isRes == true
                   ? bottomSheetHistory(
                       listLogs: historyLog,
                       locations: locationsString,
@@ -399,7 +410,7 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
               )),
           isLoad
               ? Expanded(child: Center(child: LoadingApp.loading1()))
-              : listLogs.length > 0
+              : historyLog.length > 0
                   ? Expanded(
                       child: Container(
                         child: ListView.builder(
