@@ -187,14 +187,12 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
     if (event is GetListFriend) {
       yield LoadingFriend.fromOldState(state);
       try {
-        ApiResponse response = await ServiceRepository().getListFriend();
-        print("xxxx response listfriend ${response.data}");
+        ApiResponse response = await ServiceRepository().getListFriendRequest();
         if (response.resultCode == 1) {
           List<ProfileUserModel> listFriend = (response.data as List)
               .map((e) => ProfileUserModel.fromJson(e))
               .toList();
           listFriendAll = listFriend;
-          print("xxxxx friendListall $listFriendAll");
           List<ProfileUserModel> listCloseFriend = (response.data as List)
               .map((e) => ProfileUserModel.fromJson(e))
               .toList();

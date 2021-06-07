@@ -104,7 +104,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       }
       BlocProvider.of<FriendBloc>(context).add(GetListFriend());
       BlocProvider.of<FriendBloc>(context).add(PhoneExistRequested(
-        phones: [phones[67]],
+        phones: phones,
         uuidMe: BlocProvider.of<ProfileBloc>(context).state.profileUser.uuid,
         isSearch: false,
       ));
@@ -236,7 +236,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   phones.add(_phones[i]);
                 }
                 BlocProvider.of<FriendBloc>(context).add(PhoneExistRequested(
-                  phones: [phones[67]],
+                  phones: phones,
                   uuidMe: BlocProvider.of<ProfileBloc>(context)
                       .state
                       .profileUser
@@ -346,7 +346,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       );
                       BlocProvider.of<FriendBloc>(context).add(GetListFriend());
                       BlocProvider.of<FriendBloc>(context).add(
-                        PhoneExistRequested(phones: [_phones[67]]),
+                        PhoneExistRequested(phones: _phones),
                       );
                     },
                     child: Container(

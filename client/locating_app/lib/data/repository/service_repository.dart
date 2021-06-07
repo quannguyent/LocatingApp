@@ -154,12 +154,12 @@ class ServiceRepository {
   }
 
   Future<ApiResponse> getUsers(List<String> phones) async {
-    var body = phones.map((phone) => {
-      'phone': '$phone'
-    }).toList();
+    var body = {
+      "Phones": phones
+    };
     var response = await Network.instance.post(
       url: ApiConstant.APIHOST + ApiConstant.GET_USER_BY_PHONE,
-      body: body,
+      body: jsonEncode(body),
     );
     return response.data;
   }
