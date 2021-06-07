@@ -242,4 +242,12 @@ class Common {
   static String validateEmail(value) {
     return EmailValidator.validate(value) ? null : "error.error_email";
   }
+
+  static String getAvatarUrl(avatar) {
+    var url = avatar.replaceAll('avatar', 'Avatar');
+    url = url.replaceAll('\\', '/');
+    url = url.replaceAll('..', 'https://raw.githubusercontent.com/quannguyent/LocatingApp.BE/master');
+
+    return url;
+  }
 }

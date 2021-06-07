@@ -503,16 +503,20 @@ class _MapState extends State<MapWidget> {
                         },
                         icon: CircleAvatar(
                           radius: 25,
-                          backgroundImage: BlocProvider.of<FriendBloc>(context)
+                          backgroundImage:
+                          BlocProvider.of<FriendBloc>(context)
                                       .state
                                       .listCloseFriend[i]
                                       .avatar !=
                                   null
                               ? NetworkImage(
-                                  BlocProvider.of<FriendBloc>(context)
+                                  Common.getAvatarUrl(
+                                    BlocProvider.of<FriendBloc>(context)
                                       .state
                                       .listCloseFriend[i]
-                                      .avatar)
+                                      .avatar
+                                  )
+                                )
                               : AssetImage(AppImages.DEFAULT_AVATAR),
                         ),
                       ),

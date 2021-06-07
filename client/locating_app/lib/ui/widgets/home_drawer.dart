@@ -119,7 +119,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                   backgroundImage:
                                       state.profileUser.avatar == null
                                           ? AssetImage(AppImages.LOGO_VIETNAM)
-                                          : NetworkImage(state.profileUser.avatar),
+                                          : NetworkImage(Common.getAvatarUrl(state.profileUser.avatar)),
                                 );
                               },
                             ),
