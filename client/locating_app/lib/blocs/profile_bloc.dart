@@ -11,30 +11,29 @@ class ProfileEvent {}
 class GetProfileEvent extends ProfileEvent {}
 
 class UpdateProfileEvent extends ProfileEvent {
+  String username;
   String email;
-  String firstName;
-  String lastName;
+  String displayname;
   String status;
+  String phoneNumber;
   String oldPassword;
   String newPassword;
-  String retypeNewPassword;
-  String id;
-  String phoneNumber;
+  int sexId;
   File image;
 
   UpdateProfileEvent(
+    this.username,
     this.email,
-    this.firstName,
-    this.lastName,
+    this.displayname,
     this.status,
+    this.phoneNumber,
     this.oldPassword,
     this.newPassword,
-    this.retypeNewPassword,
-    this.id,
-      this.phoneNumber,
-      {
-    this.image,
-  });
+    this.sexId,
+    {
+      this.image,
+    }
+  );
 }
 
 class ProfileState {
@@ -63,13 +62,12 @@ class InitProFileUser extends ProfileState {
   InitProFileUser()
       : super(
           profileUser: new ProfileUserModel(
-            id: "",
-            userName: "",
-            firstName: "",
-            lastName: "",
+            id: 0,
+            username: "",
+            displayName: "",
             email: "",
             status: "",
-            avatar_url: null,
+            avatar: null,
             phone: "",
             uuid: "",
           ),
@@ -127,48 +125,73 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is GetProfileEvent) {
       yield LoadingProfile.fromOldState(state);
       try {
+        // String token = await Common.getToken();
+        // ApiResponse response =
+        // await serviceRepository.getProfileUser(token: token);
         ApiResponse response = await serviceRepository.getProfileUser();
         if (response.resultCode == 1) {
-          ProfileUserModel profileUserModel =
-              ProfileUserModel.fromJson(response.data);
-          Common.setUserId(profileUserModel.uuid);
+          ProfileUserModel profileUserModel = ProfileUserModel.fromJson(response.data);
+          Common.setUserId(profileUserModel.id.toString());
           yield GetProfileState.fromOldState(state, profile: profileUserModel);
         } else {
           //error
-          yield GetProfileState.fromOldState(state,
-              error: response.message.toString());
+          yield GetProfileState.fromOldState(
+            state,
+            error: response.message.toString()
+          );
         }
       } catch (e) {
         print(e.toString());
       }
     }
     if (event is UpdateProfileEvent) {
-      print('update');
       yield LoadingProfile.fromOldState(state);
       try {
-        var response = await serviceRepository.updateProfile(
-          event.email,
-          event.firstName,
-          event.lastName,
-          event.status,
-          event.oldPassword,
-          event.newPassword,
-          event.retypeNewPassword,
-          event.id,
-          event.phoneNumber,
-          image: event.image != null ? event.image : null,
-        );
-        if (response['code'] == 1) {
-          ProfileUserModel profileUserModel =
-              ProfileUserModel.fromJson(response['data']);
-          yield UpdateProfile.fromOldState(state,
-              profile: profileUserModel,
-              success: response['message'].toString());
-        } else {
-          print(response['message'].toString());
-          yield UpdateError.fromOldState(state,
-              error: response['message'].toString());
+        var isError = false;
+        var message = '';
+
+        if (event.oldPassword.isNotEmpty
+        && event.newPassword.isNotEmpty) {
+          ApiResponse passwordResponse = await serviceRepository.updatePassword(
+            event.oldPassword,
+            event.newPassword,
+          );
+
+          if (passwordResponse.resultCode != 1) {
+            isError = true;
+            message = 'update_password';
+          }
         }
+
+        if (!isError && event.username.isNotEmpty) {
+          ApiResponse response = await serviceRepository.updateProfile(
+            event.username,
+            event.email,
+            event.displayname,
+            event.status,
+            event.phoneNumber,
+            event.sexId,
+            image: event.image != null ? event.image : null,
+          );
+
+          if (response.resultCode == 1) {
+            ProfileUserModel profileUserModel =
+                ProfileUserModel.fromJson(response.data);
+            yield UpdateProfile.fromOldState(state,
+                profile: profileUserModel,
+                success: response.message.toString());
+          } else {
+            isError = true;
+            message = 'update_profile';
+          }
+        }
+
+        if (isError) {
+          yield UpdateError.fromOldState(state,
+            error: message
+          );
+        }
+
       } catch (e) {
         print(e.toString());
       }

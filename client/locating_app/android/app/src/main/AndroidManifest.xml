@@ -23,6 +23,7 @@
     <application
         android:name=".Application"
         android:label="locating_app"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBFv-saZLMNRocY3w9C2VV6GRRJHMOjdXg"/>

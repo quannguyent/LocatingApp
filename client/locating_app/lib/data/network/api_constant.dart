@@ -7,26 +7,35 @@ class ApiConstant {
     return url;
   }
 
-  static final APIHOST = "http://citechi.ddns.net:8000/api/v1/";
+  static final APIHOST = "http://112.213.88.49:8088/rpc/locating-app/";
   // static final APIHOST = "http://192.168.1.140:8000/api/v1/";
   static final apiHostLogin = "auth/login/";
   static final FACEBOOK = "facebook";
   static final GOOGLE = "google";
-  static String REGISTER = "user/register";
-  static String AUTHENTICATION = "auth/";
-  static String PROFILE_USER = "user/me";
+
+  // Profile
+  static String REGISTER = "account/signup";
+  static String AUTHENTICATION = "account/login";
+  static String PROFILE_USER = "profile/get";
   static String VERIFY_CODE = "user/verification";
-  static String FORGOT_PASSWORD = "user/forgot_password";
-  static String RESET_PASSWORD = "user/reset_password";
-  static String UPDATE_USER = "user/";
+  static String FORGOT_PASSWORD = "profile/forgot-password";
+  static String VERIFY_OTP_CODE = "profile/verify-otp-code";
+  static String RESET_PASSWORD = "profile/recovery-password";
+  static String UPDATE_PROFILE = "profile/update";
+  static String SAVE_IMAGE = "profile/save-image";
+  static String CHANGE_PASSWORD = "profile/change-password";
+
+  static String GET_HISTORY_LOCATION = "location-log/list";
+
   static final String SETTING = "user/setting";
   static String UPDATE_LOCATION = "user/update_location";
   static String SHARE_LOCATION = "locating/user/share/";
   static final String GET_PHONE = "user/";
   static String LOG_LOCATION = "locating/location-log";
   static String LAST_LOG = "locating/user/last-log/";
-  static final String ADD_FRIEND = "locating/user-relationship";
-  static final String GET_LIST_FRIEND = "locating/user-relationship";
+  static final String ADD_FRIEND = "friend/send-friend-request";
+  static final String GET_LIST_FRIEND = "friend/list-friends";
+  static final String GET_LIST_FRIEND_REQUEST = "friend/list-friend-request";
   static final String SET_CLOSE_FRIEND = "locating/user-relationship/close";
   static final DELETE_FRIEND = "locating/user-relationship";
   static final String SEND_CHAT = "locating/conversation/send-message";
@@ -34,11 +43,13 @@ class ApiConstant {
   static final String GET_PROFILE_UUID = "user/filter-by-user-id/";
   static final String CALL_FOR_HELP = "locating/call-for-help";
 
-  static final String HUB = "http://citechi.ddns.net:44323/";
+  static final String HUB = "http://112.213.88.49:8088/rpc/locating-app/";
   static final String LOCATION = "location-hub";
   static final String chat = "conversation-hub";
 
-  static final String HOST_PHONE = 'citechi.ddns.net';
+  static final String HOST_PHONE = '112.213.88.49';
   static final String SCHEME = 'http';
-  static final String URL_PHONE = '/api/v1/user/filter-by-phones';
+  static final String URL_PHONE = '/rpc/locating-app/friend/get-friend-from-contact';
+
+  static final String GET_USER_BY_PHONE = 'friend/get-friend-from-contact';
 }

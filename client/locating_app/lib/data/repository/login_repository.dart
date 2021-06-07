@@ -46,6 +46,7 @@ class Login {
     assert(await _user.getIdToken() != null);
     User currentUser = await _auth.currentUser;
     assert(_user.uid == currentUser.uid);
+    print(_user);
     return token;
   }
 
@@ -88,26 +89,30 @@ class Login {
   }
 
   Future<ApiResponse> login(String username, password) async {
-    Map<String, String> headers = {"Content-type": "application/json"};
+    // Map<String, String> headers = {"Content-type": "application/json"};
     model.User user = new model.User(username, password);
-    String tokenFirebase = await Common.getTokenFirebase();
-    String idDevice = await PlatformDeviceId.getDeviceId;
-    String appName = Constants.APP_NAME;
+    // String tokenFirebase = await Common.getTokenFirebase();
+    // String idDevice = await PlatformDeviceId.getDeviceId;
+    // String appName = Constants.APP_NAME;
     Response<ApiResponse> response = await Network.instance.post(
       url: ApiConstant.APIHOST + ApiConstant.AUTHENTICATION,
       body: {
         "username": user.username,
         "password": user.password,
-        "app_name": appName,
-        "token_firebase": tokenFirebase,
-        "device_id": idDevice,
+        // "app_name": appName,
+        // "token_firebase": tokenFirebase,
+        // "device_id": idDevice,
       },
     );
     return response.data;
   }
 
   Future<ApiResponse> logInToServer(String token,
-      {bool isFacebook, bool isGoogle, bool isAddEmailOrPhone,String phone,String email}) async {
+      {bool isFacebook,
+      bool isGoogle,
+      bool isAddEmailOrPhone,
+      String phone,
+      String email}) async {
     String method;
     String tokenFirebase = await Common.getTokenFirebase();
     String idDevice = await PlatformDeviceId.getDeviceId;

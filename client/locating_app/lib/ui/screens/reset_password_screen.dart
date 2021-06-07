@@ -14,7 +14,7 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-  TextEditingController textEditingController = TextEditingController();
+  TextEditingController email = TextEditingController();
   bool hasError = false;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
@@ -28,11 +28,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       body: BlocConsumer<ForgotPasswordBloc, BaseState>(
         listener: (context, state) {
           if (state is LoadedState<String>) {
-            Navigator.pushNamed(
-              context,
-              Routes.verifyCodeResetPasswordScreen,
-              arguments: state.data,
-            );
+            if (state.data == email.text) {
+              Navigator.pushNamed(
+                context,
+                Routes.verifyCodeResetPasswordScreen,
+                arguments: state.data,
+              );
+            }
           }
           if (state is ErrorState<String>) {
             _scaffoldKey.currentState.showSnackBar(
@@ -80,14 +82,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         Container(
                           width: DeviceUtil.getDeviceWidth(context),
                           margin: EdgeInsets.only(top: 25),
-                          padding: EdgeInsets.only(left: 20, right: 20),
+                          padding: EdgeInsets.only(left: 24, right: 24),
                           child: RichText(
-                            // textAlign: TextAlign.center,
                             text: TextSpan(
                               children: <TextSpan>[
                                 new TextSpan(
-                                  text: Language.of(context)
-                                      .getText("reset_password.reset_password"),
+                                  text: Language.of(context).getText("reset_password.reset_password"),
                                   style: TextStyle(
                                     // h5 -> headline
                                     fontWeight: FontWeight.bold,
@@ -105,7 +105,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           // color: Colors.blue,
                           // margin: EdgeInsets.only(right: 20),
                           padding: EdgeInsets.only(
-                              left: 20, right: 60, top: 10, bottom: 40),
+                              left: 24, right: 24, top: 10, bottom: 24),
                           child: Text(
                             Language.of(context)
                                 .getText("reset_password.des_reset_password"),
@@ -121,29 +121,33 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(left: 20, right: 20),
+                          margin: EdgeInsets.only(left: 24, right: 24),
                           child: ItemTextField(
                             Icons.mail_outline,
                             "reset_password.email_address",
-                            textEditingController,
+                            email,
                             errorText: errorEmail,
-                            checkInvalid: (value) {
-                              return EmailValidator.validate(value)
-                                  ? null
-                                  : "example@gmail.com";
-                            },
                             hideText: false,
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(top: 0),
-                          padding: EdgeInsets.only(left: 20, right: 20),
+                          padding: EdgeInsets.only(left: 24, right: 24),
                           child: ItemButton(
                             title: "reset_password.send_code",
                             onPress: () {
-                              BlocProvider.of<ForgotPasswordBloc>(context).add(
-                                  TypeEmailEvent(textEditingController.text));
-                            },
+                              setState(() {
+                                if (email.text.isEmpty) {
+                                  errorEmail = "error.not_null";
+                                } else if (!EmailValidator.validate(email.text)) {
+                                  errorEmail = "error.error_email";
+                                } else errorEmail = "";
+
+                                if (errorEmail.isEmpty) {
+                                  BlocProvider.of<ForgotPasswordBloc>(context).add(
+                                    TypeEmailEvent(email.text));
+                                }
+                              });
+                            }
                           ),
                         ),
                       ],

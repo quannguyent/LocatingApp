@@ -32,7 +32,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<FriendBloc>(context).add(GetListFriend());
   }
 
   void setDrawerListArray() {
@@ -118,9 +117,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                 return CircleAvatar(
                                   backgroundColor: Colors.white,
                                   backgroundImage:
-                                      state.profileUser.avatar_url == null
+                                      state.profileUser.avatar == null
                                           ? AssetImage(AppImages.LOGO_VIETNAM)
-                                          : NetworkImage(state.profileUser.avatar_url),
+                                          : NetworkImage(state.profileUser.avatar),
                                 );
                               },
                             ),
@@ -163,7 +162,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   a.signOutGoogle();
                   IsolateNameServer.removePortNameMapping("LocatorIsolate");
                   await BackgroundLocator.updateNotificationText();
-                  await BackgroundLocator.unRegisterLocationUpdate().then((value) {
+                  await BackgroundLocator.unRegisterLocationUpdate()
+                      .then((value) {
                     Common.removeToken();
                     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
                     _firebaseMessaging.deleteInstanceID();

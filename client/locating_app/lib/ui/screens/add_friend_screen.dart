@@ -25,7 +25,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   ScrollController controller;
   int divisions;
   int index;
-  final int maxLength = 10;
+  final int maxLength = 80;
 
   Future<List<String>> getContacts() async {
     List<String> phones = [];
@@ -104,7 +104,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       }
       BlocProvider.of<FriendBloc>(context).add(GetListFriend());
       BlocProvider.of<FriendBloc>(context).add(PhoneExistRequested(
-        phones: phones,
+        phones: [phones[67]],
         uuidMe: BlocProvider.of<ProfileBloc>(context).state.profileUser.uuid,
         isSearch: false,
       ));
@@ -236,7 +236,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   phones.add(_phones[i]);
                 }
                 BlocProvider.of<FriendBloc>(context).add(PhoneExistRequested(
-                  phones: phones,
+                  phones: [phones[67]],
                   uuidMe: BlocProvider.of<ProfileBloc>(context)
                       .state
                       .profileUser
@@ -253,6 +253,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   }
 
   Widget listFriendUI({List<ProfileUserModel> users}) {
+    print(users[0]);
     return ListView.builder(
       itemCount: listViews.length,
       controller: controller,
@@ -267,8 +268,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   Widget itemListView(
       {String displayName, String usernanameme, ProfileUserModel profile}) {
     if (profile != null) {
-      if (profile.avatar_url != null) {
-        avatar = NetworkImage(profile.avatar_url);
+      if (profile.avatar != null) {
+        avatar = NetworkImage(profile.avatar);
       } else {
         avatar = AssetImage(AppImages.DEFAULT_AVATAR);
       }
@@ -314,7 +315,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 0),
                                 child: Text(
-                                  profile.userName,
+                                  profile.username,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w100,
@@ -340,13 +341,12 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                           .uuid;
                       BlocProvider.of<FriendBloc>(context).add(
                         RequireAddFriend(
-                          idMe: uuidMe,
-                          idFriend: profile.uuid,
+                          idFriend: profile.id,
                         ),
                       );
                       BlocProvider.of<FriendBloc>(context).add(GetListFriend());
                       BlocProvider.of<FriendBloc>(context).add(
-                        PhoneExistRequested(phones: _phones),
+                        PhoneExistRequested(phones: [_phones[67]]),
                       );
                     },
                     child: Container(
@@ -382,7 +382,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            fontSize: 16,
+                            fontSize: 14,
                             letterSpacing: 0.18,
                             color: AppTheme.white,
                           ),

@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_compass/flutter_compass.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as locationLib;
+import 'package:http/http.dart' as http;
+import 'package:wemapgl/wemapgl.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
 import 'package:locaing_app/data/network/network.dart';
@@ -25,24 +27,27 @@ class MapWidget extends StatefulWidget {
   _MapState createState() => _MapState();
 }
 
-class _MapState extends State<MapWidget>
-    with AutomaticKeepAliveClientMixin<MapWidget> {
+class _MapState extends State<MapWidget> {
   @override
-  bool get wantKeepAlive => true;
-
-  Completer<GoogleMapController> _controller = Completer();
-  MapType mapType;
-  Set<Marker> _markers = Set();
+  WeMapController mapController;
   static double initZoom = 15.5;
   double _direction;
-  BitmapDescriptor userIcon;
   final DrawMap _drawMap = DrawMap();
-
+  CameraTargetBounds _cameraTargetBounds = CameraTargetBounds.unbounded;
   final double sides = 3.0;
   Uint8List markerIcon;
   Uint8List markerRectangle;
   Uint8List markerImage;
   LatLng _myLocation;
+  WeMapPlace place;
+  locationLib.Location location;
+  locationLib.LocationData currentLocation;
+  final String _defaultAvatarUrl = "assets/images/default_avatar.png";
+  bool _satelliteEnabled = false;
+  Timer timer;
+  void _onMapCreated(WeMapController controller) {
+    mapController = controller;
+  }
 
   final connection = HubConnectionBuilder()
       .withUrl(
@@ -51,10 +56,15 @@ class _MapState extends State<MapWidget>
             logging: (level, message) => {},
           ))
       .build();
+  void sendCurrentLocationLoop() async {
+    final uri = Uri.parse(
+        "http://112.213.88.49:8088/rpc/locating-app/location-log/create");
+  }
 
   _realTimeTracking() async {
     String userId = await Common.getUserId();
-
+    String token = await Common.getToken();
+    print("xxxxxxxxxxxxxxxx token : ${token}");
     await connection.start();
 
     connection.invoke("RegisterFriendLocation", args: [userId]);
@@ -75,6 +85,44 @@ class _MapState extends State<MapWidget>
     });
   }
 
+  Future<void> addImageFromAsset(
+      String name, String assetName, double lat, double long) async {
+    final ByteData bytes = await rootBundle.load(assetName);
+    final Uint8List list =
+        await _drawMap.getBytesFromAsset(_defaultAvatarUrl, 150, 150);
+    await mapController.addImage(name, list);
+    mapController.addSymbol(
+      SymbolOptions(
+        geometry: LatLng(lat, long),
+        iconImage: name,
+      ),
+    );
+  }
+
+  void _onStyleLoaded(LatLng myLoc) {
+    String imageUrl =
+        BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar;
+    if (imageUrl == null) {
+      addImageFromAsset(
+          "assetImage", _defaultAvatarUrl, myLoc.latitude, myLoc.longitude);
+    } else {}
+  }
+
+  cameraFocus() async {
+    LatLng currentLocation;
+    currentLocation = await Common.getCoordinates();
+    mapController.moveCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: 270.0,
+          target: LatLng(currentLocation.latitude, currentLocation.longitude),
+          tilt: 30.0,
+          zoom: 17.0,
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -86,7 +134,10 @@ class _MapState extends State<MapWidget>
     // TODO: implement initState
     super.initState();
     BlocProvider.of<SettingBloc>(context).add(RequireLoadSetting());
-
+    location = new locationLib.Location();
+    location.onLocationChanged().listen((locationLib.LocationData currentLoc) {
+      currentLocation = currentLoc;
+    });
     FlutterCompass.events.listen((event) {
       if (mounted) {
         setState(() {
@@ -96,11 +147,12 @@ class _MapState extends State<MapWidget>
     });
     Common.getCoordinates().then((value) {
       _myLocation = LatLng(value.latitude, value.longitude);
-      _drawMap.drawTriangle(100, 100).then((value) => markerRectangle = value);
-      String userName =
-          BlocProvider.of<ProfileBloc>(context).state.profileUser.userName;
+      // _drawMap.drawTriangle(100, 100).then((value) => markerRectangle = value);
+      String username =
+          BlocProvider.of<ProfileBloc>(context).state.profileUser.username;
+      print("xxxxxx username in map_widget $username");
       String imageUrl =
-          BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar_url;
+          BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar;
       if (imageUrl != null) {
         _drawMap.loadAvatarUser(imageUrl, 200).then((value) {
           setState(() {
@@ -109,7 +161,7 @@ class _MapState extends State<MapWidget>
           _realTimeTracking();
         });
       } else {
-        _drawMap.drawCircle(200, 200, userName).then((value) {
+        _drawMap.drawCircle(200, 200, username).then((value) {
           setState(() {
             markerIcon = value;
           });
@@ -126,9 +178,10 @@ class _MapState extends State<MapWidget>
       builder: (builder) => BlocConsumer<ProfileBloc, ProfileState>(
         builder: (context, state) {
           return CustomBottomSheet(
-            nameUser: state.profileUser.userName,
-            linkImage: state.profileUser.avatar_url != null
-                ? state.profileUser.avatar_url
+            cameraFocus: cameraFocus,
+            nameUser: state.profileUser.username,
+            linkImage: state.profileUser.avatar != null
+                ? state.profileUser.avatar
                 : null,
             isMe: true,
             copyText: () {
@@ -152,6 +205,7 @@ class _MapState extends State<MapWidget>
 
   void showBottomSheetFriend(ProfileUserModel user) {
     BlocProvider.of<HomeBloc>(context).add(SelectFriend(user: user));
+    print("xxxx user in map $user");
     showMaterialModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
@@ -159,8 +213,8 @@ class _MapState extends State<MapWidget>
         return BlocConsumer<PlaceBloc, PlaceState>(
           builder: (context, state) {
             return CustomBottomSheetFriend(
-              nameUser: user.userName,
-              linkImage: user.avatar_url != null ? user.avatar_url : null,
+              nameUser: user.username,
+              linkImage: user.avatar != null ? user.avatar : null,
               isCloseFriend: user.friendship,
               user: user,
             );
@@ -184,61 +238,54 @@ class _MapState extends State<MapWidget>
       body: markerIcon != null
           ? BlocBuilder<SettingBloc, SettingState>(
               builder: (context, state) {
-                switch (state.mapType) {
-                  case "Normal":
-                    {
-                      mapType = MapType.normal;
-                      break;
-                    }
-                  case "Satellite":
-                    {
-                      mapType = MapType.satellite;
-                      break;
-                    }
-                  case "Terrain":
-                    {
-                      mapType = MapType.terrain;
-                      break;
-                    }
-                }
                 return Stack(
                   children: [
                     BlocConsumer<TrackingBloc, TrackingState>(
                       listener: (context, state) {
                         if (state is TrackingSuccess) {
-                          setState(() {
-                            _markers.clear();
-                            _markers = Set.from(state.markers);
-                            _markers.addAll([
-                              Marker(
-                                markerId: MarkerId('marker_user'),
-                                icon: BitmapDescriptor.fromBytes(markerIcon),
-                                anchor: Offset(0.5, 0.5),
-                                position: _myLocation,
-                              ),
-                              Marker(
-                                markerId: MarkerId('marker_rotation'),
-                                icon: BitmapDescriptor.fromBytes(markerRectangle),
-                                anchor: Offset(0.5, 1.75),
-                                rotation: _direction,
-                                position: _myLocation,
-                              ),
-                            ]);
-                          });
+                          // setState(() {
+                          //   _markers.clear();
+                          //   _markers = Set.from(state.markers);
+                          //   _markers.addAll([
+                          //     Marker(
+                          //       markerId: MarkerId('marker_user'),
+                          //       icon: BitmapDescriptor.fromBytes(markerIcon),
+                          //       anchor: Offset(0.5, 0.5),
+                          //       position: _myLocation,
+                          //     ),
+                          //     Marker(
+                          //       markerId: MarkerId('marker_rotation'),
+                          //       icon:
+                          //           BitmapDescriptor.fromBytes(markerRectangle),
+                          //       anchor: Offset(0.5, 1.75),
+                          //       rotation: _direction,
+                          //       position: _myLocation,
+                          //     ),
+                          //   ]);
+                          // });
                         }
                       },
                       builder: (context, trackingState) {
                         return Container(
-                          child: GoogleMap(
-                            markers: _markers,
-                            mapType: mapType,
-                            zoomControlsEnabled: false,
-                            initialCameraPosition: CameraPosition(
-                              target: _myLocation,
-                              zoom: initZoom,
-                            ),
-                            onMapCreated: (GoogleMapController controller) {
-                              _controller.complete(controller);
+                          child: WeMap(
+                            onMapClick: (point, latlng, _place) async {
+                              place = await _place;
+                            },
+                            onPlaceCardClose: () {
+                              // print("Place Card closed");
+                            },
+                            onStyleLoadedCallback: () {
+                              if (_myLocation != null) {
+                                mapController.moveCamera(
+                                  CameraUpdate.newCameraPosition(
+                                    CameraPosition(
+                                      target: _myLocation,
+                                      zoom: 16.0,
+                                    ),
+                                  ),
+                                );
+                                _onStyleLoaded(_myLocation);
+                              }
                             },
                             gestureRecognizers:
                                 <Factory<OneSequenceGestureRecognizer>>[
@@ -246,6 +293,12 @@ class _MapState extends State<MapWidget>
                                 () => new EagerGestureRecognizer(),
                               ),
                             ].toSet(),
+                            onMapCreated: _onMapCreated,
+                            initialCameraPosition: const CameraPosition(
+                              target: LatLng(21.036029, 105.782950),
+                              zoom: 16.0,
+                            ),
+                            destinationIcon: "assets/symbols/destination.png",
                           ),
                         );
                       },
@@ -256,18 +309,19 @@ class _MapState extends State<MapWidget>
                         color: Colors.grey[500].withOpacity(0.6),
                         icon: Icons.map_outlined,
                         padding: 8,
-                        iconColor: mapType != MapType.satellite
+                        iconColor: _satelliteEnabled != true
                             ? Colors.white
                             : AppTheme.yellowRed,
                         onTap: () {
-                          if (mapType != MapType.satellite)
-                            BlocProvider.of<SettingBloc>(context).add(
-                              ChangeMapType("Satellite"),
-                            );
-                          if (mapType == MapType.satellite)
-                            BlocProvider.of<SettingBloc>(context).add(
-                              ChangeMapType("Normal"),
-                            );
+                          setState(() {
+                            if (_satelliteEnabled == false) {
+                              _satelliteEnabled = true;
+                              mapController.addSatelliteLayer();
+                            } else {
+                              _satelliteEnabled = false;
+                              mapController.removeSatelliteLayer();
+                            }
+                          });
                         }),
                     itemMap(
                       top: 110,
@@ -390,6 +444,8 @@ class _MapState extends State<MapWidget>
   }
 
   Widget bottomListFriend() {
+    print(
+        "xxxxx ${BlocProvider.of<FriendBloc>(context).state.listCloseFriend}");
     return Row(
       children: [
         itemFriend(
@@ -450,13 +506,13 @@ class _MapState extends State<MapWidget>
                           backgroundImage: BlocProvider.of<FriendBloc>(context)
                                       .state
                                       .listCloseFriend[i]
-                                      .avatar_url !=
+                                      .avatar !=
                                   null
                               ? NetworkImage(
                                   BlocProvider.of<FriendBloc>(context)
                                       .state
                                       .listCloseFriend[i]
-                                      .avatar_url)
+                                      .avatar)
                               : AssetImage(AppImages.DEFAULT_AVATAR),
                         ),
                       ),

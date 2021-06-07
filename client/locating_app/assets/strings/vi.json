@@ -76,8 +76,7 @@
     "confirm_password": "Xác nhận lại mật khẩu",
     "create": "Tạo tài khoản",
     "have_an_account": "Bạn đã có tài khoản? ",
-    "first_name": "Họ",
-    "last_name": "Tên",
+    "display_name": "Tên hiển thị",
     "verify": "Xác minh",
     "des_verify": "Nhập mã chúng tôi vừa gửi cho bạn vào địa chỉ email của bạn.",
     "back": "Trở lại",
@@ -86,10 +85,20 @@
     "resend": "Gửi lại",
     "verify_success":"Xác minh thành công",
     "phone_number": "Số điện thoại",
-    "type_phone_number": "Nhập số điện thoại của bạn"
+    "type_phone_number": "Nhập số điện thoại của bạn",
+    "resend_otp": "Chúng tôi đã gửi lại mã OTP vào email của bạn"
+  },
+  "login": {
+    "not_have_an_account": "Bạn chưa có tài khoản?"
   },
   "profile": "Tài khoản",
   "error": {
+    "login": "Đăng nhập không thành công",
+    "register" : "Đăng ký không thành công",
+    "update_password" : "Cập nhật mật khẩu không thành công",
+    "update_profile" : "Cập nhật thông tin không thành công",
+    "forgot_password" : "Email chưa được đăng kí",
+    "verify_otp" : "Mã OTP không chính xác",
     "connect_fail" : "Kiểm tra kết nối mạng của bạn",
     "error_email": "Example@gmail.com",
     "not_null": "Thiếu thông tin",
@@ -104,6 +113,7 @@
     "email_not_found": "Mail khong ton tai",
     "verify_code_incorrect": "Mã xác minh mã không chính xác",
     "password_dont_match": "Mật khẩu không khớp",
+    "password_not_change": "Mật khẩu mới giống mật khẩu cũ",
     "code_expired": "Mã hết hạn",
     "mail_has_not_been_sent": "Thư chưa được gửi đi",
     "password_incorrect": "Mật khẩu không chính xác",
@@ -119,6 +129,10 @@
     "account_does_not_contain_phone" : "Tài khoản không chứa số điện thoại",
     "phone_already_exists": "Số điện thoại đã được sử dụng",
     "over_num_of_allowed_attemps": "Nhập quá số lần cho phép"
+  },
+  "success": {
+    "register": "Đăng ký thành công",
+    "update_profile": "Cập nhật thành công"
   },
   "profile_user": {
     "update": "Cập nhật",

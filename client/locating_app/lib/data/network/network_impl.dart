@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:locaing_app/utils/common.dart';
 import 'package:quiver/collection.dart';
-
+import 'dart:convert';
 import 'api_response.dart';
 import 'network.dart';
 
@@ -50,15 +50,20 @@ class Network {
       String contentType = Headers.jsonContentType}) async {
     try {
       String accessToken = await Common.getToken();
+      var headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+
+      if (accessToken != '') {
+        headers['Authorization'] = 'Bearer $accessToken';
+      }
+
       Response response = await _dio.post(
         url,
         data: body,
         queryParameters: params,
-        options: Options(responseType: ResponseType.json, headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $accessToken',
-        }),
+        options: Options(responseType: ResponseType.json, headers: headers),
       );
       return getApiResponse(response);
     } on DioError catch (e) {
@@ -135,7 +140,7 @@ class Network {
       case DioErrorType.SEND_TIMEOUT:
       case DioErrorType.DEFAULT:
         return Response<ApiResponse>(
-            data: ApiResponse.errorLocal("error_api.connect"),
+          data: ApiResponse.errorLocal("error_api.connect"),
         );
       default:
         return Response<ApiResponse>(data: ApiResponse.error(e.message));
@@ -143,7 +148,7 @@ class Network {
   }
 
   Response<ApiResponse> getApiResponse(Response response) {
-    var result = response.data;
+    var result = response;
     if (result == null) {
       return Response<ApiResponse>(
           data: ApiResponse.success(resultCode: 1, data: response.data));
@@ -151,9 +156,9 @@ class Network {
 
     return Response<ApiResponse>(
       data: ApiResponse.success(
-        resultCode: result["code"],
-        message: result["message"],
-        data: result["data"],
+        resultCode: result.statusCode == 200 ? 1 : 0,
+        message: result.statusMessage,
+        data: result.data,
       ),
     );
   }

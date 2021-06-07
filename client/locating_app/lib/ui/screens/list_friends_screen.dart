@@ -167,7 +167,7 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
   }
 
   Widget itemFriend(ProfileUserModel user) {
-    print('Avatar: ${user.avatar_url}');
+    print('Avatar: ${user.avatar}');
     return Container(
       // color: Colors.yellow,
       width: DeviceUtil.getDeviceWidth(context) - 16,
@@ -183,8 +183,8 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
                 margin: EdgeInsets.only(right: 16),
                 child: CircleAvatar(
                   radius: 25,
-                  backgroundImage: user.avatar_url != null
-                      ? NetworkImage(user.avatar_url)
+                  backgroundImage: user.avatar != null
+                      ? NetworkImage(user.avatar)
                       : AssetImage(
                     AppImages.DEFAULT_AVATAR,
                   ),
@@ -203,7 +203,7 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
             flex: 1,
             child: Container(
               child: Text(
-                user.userName,
+                user.username,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
@@ -261,7 +261,7 @@ class BottomOptionFriend extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.only(left: 10),
                       child: Text(
-                        user.userName,
+                        user.username,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

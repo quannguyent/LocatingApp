@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
@@ -9,7 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dash/flutter_dash.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:locaing_app/data/model/history_location.dart';
+import 'package:locaing_app/data/network/api_constant.dart';
+import 'package:wemapgl/wemapgl.dart';
 import 'package:intl/intl.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
@@ -19,6 +22,7 @@ import 'package:locaing_app/res/resources.dart';
 import 'package:locaing_app/ui/widgets/widgets.dart';
 import 'package:locaing_app/utils/common.dart';
 import 'package:locaing_app/utils/device.dart';
+import 'package:http/http.dart' as http;
 
 class HistoryUserScreen extends StatefulWidget {
   @override
@@ -26,22 +30,50 @@ class HistoryUserScreen extends StatefulWidget {
 }
 
 class _HistoryUserScreenState extends State<HistoryUserScreen> {
-  Completer<GoogleMapController> _controller = Completer();
-  Set<Marker> listMarkers = Set();
+  // Completer<GoogleMapController> _controller = Completer();
+  // Set<Marker> listMarkers = Set();
   double zoom = 16;
+  WeMapController mapController;
   LatLng cameraTarget = LatLng(21.066933, 105.789319);
-  Set<Polyline> _polyLines = {};
+  // Set<Polyline> _polyLines = {};
   List<LatLng> _listPolyLines = [];
   List<String> _location = [];
   double heightBottomSheet;
   Uint8List markerIcon;
-  String uuidFiend;
-  Set<Circle> _circles = HashSet<Circle>();
+  String userId;
+  WeMapPlace place;
+  // List<HistoryLocation> coordinates = [];
+  List<String> locationsString = [];
+  List<HistoryLocation> historyLog = [];
 
+  // Set<Circle> _circles = HashSet<Circle>();
+  Map<String, dynamic> geometries = {
+    "type": "GeometryCollection",
+    "geometries": [
+      {"type": "LineString", "coordinates": []}
+    ]
+  };
   Future<LatLngBounds> _getVisibleRegion() async {
-    final GoogleMapController googleMapController = await _controller.future;
-    final LatLngBounds bounds = await googleMapController.getVisibleRegion();
+    final LatLngBounds bounds = await mapController.getVisibleRegion();
+    print("xxxx bounds $bounds");
     return bounds;
+  }
+
+  void _addPolyline() {
+    List<LatLng> a = [];
+
+    historyLog.forEach((element) {
+      LatLng temp = new LatLng(element.lat, element.lng);
+      a.add(temp);
+    });
+    mapController.addLine(
+      LineOptions(
+        geometry: [...a],
+        lineColor: "#ff0000",
+        lineWidth: 7.0,
+        lineOpacity: 0.5,
+      ),
+    );
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -54,41 +86,46 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
         .asUint8List();
   }
 
-  void loadData(List<LogLocationModel> listLogs) async {
-    LatLng start = new LatLng(listLogs[0].lat, listLogs[0].lng);
-    LatLng end = new LatLng(
-        listLogs[listLogs.length - 1].lat, listLogs[listLogs.length - 1].lng);
-    listMarkers.clear();
-    _listPolyLines.clear();
-    _polyLines.clear();
-    listMarkers.add(Marker(
-      anchor: Offset(0.5, 0.5),
-      markerId: MarkerId("marker_id_start"),
-      position: start,
-      icon: BitmapDescriptor.defaultMarker,
-    ));
-    listMarkers.add(Marker(
-      anchor: Offset(0.5, 0.5),
-      markerId: MarkerId("marker_id_end"),
-      position: end,
-      icon: BitmapDescriptor.fromBytes(markerIcon),
-    ));
-    listLogs.forEach((element) {
-      _listPolyLines.add(LatLng(element.lat, element.lng));
-    });
+  // void loadData(List<LogLocationModel> listLogs) async {
+  //   LatLng start = new LatLng(listLogs[0].lat, listLogs[0].lng);
+  //   LatLng end = new LatLng(
+  //       listLogs[listLogs.length - 1].lat, listLogs[listLogs.length - 1].lng);
+  //   // listMarkers.clear();
+  //   _listPolyLines.clear();
+  //   _polyLines.clear();
+  //   listMarkers.add(Marker(
+  //     anchor: Offset(0.5, 0.5),
+  //     markerId: MarkerId("marker_id_start"),
+  //     position: start,
+  //     icon: BitmapDescriptor.defaultMarker,
+  //   ));
+  //   listMarkers.add(Marker(
+  //     anchor: Offset(0.5, 0.5),
+  //     markerId: MarkerId("marker_id_end"),
+  //     position: end,
+  //     icon: BitmapDescriptor.fromBytes(markerIcon),
+  //   ));
+  //   listLogs.forEach((element) {
+  //     _listPolyLines.add(LatLng(element.lat, element.lng));
+  //   });
 
-    _polyLines.add(
-      // ve duong di
-      Polyline(
-          polylineId: PolylineId('polylineId'),
-          color: AppTheme.green.withOpacity(0.5),
-          width: 5,
-          points: _listPolyLines),
-    );
-  }
+  //   _polyLines.add(
+  //     // ve duong di
+  //     Polyline(
+  //         polylineId: PolylineId('polylineId'),
+  //         color: AppTheme.green.withOpacity(0.5),
+  //         width: 5,
+  //         points: _listPolyLines),
+  //   );
+  // }
 
   void _getLogLocation(DateTime dateTime) async {
-    final LatLngBounds bounds = await _getVisibleRegion();
+    if (userId == null) {
+      userId = await Common.getUserId();
+    }
+    String token = await Common.getToken();
+    // final LatLngBounds bounds = await _getVisibleRegion();
+    print("xxxx this id userId $userId");
 
     double endTime = 0;
     double startTime = 0;
@@ -101,17 +138,48 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
       endTime = dateTime.millisecondsSinceEpoch / 1000 + 3600 * 24;
       startTime = dateTime.millisecondsSinceEpoch / 1000;
     }
-
-    BlocProvider.of<LogLocationBloc>(context).add(GetLogRequested(
-      userId: uuidFiend,
-      startTime: startTime,
-      endTime: endTime,
-      topRightLat: bounds.northeast.latitude,
-      topRightLng: bounds.northeast.longitude,
-      bottomLeftLat: bounds.southwest.latitude,
-      bottomLeftLng: bounds.southwest.longitude,
-    ));
+    var response = await http.post(
+      ApiConstant.APIHOST + ApiConstant.GET_HISTORY_LOCATION,
+      headers: {
+        "Content-Type": "application/json",
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(
+        {
+          "appUserId": {
+            "equal": userId,
+          },
+        },
+      ),
+    );
+    List resBody = jsonDecode(response.body);
+    List<HistoryLocation> temp2 = [];
+    resBody.forEach((element) {
+      HistoryLocation temp = new HistoryLocation(
+          lat: element["latitude"],
+          lng: element["longtitude"],
+          createAt: element["createdAt"]);
+      print("xxxxxx 12312312323132123 ${temp.lat}");
+      temp2.add(temp);
+    });
+    locationsString = await Common.getLocations(temp2);
+    setState(() {
+      historyLog = [...temp2];
+    });
+    _addPolyline();
+    // print("xxxx location String $locationsString");
+    // BlocProvider.of<LogLocationBloc>(context).add(GetLogRequested(
+    //   userId: uuidFiend,
+    //   // startTime: startTime,
+    //   // endTime: endTime,
+    //   topRightLat: bounds.northeast.latitude,
+    //   topRightLng: bounds.northeast.longitude,
+    //   bottomLeftLat: bounds.southwest.latitude,
+    //   bottomLeftLng: bounds.southwest.longitude,
+    // ));
   }
+
   DateTime selectedDate = DateTime.now();
   bool _decideWhichDayToEnable(DateTime day) {
     if ((day.isBefore(DateTime.now().add(Duration(days: 0))) &&
@@ -137,112 +205,107 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
     }
   }
 
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     heightBottomSheet = 300;
-    getBytesFromAsset(AppImages.MARKER, 70).then((value) {
-      setState(() {
-        markerIcon = value;
-      });
-    });
+    if (mounted) {
+      // _getLogLocation(DateTime.now());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    uuidFiend = ModalRoute.of(context).settings.arguments;
+    userId = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: Container(
-        width: DeviceUtil.getDeviceHeight(context),
-        height: DeviceUtil.getDeviceHeight(context),
-        child: BlocBuilder<LogLocationBloc, LogLocationState>(
-          builder: (context, state) {
-            if (state is LogLocationLoadSuccess) {
-              if (state.listLogs != null) {
-                loadData(state.listLogs);
-              } else {
-                 listMarkers.clear();
-                _listPolyLines.clear();
-                _polyLines.clear();
-              }
-            }
-            return markerIcon != null
-                ? Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      BlocConsumer<PlaceBloc, PlaceState>(
-                        builder: (context, state) {
-                          return GoogleMap(
-                            circles: _circles,
-                            polylines: _polyLines,
-                            markers: listMarkers,
-                            initialCameraPosition: CameraPosition(
-                              target: cameraTarget,
-                              zoom: zoom,
-                            ),
-                            onMapCreated: (GoogleMapController controller) {
-                              _controller.complete(controller);
-                              _getLogLocation(selectedDate);
-                            },
-                            // onCameraMove: (CameraPosition position) {
-                            //   _getLogLocation(selectedDate);
-                            // },
-                            onCameraIdle: () {
-                              _getLogLocation(selectedDate);
-                            },
-                            gestureRecognizers:
-                                <Factory<OneSequenceGestureRecognizer>>[
-                              new Factory<OneSequenceGestureRecognizer>(
-                                () => new EagerGestureRecognizer(),
-                              ),
-                            ].toSet(),
-                          );
-                        },
-                        listener: (context, state) {
-                          if (state is PlaceLoadSuccess) {
-                          }
-                        },
-                      ),
-                      Positioned(
-                        top: 20,
-                        left: 20,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            child: Icon(
-                              Icons.arrow_back_ios,
-                              color: Colors.blue,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                      state is LogLocationLoadSuccess
-                          ? bottomSheetHistory(
-                              listLogs: state.listLogs,
-                              locations: state.locations,
-                              isLoad: false)
-                          : bottomSheetHistory(isLoad: true),
-                    ],
-                  )
-                : SizedBox();
-          },
-        ),
-      ),
+          width: DeviceUtil.getDeviceHeight(context),
+          height: DeviceUtil.getDeviceHeight(context),
+          // child: BlocBuilder<LogLocationBloc, LogLocationState>(
+          // builder: (context, state) {
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              // BlocConsumer<PlaceBloc, PlaceState>(
+              //   builder: (context, state) {
+              // return WeMap(
+              WeMap(
+                onMapClick: (point, latlng, _place) async {
+                  place = await _place;
+                },
+                onPlaceCardClose: () {
+                  // print("Place Card closed");
+                },
+                onStyleLoadedCallback: () async {
+                  // await _addPolyline();
+                },
+                reverse: true,
+                onMapCreated: (WeMapController controller) {
+                  mapController = controller;
+                  _getLogLocation(DateTime.now());
+                },
+                onCameraIdle: () async {
+                  // await _addPolyline();
+                },
+                initialCameraPosition: const CameraPosition(
+                  target: LatLng(21.036029, 105.782950),
+                  zoom: 16.0,
+                ),
+                destinationIcon: "assets/symbols/destination.png",
+                // ),
+                // },
+                // listener: (context, state) {
+                //   if (state is PlaceLoadSuccess) {}
+                // },
+              ),
+              Positioned(
+                top: 20,
+                left: 20,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.blue,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ),
+              // state is LogLocationLoadSuccess
+              //     ? bottomSheetHistory(
+              //         listLogs: state.listLogs,
+              //         locations: state.locations,
+              //         isLoad: false)
+              //     : bottomSheetHistory(isLoad: true),
+              historyLog.length > 0
+                  ? bottomSheetHistory(
+                      listLogs: historyLog,
+                      locations: locationsString,
+                      isLoad: false)
+                  : bottomSheetHistory(
+                      listLogs: historyLog,
+                      locations: locationsString,
+                      isLoad: true),
+            ],
+          )
+          // },
+          // ),
+          ),
     );
   }
 
   Widget bottomSheetHistory(
-      {List<LogLocationModel> listLogs, List<String> locations, bool isLoad}) {
+      {List<HistoryLocation> listLogs, List<String> locations, bool isLoad}) {
     String dateOfWeek = Language.of(context)
         .getText("history_location.${DateFormat('EEEE').format(selectedDate)}");
     String dateOfMonth = DateFormat('d').format(selectedDate);
     String month = Language.of(context)
         .getText("history_location.${DateFormat('MMM').format(selectedDate)}");
+    print("xxxx locationsssss $locations , listlong ${listLogs.length}");
     return Container(
       padding: EdgeInsets.only(
         top: 20,
@@ -336,7 +399,7 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
               )),
           isLoad
               ? Expanded(child: Center(child: LoadingApp.loading1()))
-              : listLogs != null
+              : listLogs.length > 0
                   ? Expanded(
                       child: Container(
                         child: ListView.builder(
@@ -361,8 +424,8 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
     );
   }
 
-  Widget itemCardHistory(LogLocationModel logLocationModel, String location) {
-    String time = Common.readTime(logLocationModel.createdAt.round());
+  Widget itemCardHistory(HistoryLocation logLocationModel, String location) {
+    // String time = Common.readTime(logLocationModel.createdAt.round());
     String distance = location;
     return Container(
       width: DeviceUtil.getDeviceWidth(context),
@@ -374,7 +437,8 @@ class _HistoryUserScreenState extends State<HistoryUserScreen> {
           Container(
             margin: EdgeInsets.only(bottom: 4),
             child: Text(
-              time,
+              // time,
+              "12312312332",
               style: TextStyle(
                 color: AppTheme.deactivatedText,
                 fontSize: 12,

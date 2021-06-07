@@ -74,8 +74,8 @@ class PlaceScreen extends StatelessWidget {
     Color color = AppTheme.grey_500;
     ImageProvider avatar;
     if (friend != null) {
-      if (friend.avatar_url != null) {
-        avatar = NetworkImage(friend.avatar_url);
+      if (friend.avatar != null) {
+        avatar = NetworkImage(friend.avatar);
       } else {
         avatar = AssetImage(AppImages.DEFAULT_AVATAR);
       }
@@ -116,7 +116,7 @@ class PlaceScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              friend.userName,
+                              friend.username,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

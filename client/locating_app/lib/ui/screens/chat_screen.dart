@@ -23,10 +23,11 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    ProfileUserModel user ;user= ModalRoute.of(context).settings.arguments;
+    ProfileUserModel user;
+    user = ModalRoute.of(context).settings.arguments;
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomPadding: false,
+        // resizeToAvoidBottomPadding: false,
         body: BlocProvider<ChatBloc>(
           create: (context) => ChatBloc(null),
           child: Container(
@@ -100,7 +101,7 @@ class _AppbarWidgetState extends State<AppbarWidget> {
           activeStatus = widget.user.activeStatus;
         } else {
           activeStatus = state.friendProfile.activeStatus;
-          double lastUpdate = state.friendProfile.lastTimeUpdateStatus;
+          double lastUpdate = state.friendProfile.updatedAt;
           time = getTime(lastUpdate);
         }
         return Container(
@@ -132,7 +133,7 @@ class _AppbarWidgetState extends State<AppbarWidget> {
                               child: CircleAvatar(
                                 radius: 25,
                                 backgroundImage:
-                                    NetworkImage(widget.user.avatar_url),
+                                    NetworkImage(widget.user.avatar),
                               ),
                             ),
                             (activeStatus == 1)
@@ -155,7 +156,7 @@ class _AppbarWidgetState extends State<AppbarWidget> {
                           children: [
                             Container(
                               child: Text(
-                                widget.user.userName,
+                                widget.user.username,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               ),
@@ -306,8 +307,8 @@ class _BodyWidgetState extends State<BodyWidget> {
             child: Container(
               height: 0.9 * DeviceUtil.getDeviceHeight(context),
               child: Scaffold(
-                resizeToAvoidBottomPadding:
-                    false, // this avoids the overflow error
+                // resizeToAvoidBottomPadding:
+                //     false, // this avoids the overflow error
                 body: Container(
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -531,8 +532,8 @@ class _ItemchatState extends State<ItemChat> {
                     child: widget.isShowAvatar == true
                         ? CircleAvatar(
                             radius: 15.0,
-                            backgroundImage: widget.user.avatar_url != null
-                                ? NetworkImage(widget.user.avatar_url)
+                            backgroundImage: widget.user.avatar != null
+                                ? NetworkImage(widget.user.avatar)
                                 : AssetImage(AppImages.DEFAULT_AVATAR),
                           )
                         : Container(

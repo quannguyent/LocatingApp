@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:locaing_app/data/model/model.dart';
 import 'package:locaing_app/data/network/api_response.dart';
 import 'package:locaing_app/data/repository/repository.dart';
+import 'package:locaing_app/utils/common.dart';
+import 'dart:developer' as dev;
 
 class FriendEvent {}
 
-class GetListFriend extends FriendEvent {}
+class GetListFriend extends FriendEvent {
+  String idMe;
+}
 
 class FindFriend extends FriendEvent {
   String name;
@@ -29,8 +35,7 @@ class PhoneExistRequested extends FriendEvent {
   String uuidMe;
   List<String> phones;
   bool isSearch;
-  PhoneExistRequested(
-      {this.phones, this.uuidMe, this.isSearch});
+  PhoneExistRequested({this.phones, this.uuidMe, this.isSearch});
 }
 
 class PhoneExistMoreRequested extends FriendEvent {
@@ -40,8 +45,8 @@ class PhoneExistMoreRequested extends FriendEvent {
 }
 
 class RequireAddFriend extends FriendEvent {
-  String idMe, idFriend;
-  RequireAddFriend({this.idMe, this.idFriend});
+  int idFriend;
+  RequireAddFriend({this.idFriend});
 }
 
 class FindFriendByPhone extends FriendEvent {
@@ -183,11 +188,13 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       yield LoadingFriend.fromOldState(state);
       try {
         ApiResponse response = await ServiceRepository().getListFriend();
+        print("xxxx response listfriend ${response.data}");
         if (response.resultCode == 1) {
           List<ProfileUserModel> listFriend = (response.data as List)
               .map((e) => ProfileUserModel.fromJson(e))
               .toList();
           listFriendAll = listFriend;
+          print("xxxxx friendListall $listFriendAll");
           List<ProfileUserModel> listCloseFriend = (response.data as List)
               .map((e) => ProfileUserModel.fromJson(e))
               .toList();
@@ -201,7 +208,7 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       yield LoadingFriend.fromOldState(state);
       List<ProfileUserModel> listFriend = state.listFriend;
       List<ProfileUserModel> filterUser = listFriend
-          .where((item) => item.userName.contains(event.name))
+          .where((item) => item.username.contains(event.name))
           .toList();
       yield RequestSuccessFriend.fromOldState(state, listFriend: filterUser);
       if (event.name.isEmpty) {
@@ -255,16 +262,24 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
           yield Refresh.fromOldState(state);
         }
       }
-      try {
-        final List<ProfileUserModel> users =
-            await AddFriendRepository().getPhoneUserExist(event.phones);
 
-        for (ProfileUserModel i in state.listFriend) {
-          users.removeWhere((item) => item.uuid == i.uuid);
-        }
-        users.removeWhere((item) => item.uuid == event.uuidMe);
-        yield PhoneLoadSuccess.fromOldState(state,
-            users: users, phones: event.phones);
+      try {
+        // final List<ProfileUserModel> users =
+        //     await AddFriendRepository().getPhoneUserExist(event.phones);
+        var response = await ServiceRepository().getUsers(event.phones);
+
+        // final Map mapResponse = json.decode(response);
+        final List<ProfileUserModel> users = (response.data as List)
+            .map((e) => ProfileUserModel.fromJson(e))
+            .toList();
+
+        // for (ProfileUserModel i in state.listFriend) {
+        //   users.removeWhere((item) => item.id == i.id);
+        // }
+        // users.removeWhere((item) => item.id == int.parse(event.uuidMe));
+
+        yield PhoneLoadSuccess.fromOldState(state, users: users, phones: event.phones);
+
       } catch (e) {
         print(e.toString());
       }
@@ -289,7 +304,7 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       yield LoadingFriend.fromOldState(state);
       try {
         ApiResponse response =
-            await ServiceRepository().addFriend(event.idMe, event.idFriend);
+            await ServiceRepository().addFriend(event.idFriend);
         if (response.resultCode == 1) {
           yield RequestSuccessFriend.fromOldState(state,
               success: "add_friend_success");

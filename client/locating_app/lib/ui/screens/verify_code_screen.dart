@@ -217,7 +217,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                     onPress: () {
                       BlocProvider.of<RegisterBloc>(context).add(VerifyCode(
                           userRegister.email,
-                          userRegister.userName,
+                          userRegister.username,
                           currentText));
                     },
                   ),

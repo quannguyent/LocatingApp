@@ -24,13 +24,14 @@ class _LoginScreenState extends State<LoginScreen> {
   String errorPassword;
   double radius = 30;
   bool isLoginFb = true;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Widget logoWidget() {
     return Container(
       width: DeviceUtil.getDeviceWidth(context),
-      height: DeviceUtil.getDeviceHeight(context) / 4,
+      // height: DeviceUtil.getDeviceHeight(context) / 4,
       alignment: Alignment.bottomLeft,
-      padding: EdgeInsets.only(left: 24, bottom: 24),
+      padding: EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppTheme.white,
         borderRadius: BorderRadius.only(bottomRight: Radius.circular(50)),
@@ -80,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget bodyWidget() {
     return Container(
-      margin: EdgeInsets.only(top: 60),
+      margin: EdgeInsets.only(top: 20),
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -94,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(left: 40, right: 40),
+                    margin: EdgeInsets.only(left: 24, right: 24),
                     child: ItemTextField(
                       Icons.perm_identity,
                       "home.username",
@@ -109,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 40, right: 40),
+                    margin: EdgeInsets.only(left: 24, right: 24),
                     child: ItemTextField(
                       Icons.lock_outline,
                       "home.password",
@@ -125,61 +126,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget bottomWidget() {
-    return Container(
-      width: DeviceUtil.getDeviceWidth(context),
-      margin: EdgeInsets.only(top: 20),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(right: 15),
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        isLoginFb = true;
-                      });
-                      BlocProvider.of<LoginBloc>(context)
-                          .add(LoginFaceBookEvent());
-                    },
-                    child: Container(
-                      child: itemLogin(
-                        FontAwesomeIcons.facebook,
-                        "Facebook",
-                        Color(0xff0984e3),
-                      ),
-                      margin: EdgeInsets.only(right: 20),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      isLoginFb = false;
-                    });
-                    BlocProvider.of<LoginBloc>(context).add(LoginGoogleEvent());
-                  },
-                  child: itemLogin(
-                    FontAwesomeIcons.google,
-                    "Google",
-                    Colors.redAccent,
-                  ),
-                )
-              ],
             ),
           ),
         ],
@@ -207,11 +153,20 @@ class _LoginScreenState extends State<LoginScreen> {
             //fb :true, gg:false
             Navigator.pushNamed(context, Routes.addPhoneNumber,
                 arguments: [isLoginFb, state.data, state.dataTrash]);
+          } else {
+            _scaffoldKey.currentState.showSnackBar(
+              new SnackBar(
+                content: new Text(
+                  Language.of(context).getText("error." + state.data),
+                ),
+              ),
+            );
           }
         }
       },
       builder: (context, state) {
         return Scaffold(
+          key: _scaffoldKey,
           body: Stack(
             children: [
               Container(
@@ -219,110 +174,99 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: DeviceUtil.getDeviceWidth(context),
                 height: DeviceUtil.getDeviceHeight(context),
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        child: logoWidget(),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(bottom: 30),
-                        child: bodyWidget(),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
-                        child: ItemButton(
-                          title: "home.login",
-                          onPress: () {
-                            String userName = _username.text;
-                            String passWord = _password.text;
-                            setState(() {
-                              if (_username.text.isEmpty) {
-                                errorUser = "error.not_null";
-                              } else {
-                                errorUser = null;
-                                //  userName = _username.text;
-                              }
-                              if (_password.text.isEmpty) {
-                                errorPassword = "error.not_null";
-                              } else {
-                                errorPassword = null;
-                                //password = _password.text;
-                              }
-                            });
-                            if (userName.isNotEmpty && passWord.isNotEmpty) {
-                              print(_username.text.toString());
-                              BlocProvider.of<LoginBloc>(context).add(
-                                LoginPressedEvent(
-                                  user: User(
-                                    _username.text,
-                                    _password.text,
+                  child: SizedBox(
+                    height: DeviceUtil.getDeviceHeight(context),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              child: logoWidget(),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(bottom: 8),
+                              child: bodyWidget(),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 24, right: 24),
+                              child: ItemButton(
+                                title: "home.login",
+                                onPress: () {
+                                  String username = _username.text;
+                                  String passWord = _password.text;
+                                  setState(() {
+                                    if (_username.text.isEmpty) {
+                                      errorUser = "error.not_null";
+                                    } else {
+                                      errorUser = null;
+                                      //  username = _username.text;
+                                    }
+                                    if (_password.text.isEmpty) {
+                                      errorPassword = "error.not_null";
+                                    } else {
+                                      errorPassword = null;
+                                      //password = _password.text;
+                                    }
+                                  });
+                                  if (username.isNotEmpty && passWord.isNotEmpty) {
+                                    BlocProvider.of<LoginBloc>(context).add(
+                                      LoginPressedEvent(
+                                        user: User(
+                                          _username.text,
+                                          _password.text,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, Routes.resetPasswordScreen);
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                width: 0.85 * DeviceUtil.getDeviceWidth(context),
+                                child: Text(
+                                  Language.of(context)
+                                      .getText("home.forgot_password"),
+                                  style: TextStyle(
+                                    // h5 -> headline
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    letterSpacing: 0.27,
+                                    color: AppTheme.blue,
                                   ),
                                 ),
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context, Routes.resetPasswordScreen);
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: 0.85 * DeviceUtil.getDeviceWidth(context),
-                          child: Text(
-                            Language.of(context)
-                                .getText("home.forgot_password"),
-                            style: TextStyle(
-                              // h5 -> headline
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                              letterSpacing: 0.27,
-                              color: AppTheme.blue,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 0, bottom: 30),
-                        child: bottomWidget(),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left: 40, right: 40),
-                        child: ItemButton(
-                          title: "home.sign_up",
-                          onPress: () {
-                            Navigator.pushNamed(context, Routes.registerScreen);
-                          },
-                          color: Color(0xfff0f0f5).withOpacity(0.9),
-                          colorText: AppTheme.blue,
-                        ),
-                      ),
-                      BlocConsumer<LoginBloc, BaseState>(
-                        listener: (context, state) {
-                          if (state is ErrorState<String>) {
-                            if (state.data ==
-                                    "account_does_not_contain_phone" ||
-                                state.data ==
-                                    "account_does_not_contain_email_and_phone") {
-                            } else {
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text(
-                                  Language.of(context)
-                                      .getText("error." + state.data),
+                        Container(
+                          margin: EdgeInsets.only(left: 24, right: 24, bottom: 10, top: 24),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(Language.of(context).getText("login.not_have_an_account") + ' '),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(context, Routes.registerScreen);
+                                },
+                                child: Text(
+                                  Language.of(context).getText("home.sign_up"),
+                                  style: TextStyle(color: Colors.blue),
                                 ),
-                              ));
-                            }
-                          }
-                        },
-                        builder: (context, state) {
-                          return Container();
-                        },
-                      ),
-                    ],
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
