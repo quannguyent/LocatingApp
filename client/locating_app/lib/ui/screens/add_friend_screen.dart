@@ -341,7 +341,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                           .uuid;
                       BlocProvider.of<FriendBloc>(context).add(
                         RequireAddFriend(
-                          idMe: uuidMe,
                           idFriend: profile.id,
                         ),
                       );

@@ -45,9 +45,8 @@ class PhoneExistMoreRequested extends FriendEvent {
 }
 
 class RequireAddFriend extends FriendEvent {
-  String idMe;
   int idFriend;
-  RequireAddFriend({this.idMe, this.idFriend});
+  RequireAddFriend({this.idFriend});
 }
 
 class FindFriendByPhone extends FriendEvent {
@@ -303,7 +302,7 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       yield LoadingFriend.fromOldState(state);
       try {
         ApiResponse response =
-            await ServiceRepository().addFriend(event.idMe, event.idFriend);
+            await ServiceRepository().addFriend(event.idFriend);
         if (response.resultCode == 1) {
           yield RequestSuccessFriend.fromOldState(state,
               success: "add_friend_success");

@@ -33,6 +33,7 @@ class ApiConstant {
   static String LAST_LOG = "locating/user/last-log/";
   static final String ADD_FRIEND = "friend/send-friend-request";
   static final String GET_LIST_FRIEND = "friend/list-friends";
+  static final String GET_LIST_FRIEND_REQUEST = "friend/list-friend-request";
   static final String SET_CLOSE_FRIEND = "locating/user-relationship/close";
   static final DELETE_FRIEND = "locating/user-relationship";
   static final String SEND_CHAT = "locating/conversation/send-message";
