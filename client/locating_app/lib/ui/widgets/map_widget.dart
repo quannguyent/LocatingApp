@@ -99,13 +99,42 @@ class _MapState extends State<MapWidget> {
     );
   }
 
+  Future<void> addImageFromNetWork(
+      String name, double lat, double long, String url) async {
+    print("xxxxxxx 12331231231232 iamge $url");
+    final Uint8List list = await _drawMap.getBytesFromNetwork(url, 150, 150);
+    await mapController.addImage(name, list);
+    mapController.addSymbol(
+      SymbolOptions(
+        geometry: LatLng(lat, long),
+        iconImage: name,
+      ),
+    );
+  }
+
   void _onStyleLoaded(LatLng myLoc) {
+    final List<ProfileUserModel> profile =
+        BlocProvider.of<FriendBloc>(context).state.listFriend;
+    profile.forEach((element) {
+      print("xxxxx 123123123123312312 id ${element.id} ${element.email}");
+    });
+    String username =
+        BlocProvider.of<ProfileBloc>(context).state.profileUser.username;
     String imageUrl =
         BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar;
     if (imageUrl == null) {
       addImageFromAsset(
           "assetImage", _defaultAvatarUrl, myLoc.latitude, myLoc.longitude);
-    } else {}
+    } else {
+      addImageFromNetWork(username, myLoc.latitude, myLoc.longitude,
+          Common.getAvatarUrl(imageUrl));
+    }
+    addImageFromNetWork(
+        "admin",
+        20.98622634635928,
+        105.79820509950514,
+        Common.getAvatarUrl(
+            "https://raw.githubusercontent.com/quannguyent/LocatingApp.BE/master/Avatar/Screenshot_20210213-014516.png"));
   }
 
   cameraFocus() async {
@@ -146,7 +175,9 @@ class _MapState extends State<MapWidget> {
       }
     });
     Common.getCoordinates().then((value) {
-      _myLocation = LatLng(value.latitude, value.longitude);
+      setState(() {
+        _myLocation = LatLng(value.latitude, value.longitude);
+      });
       // _drawMap.drawTriangle(100, 100).then((value) => markerRectangle = value);
       String username =
           BlocProvider.of<ProfileBloc>(context).state.profileUser.username;
@@ -205,7 +236,7 @@ class _MapState extends State<MapWidget> {
 
   void showBottomSheetFriend(ProfileUserModel user) {
     BlocProvider.of<HomeBloc>(context).add(SelectFriend(user: user));
-    print("xxxx user in map $user");
+    print("xxxx user in map ${user.id}");
     showMaterialModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
@@ -234,145 +265,145 @@ class _MapState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      body: markerIcon != null
-          ? BlocBuilder<SettingBloc, SettingState>(
-              builder: (context, state) {
-                return Stack(
-                  children: [
-                    BlocConsumer<TrackingBloc, TrackingState>(
-                      listener: (context, state) {
-                        if (state is TrackingSuccess) {
-                          // setState(() {
-                          //   _markers.clear();
-                          //   _markers = Set.from(state.markers);
-                          //   _markers.addAll([
-                          //     Marker(
-                          //       markerId: MarkerId('marker_user'),
-                          //       icon: BitmapDescriptor.fromBytes(markerIcon),
-                          //       anchor: Offset(0.5, 0.5),
-                          //       position: _myLocation,
-                          //     ),
-                          //     Marker(
-                          //       markerId: MarkerId('marker_rotation'),
-                          //       icon:
-                          //           BitmapDescriptor.fromBytes(markerRectangle),
-                          //       anchor: Offset(0.5, 1.75),
-                          //       rotation: _direction,
-                          //       position: _myLocation,
-                          //     ),
-                          //   ]);
-                          // });
-                        }
-                      },
-                      builder: (context, trackingState) {
-                        return Container(
-                          child: WeMap(
-                            onMapClick: (point, latlng, _place) async {
-                              place = await _place;
-                            },
-                            onPlaceCardClose: () {
-                              // print("Place Card closed");
-                            },
-                            onStyleLoadedCallback: () {
-                              if (_myLocation != null) {
-                                mapController.moveCamera(
-                                  CameraUpdate.newCameraPosition(
-                                    CameraPosition(
-                                      target: _myLocation,
-                                      zoom: 16.0,
-                                    ),
-                                  ),
-                                );
-                                _onStyleLoaded(_myLocation);
-                              }
-                            },
-                            gestureRecognizers:
-                                <Factory<OneSequenceGestureRecognizer>>[
-                              new Factory<OneSequenceGestureRecognizer>(
-                                () => new EagerGestureRecognizer(),
+        key: _scaffoldKey,
+        // body: markerIcon != null
+        body: BlocBuilder<SettingBloc, SettingState>(
+          builder: (context, state) {
+            return Stack(
+              children: [
+                BlocConsumer<TrackingBloc, TrackingState>(
+                  listener: (context, state) {
+                    if (state is TrackingSuccess) {
+                      // setState(() {
+                      //   _markers.clear();
+                      //   _markers = Set.from(state.markers);
+                      //   _markers.addAll([
+                      //     Marker(
+                      //       markerId: MarkerId('marker_user'),
+                      //       icon: BitmapDescriptor.fromBytes(markerIcon),
+                      //       anchor: Offset(0.5, 0.5),
+                      //       position: _myLocation,
+                      //     ),
+                      //     Marker(
+                      //       markerId: MarkerId('marker_rotation'),
+                      //       icon:
+                      //           BitmapDescriptor.fromBytes(markerRectangle),
+                      //       anchor: Offset(0.5, 1.75),
+                      //       rotation: _direction,
+                      //       position: _myLocation,
+                      //     ),
+                      //   ]);
+                      // });
+                    }
+                  },
+                  builder: (context, trackingState) {
+                    return Container(
+                      child: WeMap(
+                        onMapClick: (point, latlng, _place) async {
+                          place = await _place;
+                        },
+                        onPlaceCardClose: () {
+                          // print("Place Card closed");
+                        },
+                        onStyleLoadedCallback: () {
+                          if (_myLocation != null) {
+                            mapController.moveCamera(
+                              CameraUpdate.newCameraPosition(
+                                CameraPosition(
+                                  target: _myLocation,
+                                  zoom: 16.0,
+                                ),
                               ),
-                            ].toSet(),
-                            onMapCreated: _onMapCreated,
-                            initialCameraPosition: const CameraPosition(
-                              target: LatLng(21.036029, 105.782950),
-                              zoom: 16.0,
-                            ),
-                            destinationIcon: "assets/symbols/destination.png",
+                            );
+                            _onStyleLoaded(_myLocation);
+                          }
+                        },
+                        gestureRecognizers:
+                            <Factory<OneSequenceGestureRecognizer>>[
+                          new Factory<OneSequenceGestureRecognizer>(
+                            () => new EagerGestureRecognizer(),
                           ),
-                        );
-                      },
-                    ),
-                    itemMap(
-                        top: 60,
-                        left: 10,
-                        color: Colors.grey[500].withOpacity(0.6),
-                        icon: Icons.map_outlined,
-                        padding: 8,
-                        iconColor: _satelliteEnabled != true
-                            ? Colors.white
-                            : AppTheme.yellowRed,
-                        onTap: () {
-                          setState(() {
-                            if (_satelliteEnabled == false) {
-                              _satelliteEnabled = true;
-                              mapController.addSatelliteLayer();
-                            } else {
-                              _satelliteEnabled = false;
-                              mapController.removeSatelliteLayer();
-                            }
-                          });
-                        }),
-                    itemMap(
-                      top: 110,
-                      left: 10,
-                      color: Colors.redAccent[100].withOpacity(0.6),
-                      icon: Icons.notifications_none_outlined,
-                      iconColor: Colors.white,
-                      padding: 8,
-                      onTap: () {
-                        Navigator.pushNamed(context, Routes.alertScreen);
-                      },
-                    ),
-                    itemMap(
-                      top: 160,
-                      left: 10,
-                      color: AppTheme.yellowRed.withOpacity(0.8),
-                      icon: Icons.people_alt,
-                      iconColor: Colors.white,
-                      padding: 8,
-                      onTap: () {
-                        Navigator.pushNamed(context, Routes.listFriendsScreen);
-                      },
-                    ),
-                    itemMap(
-                      top: 210,
-                      left: 10,
-                      color: AppTheme.blue.withOpacity(0.8),
-                      icon: Icons.emoji_people,
-                      iconColor: Colors.white,
-                      padding: 8,
-                      onTap: () {
-                        Navigator.pushNamed(context, Routes.listFriendRequestScreen);
-                      },
-                    ),
-                    Positioned(
-                      bottom: 90,
-                      child: Container(
-                        width: DeviceUtil.getDeviceWidth(context),
-                        height: 60,
-                        padding: EdgeInsets.only(left: 10),
-                        child: bottomListFriend(),
+                        ].toSet(),
+                        onMapCreated: _onMapCreated,
+                        initialCameraPosition: const CameraPosition(
+                          target: LatLng(21.036029, 105.782950),
+                          zoom: 16.0,
+                        ),
+                        destinationIcon: "assets/symbols/destination.png",
                       ),
-                    ),
-                  ],
-                );
-              },
-            )
-          : Center(
-              child: LoadingApp.loading1(),
-            ),
-    );
+                    );
+                  },
+                ),
+                itemMap(
+                    top: 60,
+                    left: 10,
+                    color: Colors.grey[500].withOpacity(0.6),
+                    icon: Icons.map_outlined,
+                    padding: 8,
+                    iconColor: _satelliteEnabled != true
+                        ? Colors.white
+                        : AppTheme.yellowRed,
+                    onTap: () {
+                      setState(() {
+                        if (_satelliteEnabled == false) {
+                          _satelliteEnabled = true;
+                          mapController.addSatelliteLayer();
+                        } else {
+                          _satelliteEnabled = false;
+                          mapController.removeSatelliteLayer();
+                        }
+                      });
+                    }),
+                itemMap(
+                  top: 110,
+                  left: 10,
+                  color: Colors.redAccent[100].withOpacity(0.6),
+                  icon: Icons.notifications_none_outlined,
+                  iconColor: Colors.white,
+                  padding: 8,
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.alertScreen);
+                  },
+                ),
+                itemMap(
+                  top: 160,
+                  left: 10,
+                  color: AppTheme.yellowRed.withOpacity(0.8),
+                  icon: Icons.people_alt,
+                  iconColor: Colors.white,
+                  padding: 8,
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.listFriendsScreen);
+                  },
+                ),
+                itemMap(
+                  top: 210,
+                  left: 10,
+                  color: AppTheme.blue.withOpacity(0.8),
+                  icon: Icons.emoji_people,
+                  iconColor: Colors.white,
+                  padding: 8,
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.listFriendRequestScreen);
+                  },
+                ),
+                Positioned(
+                  bottom: 90,
+                  child: Container(
+                    width: DeviceUtil.getDeviceWidth(context),
+                    height: 60,
+                    padding: EdgeInsets.only(left: 10),
+                    child: bottomListFriend(),
+                  ),
+                ),
+              ],
+            );
+          },
+        )
+        // : Center(
+        //     child: LoadingApp.loading1(),
+        //   ),
+        );
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -455,8 +486,7 @@ class _MapState extends State<MapWidget> {
   }
 
   Widget bottomListFriend() {
-    print(
-        "xxxxx ${BlocProvider.of<FriendBloc>(context).state.listCloseFriend}");
+    // print("xxxxx ${BlocProvider.of<FriendBloc>(context).state.listFriend}");
     return Row(
       children: [
         itemFriend(
@@ -488,13 +518,12 @@ class _MapState extends State<MapWidget> {
           icon: Text('User'),
         ),
         Expanded(
-          child: BlocProvider.of<FriendBloc>(context).state.listCloseFriend !=
-                  null
+          child: BlocProvider.of<FriendBloc>(context).state.listFriend != null
               ? ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: BlocProvider.of<FriendBloc>(context)
                       .state
-                      .listCloseFriend
+                      .listFriend
                       .length,
                   itemBuilder: (BuildContext context, int i) {
                     return Container(
@@ -504,30 +533,26 @@ class _MapState extends State<MapWidget> {
                         isFriend: true,
                         status: BlocProvider.of<FriendBloc>(context)
                             .state
-                            .listCloseFriend[i]
+                            .listFriend[i]
                             .activeStatus,
                         onTap: () {
                           showBottomSheetFriend(
                               BlocProvider.of<FriendBloc>(context)
                                   .state
-                                  .listCloseFriend[i]);
+                                  .listFriend[i]);
                         },
                         icon: CircleAvatar(
                           radius: 25,
-                          backgroundImage:
-                          BlocProvider.of<FriendBloc>(context)
+                          backgroundImage: BlocProvider.of<FriendBloc>(context)
                                       .state
-                                      .listCloseFriend[i]
+                                      .listFriend[i]
                                       .avatar !=
                                   null
-                              ? NetworkImage(
-                                  Common.getAvatarUrl(
-                                    BlocProvider.of<FriendBloc>(context)
+                              ? NetworkImage(Common.getAvatarUrl(
+                                  BlocProvider.of<FriendBloc>(context)
                                       .state
-                                      .listCloseFriend[i]
-                                      .avatar
-                                  )
-                                )
+                                      .listFriend[i]
+                                      .avatar))
                               : AssetImage(AppImages.DEFAULT_AVATAR),
                         ),
                       ),

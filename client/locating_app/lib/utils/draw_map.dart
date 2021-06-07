@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:locaing_app/res/resources.dart';
+import 'package:locaing_app/utils/common.dart';
 
 class DrawMap {
   final double sides = 3.0;
@@ -65,7 +66,8 @@ class DrawMap {
 
     canvas.clipPath(Path()..addOval(oval));
 
-    var markerImageFile = await DefaultCacheManager().getSingleFile(imageUrl);
+    var markerImageFile = await DefaultCacheManager()
+        .getSingleFile(Common.getAvatarUrl(imageUrl));
     final Uint8List markerImageBytes = await markerImageFile.readAsBytes();
 
     final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
@@ -94,6 +96,17 @@ class DrawMap {
       String path, int width, int height) async {
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width, targetHeight: height);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+        .buffer
+        .asUint8List();
+  }
+
+  Future<Uint8List> getBytesFromNetwork(
+      String url, int width, int height) async {
+    ByteData bytes = (await NetworkAssetBundle(Uri.parse(url)).load(url));
+    ui.Codec codec = await ui.instantiateImageCodec(bytes.buffer.asUint8List(),
         targetWidth: width, targetHeight: height);
     ui.FrameInfo fi = await codec.getNextFrame();
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
