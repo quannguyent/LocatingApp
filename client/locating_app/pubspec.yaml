@@ -33,7 +33,7 @@ dependencies:
   flutter_bloc: ^6.1.0
   shared_preferences: ^0.5.12+4
   equatable: ^1.2.5
-  location: ^2.5.4
+  location: ^3.1.0
   geocoder: ^0.2.1
   geolocator: ^6.2.1
   raw_gnss: ^0.1.2

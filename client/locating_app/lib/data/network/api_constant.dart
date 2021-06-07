@@ -35,7 +35,7 @@ class ApiConstant {
   static final String GET_PROFILE_UUID = "user/filter-by-user-id/";
   static final String CALL_FOR_HELP = "locating/call-for-help";
 
-  static final String HUB = "http://112.213.88.49:8088/rpc/locating-app/";
+  static final String HUB = "http://112.213.88.49:8088/";
   static final String LOCATION = "location-hub";
   static final String chat = "conversation-hub";
 

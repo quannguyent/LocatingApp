@@ -1,5 +1,3 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
 part of 'profile_user_model.dart';
 
 // **************************************************************************
@@ -8,33 +6,30 @@ part of 'profile_user_model.dart';
 
 ProfileUserModel _$ProfileUserModelFromJson(Map<String, dynamic> json) {
   return ProfileUserModel(
-    id: json['id'] as String ?? '',
-    userName: json['username'] as String ?? '',
-    firstName: json['first_name'] as String ?? '',
-    lastName: json['last_name'] as String ?? '',
+    id: json['id'] as int ?? 0,
+    username: json['username'] as String ?? '',
+    displayName: json['displayName'] as String ?? '',
     email: json['email'] as String ?? '',
     status: json['status'] as String ?? '',
-    avatar_url: json['avatar_url'] as String,
+    avatar: json['avatar'] as String,
     phone: json['phone'] as String ?? '',
-    uuid: json['uuid'] as String ?? '',
+    sexId: json['sexId'] as int ?? 0,
     friendship: json['friendship'] as int ?? 0,
     activeStatus: json['active_status'] as int,
-    lastTimeUpdateStatus: (json['last_time_update_status'] as num)?.toDouble(),
+    updatedAt: (json['last_time_update_status'] as num)?.toDouble(),
   );
 }
 
 Map<String, dynamic> _$ProfileUserModelToJson(ProfileUserModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'uuid': instance.uuid,
-      'username': instance.userName,
-      'first_name': instance.firstName,
-      'last_name': instance.lastName,
+      'username': instance.username,
+      'displayName': instance.displayName,
       'email': instance.email,
       'phone': instance.phone,
       'status': instance.status,
-      'avatar_url': instance.avatar_url,
+      'avatar': instance.avatar,
       'friendship': instance.friendship,
       'active_status': instance.activeStatus,
-      'last_time_update_status': instance.lastTimeUpdateStatus,
+      'last_time_update_status': instance.updatedAt,
     };

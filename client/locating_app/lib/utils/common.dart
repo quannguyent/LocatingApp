@@ -132,9 +132,9 @@ class Common {
       }
     }
     _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == GPSService.PermissionStatus.DENIED) {
+    if (_permissionGranted == GPSService.PermissionStatus.granted) {
       _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != GPSService.PermissionStatus.GRANTED) {
+      if (_permissionGranted != GPSService.PermissionStatus.granted) {
         enable = false;
       }
     }

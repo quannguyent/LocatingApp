@@ -116,11 +116,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
                               builder: (context, state) {
                                 return CircleAvatar(
                                   backgroundColor: Colors.white,
-                                  backgroundImage:
-                                      state.profileUser.avatar_url == null
-                                          ? AssetImage(AppImages.LOGO_VIETNAM)
-                                          : NetworkImage(
-                                              state.profileUser.avatar_url),
+                                  backgroundImage: state.profileUser.avatar ==
+                                          null
+                                      ? AssetImage(AppImages.LOGO_VIETNAM)
+                                      : NetworkImage(state.profileUser.avatar),
                                 );
                               },
                             ),

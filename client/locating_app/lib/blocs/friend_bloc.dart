@@ -203,7 +203,7 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       yield LoadingFriend.fromOldState(state);
       List<ProfileUserModel> listFriend = state.listFriend;
       List<ProfileUserModel> filterUser = listFriend
-          .where((item) => item.userName.contains(event.name))
+          .where((item) => item.username.contains(event.name))
           .toList();
       yield RequestSuccessFriend.fromOldState(state, listFriend: filterUser);
       if (event.name.isEmpty) {

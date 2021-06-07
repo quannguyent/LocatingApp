@@ -107,7 +107,7 @@ class FCM {
     ApiResponse data = await ServiceRepository().getProfileUuId(uuid);
     if (data.resultCode == 1) {
       ProfileUserModel profileUser = ProfileUserModel.fromJson(data.data);
-      print(profileUser.userName);
+      print(profileUser.username);
       BlocProvider.of<HomeBloc>(context).add(SelectFriend(user: profileUser));
       Navigator.pushNamed(context, Routes.listPlaceScreen);
     }

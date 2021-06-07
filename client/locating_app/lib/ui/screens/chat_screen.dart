@@ -101,8 +101,8 @@ class _AppbarWidgetState extends State<AppbarWidget> {
           activeStatus = widget.user.activeStatus;
         } else {
           activeStatus = state.friendProfile.activeStatus;
-          double lastUpdate = state.friendProfile.lastTimeUpdateStatus;
-          time = getTime(lastUpdate);
+          // double lastUpdate = state.friendProfile.lastTimeUpdateStatus;
+          // time = getTime(lastUpdate);
         }
         return Container(
           width: DeviceUtil.getDeviceWidth(context),
@@ -133,7 +133,7 @@ class _AppbarWidgetState extends State<AppbarWidget> {
                               child: CircleAvatar(
                                 radius: 25,
                                 backgroundImage:
-                                    NetworkImage(widget.user.avatar_url),
+                                    NetworkImage(widget.user.avatar),
                               ),
                             ),
                             (activeStatus == 1)
@@ -156,7 +156,7 @@ class _AppbarWidgetState extends State<AppbarWidget> {
                           children: [
                             Container(
                               child: Text(
-                                widget.user.userName,
+                                widget.user.username,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               ),
@@ -531,8 +531,8 @@ class _ItemchatState extends State<ItemChat> {
                     child: widget.isShowAvatar == true
                         ? CircleAvatar(
                             radius: 15.0,
-                            backgroundImage: widget.user.avatar_url != null
-                                ? NetworkImage(widget.user.avatar_url)
+                            backgroundImage: widget.user.avatar != null
+                                ? NetworkImage(widget.user.avatar)
                                 : AssetImage(AppImages.DEFAULT_AVATAR),
                           )
                         : Container(

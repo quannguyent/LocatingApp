@@ -25,13 +25,11 @@ class ServiceRepository {
     return response.data;
   }
 
-  Future<ApiResponse> updatePassword(String email, String verifyCode,
-      String newPassword, String retypeNewPassword) async {
+  Future<ApiResponse> updatePassword(
+      String oldPassword, String newPassword) async {
     var body = {
-      "email": "$email",
-      "verify_code": "$verifyCode",
-      "new_password": "$newPassword",
-      "retype_password": "$retypeNewPassword"
+      "oldPassword": "$oldPassword",
+      "newPassword": "$newPassword",
     };
     Response<ApiResponse> response = await Network.instance.post(
       url: ApiConstant.APIHOST + ApiConstant.RESET_PASSWORD,

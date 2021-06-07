@@ -102,7 +102,8 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
                         .getText("list_friend.search_friend"),
                   ),
                   onChanged: (value) {
-                    BlocProvider.of<FriendBloc>(context).add((FindFriend(value)));
+                    BlocProvider.of<FriendBloc>(context)
+                        .add((FindFriend(value)));
                   },
                 ),
               )
@@ -167,7 +168,7 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
   }
 
   Widget itemFriend(ProfileUserModel user) {
-    print('Avatar: ${user.avatar_url}');
+    print('Avatar: ${user.avatar}');
     return Container(
       // color: Colors.yellow,
       width: DeviceUtil.getDeviceWidth(context) - 16,
@@ -183,27 +184,32 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
                 margin: EdgeInsets.only(right: 16),
                 child: CircleAvatar(
                   radius: 25,
-                  backgroundImage: user.avatar_url != null
-                      ? NetworkImage(user.avatar_url)
+                  backgroundImage: user.avatar != null
+                      ? NetworkImage(user.avatar)
                       : AssetImage(
-                    AppImages.DEFAULT_AVATAR,
-                  ),
+                          AppImages.DEFAULT_AVATAR,
+                        ),
                 ),
               ),
-              (user.activeStatus == 1) ? Positioned(
-                right: 32,
-                bottom: 12,
-                child: CustomPaint(
-                  painter: DotPainter(color: AppTheme.statusOn, width: 14,),
-                ),
-              ) : Container(),
+              (user.activeStatus == 1)
+                  ? Positioned(
+                      right: 32,
+                      bottom: 12,
+                      child: CustomPaint(
+                        painter: DotPainter(
+                          color: AppTheme.statusOn,
+                          width: 14,
+                        ),
+                      ),
+                    )
+                  : Container(),
             ],
           ),
           Expanded(
             flex: 1,
             child: Container(
               child: Text(
-                user.userName,
+                user.username,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
@@ -245,7 +251,9 @@ class BottomOptionFriend extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(10),topRight: Radius.circular(10)),
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
       ),
       child: Wrap(
         children: [
@@ -261,7 +269,7 @@ class BottomOptionFriend extends StatelessWidget {
                     Container(
                       margin: EdgeInsets.only(left: 10),
                       child: Text(
-                        user.userName,
+                        user.username,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

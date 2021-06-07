@@ -56,20 +56,23 @@ class _MapState extends State<MapWidget> {
             logging: (level, message) => {},
           ))
       .build();
-  void sendCurrentLocationLoop() async {
-    final uri = Uri.parse(
-        "http://112.213.88.49:8088/rpc/locating-app/location-log/create");
-  }
 
   _realTimeTracking() async {
     String userId = await Common.getUserId();
     String token = await Common.getToken();
-    print("xxxxxxxxxxxxxxxx token : ${token}");
+    print("xxxxxxxxxxxxxxxx token : ${userId}");
     await connection.start();
+    print("1231231231 running");
+    if (connection.state == HubConnectionState.connected) {
+      print("xxxxxxxx connect");
+    } else {
+      print("xxxxxxxx disconnect");
+    }
 
-    connection.invoke("RegisterFriendLocation", args: [userId]);
+    connection.invoke("SendLocation", args: [userId]);
 
     connection.on('ReceiveFriendLocation', (message) {
+      print("12213123 message $message");
       //print(message);
       final List<ListLogLocationModel> locations = (message[0]['data'] as List)
           .map((json) => ListLogLocationModel.fromJson(json))
@@ -101,7 +104,7 @@ class _MapState extends State<MapWidget> {
 
   void _onStyleLoaded(LatLng myLoc) {
     String imageUrl =
-        BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar_url;
+        BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar;
     if (imageUrl == null) {
       addImageFromAsset(
           "assetImage", _defaultAvatarUrl, myLoc.latitude, myLoc.longitude);
@@ -133,9 +136,13 @@ class _MapState extends State<MapWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    BlocProvider.of<SettingBloc>(context).add(RequireLoadSetting());
+    // BlocProvider.of<SettingBloc>(context).add(RequireLoadSetting());
     location = new locationLib.Location();
-    location.onLocationChanged().listen((locationLib.LocationData currentLoc) {
+    // locationLib.LocationData
+    location.changeSettings(interval: 10000, distanceFilter: 5);
+    location.onLocationChanged.listen((locationLib.LocationData currentLoc) {
+      print(
+          "xxxx location currrent ${currentLoc.latitude} ${currentLoc.longitude}");
       currentLocation = currentLoc;
     });
     FlutterCompass.events.listen((event) {
@@ -149,10 +156,10 @@ class _MapState extends State<MapWidget> {
       _myLocation = LatLng(value.latitude, value.longitude);
       // _drawMap.drawTriangle(100, 100).then((value) => markerRectangle = value);
       String userName =
-          BlocProvider.of<ProfileBloc>(context).state.profileUser.userName;
+          BlocProvider.of<ProfileBloc>(context).state.profileUser.username;
       print("xxxxxx username in map_widget $userName");
       String imageUrl =
-          BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar_url;
+          BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar;
       if (imageUrl != null) {
         _drawMap.loadAvatarUser(imageUrl, 200).then((value) {
           setState(() {
@@ -179,9 +186,9 @@ class _MapState extends State<MapWidget> {
         builder: (context, state) {
           return CustomBottomSheet(
             cameraFocus: cameraFocus,
-            nameUser: state.profileUser.userName,
-            linkImage: state.profileUser.avatar_url != null
-                ? state.profileUser.avatar_url
+            nameUser: state.profileUser.username,
+            linkImage: state.profileUser.avatar != null
+                ? state.profileUser.avatar
                 : null,
             isMe: true,
             copyText: () {
@@ -213,8 +220,8 @@ class _MapState extends State<MapWidget> {
         return BlocConsumer<PlaceBloc, PlaceState>(
           builder: (context, state) {
             return CustomBottomSheetFriend(
-              nameUser: user.userName,
-              linkImage: user.avatar_url != null ? user.avatar_url : null,
+              nameUser: user.username,
+              linkImage: user.avatar != null ? user.avatar : null,
               isCloseFriend: user.friendship,
               user: user,
             );
@@ -506,13 +513,13 @@ class _MapState extends State<MapWidget> {
                           backgroundImage: BlocProvider.of<FriendBloc>(context)
                                       .state
                                       .listCloseFriend[i]
-                                      .avatar_url !=
+                                      .avatar !=
                                   null
                               ? NetworkImage(
                                   BlocProvider.of<FriendBloc>(context)
                                       .state
                                       .listCloseFriend[i]
-                                      .avatar_url)
+                                      .avatar)
                               : AssetImage(AppImages.DEFAULT_AVATAR),
                         ),
                       ),

@@ -17,7 +17,7 @@ class FriendProfileBloc extends Bloc<FriendProfileEvent, FriendProfileState> {
             await serviceRepository.getProfileUuId(event.userId);
         if (data.resultCode == 1) {
           ProfileUserModel profileUser = ProfileUserModel.fromJson(data.data);
-          print(profileUser.userName);
+          print(profileUser.username);
           yield FriendProfileLoadSuccess.fromOldState(state,
               friendProfile: profileUser);
         }

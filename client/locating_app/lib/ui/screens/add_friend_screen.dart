@@ -216,8 +216,12 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
               onChanged: (value) {
                 _phones.clear();
                 for (PhoneNumber phoneNumber in _displayName) {
-                  if (phoneNumber.name.toLowerCase().contains(value.toLowerCase()) ||
-                      phoneNumber.phone.toLowerCase().contains(value.toLowerCase())) {
+                  if (phoneNumber.name
+                          .toLowerCase()
+                          .contains(value.toLowerCase()) ||
+                      phoneNumber.phone
+                          .toLowerCase()
+                          .contains(value.toLowerCase())) {
                     _phones.add(phoneNumber.phone);
                   }
                 }
@@ -267,8 +271,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   Widget itemListView(
       {String displayName, String usernanameme, ProfileUserModel profile}) {
     if (profile != null) {
-      if (profile.avatar_url != null) {
-        avatar = NetworkImage(profile.avatar_url);
+      if (profile.avatar != null) {
+        avatar = NetworkImage(profile.avatar);
       } else {
         avatar = AssetImage(AppImages.DEFAULT_AVATAR);
       }
@@ -310,18 +314,18 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                             ),
                             profile != null
                                 ? SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 0),
-                                child: Text(
-                                  profile.userName,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w100,
-                                  ),
-                                ),
-                              ),
-                            )
+                                    scrollDirection: Axis.horizontal,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 0),
+                                      child: Text(
+                                        profile.username,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w100,
+                                        ),
+                                      ),
+                                    ),
+                                  )
                                 : SizedBox(height: 8.0),
                           ],
                         ),
