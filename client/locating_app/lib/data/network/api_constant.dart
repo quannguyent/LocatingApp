@@ -25,6 +25,8 @@ class ApiConstant {
   static String SAVE_IMAGE = "profile/save-image";
   static String CHANGE_PASSWORD = "profile/change-password";
 
+  static String GET_HISTORY_LOCATION = "location-log/list";
+
   static final String SETTING = "user/setting";
   static String UPDATE_LOCATION = "user/update_location";
   static String SHARE_LOCATION = "locating/user/share/";

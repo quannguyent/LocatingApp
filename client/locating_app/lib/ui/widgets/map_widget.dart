@@ -101,7 +101,7 @@ class _MapState extends State<MapWidget> {
 
   void _onStyleLoaded(LatLng myLoc) {
     String imageUrl =
-        BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar_url;
+        BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar;
     if (imageUrl == null) {
       addImageFromAsset(
           "assetImage", _defaultAvatarUrl, myLoc.latitude, myLoc.longitude);
