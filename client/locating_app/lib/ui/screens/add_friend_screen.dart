@@ -29,7 +29,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   final int maxLength = 80;
 
   Future<List<String>> getContacts() async {
-    List<String> phones = [];
+    List<String> phones = ['0365065527'];
     // Load without thumbnails initially.
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
