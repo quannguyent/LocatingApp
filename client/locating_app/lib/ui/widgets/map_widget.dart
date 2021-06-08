@@ -47,6 +47,7 @@ class _MapState extends State<MapWidget> {
   Timer timer;
   void _onMapCreated(WeMapController controller) {
     mapController = controller;
+    _onStyleLoaded(_myLocation);
   }
 
   final connection = HubConnectionBuilder()
@@ -65,24 +66,24 @@ class _MapState extends State<MapWidget> {
     String userId = await Common.getUserId();
     String token = await Common.getToken();
     print("xxxxxxxxxxxxxxxx token : ${token}");
-    await connection.start();
+    // await connection.start();
 
-    connection.invoke("RegisterFriendLocation", args: [userId]);
+    // connection.invoke("RegisterFriendLocation", args: [userId]);
 
-    connection.on('ReceiveFriendLocation', (message) {
-      //print(message);
-      final List<ListLogLocationModel> locations = (message[0]['data'] as List)
-          .map((json) => ListLogLocationModel.fromJson(json))
-          .toList();
-      List<LogLocationModel> locationsLogs = [];
-      for (ListLogLocationModel i in locations) {
-        locationsLogs.add(i.lastLocationLog);
-      }
-      final List<ProfileUserModel> profile =
-          BlocProvider.of<FriendBloc>(context).state.listFriend;
-      BlocProvider.of<TrackingBloc>(context)
-          .add(GetTrackingFriend(logs: locationsLogs, profiles: profile));
-    });
+    // connection.on('ReceiveFriendLocation', (message) {
+    //   //print(message);
+    //   final List<ListLogLocationModel> locations = (message[0]['data'] as List)
+    //       .map((json) => ListLogLocationModel.fromJson(json))
+    //       .toList();
+    //   List<LogLocationModel> locationsLogs = [];
+    //   for (ListLogLocationModel i in locations) {
+    //     locationsLogs.add(i.lastLocationLog);
+    //   }
+    //   final List<ProfileUserModel> profile =
+    //       BlocProvider.of<FriendBloc>(context).state.listFriend;
+    //   BlocProvider.of<TrackingBloc>(context)
+    //       .add(GetTrackingFriend(logs: locationsLogs, profiles: profile));
+    // });
   }
 
   Future<void> addImageFromAsset(
@@ -114,7 +115,10 @@ class _MapState extends State<MapWidget> {
     );
   }
 
-  void _onStyleLoaded(LatLng myLoc) {
+  void _onStyleLoaded(LatLng myLoc) async {
+    locationLib.LocationData myLocation;
+    locationLib.Location location = new locationLib.Location();
+    myLocation = await location.getLocation();
     final List<ProfileUserModel> profile =
         BlocProvider.of<FriendBloc>(context).state.listFriend;
     profile.forEach((element) {
@@ -125,8 +129,8 @@ class _MapState extends State<MapWidget> {
     String imageUrl =
         BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar;
     if (imageUrl == null) {
-      addImageFromAsset(
-          "assetImage", _defaultAvatarUrl, myLoc.latitude, myLoc.longitude);
+      addImageFromAsset("assetImage", _defaultAvatarUrl, myLocation.latitude,
+          myLocation.longitude);
     } else {
       addImageFromNetWork(username, myLoc.latitude, myLoc.longitude,
           Common.getAvatarUrl(imageUrl));
