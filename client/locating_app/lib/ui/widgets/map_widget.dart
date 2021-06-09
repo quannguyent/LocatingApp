@@ -47,7 +47,6 @@ class _MapState extends State<MapWidget> {
   Timer timer;
   void _onMapCreated(WeMapController controller) {
     mapController = controller;
-    _onStyleLoaded(_myLocation);
   }
 
   final connection = HubConnectionBuilder()
@@ -88,7 +87,7 @@ class _MapState extends State<MapWidget> {
 
   Future<void> addImageFromAsset(
       String name, String assetName, double lat, double long) async {
-    print("xxxxxxx 12331231231232 iamge");
+    print("xxxxxxx 12331231231232 iamge $lat $long");
 
     final ByteData bytes = await rootBundle.load(assetName);
     final Uint8List list =
@@ -104,8 +103,8 @@ class _MapState extends State<MapWidget> {
 
   Future<void> addImageFromNetWork(
       String name, double lat, double long, String url) async {
-    print("xxxxxxx 12331231231232 iamge $url");
-    final Uint8List list = await _drawMap.getBytesFromNetwork(url, 150, 150);
+    print("xxxxxxx 12331231231232 iamge $lat $long");
+    final Uint8List list = await _drawMap.resizeAndCircle(url, 100);
     await mapController.addImage(name, list);
     mapController.addSymbol(
       SymbolOptions(
@@ -119,6 +118,7 @@ class _MapState extends State<MapWidget> {
     locationLib.LocationData myLocation;
     locationLib.Location location = new locationLib.Location();
     myLocation = await location.getLocation();
+    print("xxxxassdas 123123 ${myLocation.latitude} ${myLocation.longitude}");
     final List<ProfileUserModel> profile =
         BlocProvider.of<FriendBloc>(context).state.listFriend;
     profile.forEach((element) {
@@ -129,13 +129,13 @@ class _MapState extends State<MapWidget> {
     String imageUrl =
         BlocProvider.of<ProfileBloc>(context).state.profileUser.avatar;
     if (imageUrl == null) {
-      addImageFromAsset("assetImage", _defaultAvatarUrl, myLocation.latitude,
-          myLocation.longitude);
+      await addImageFromAsset("assetImage", _defaultAvatarUrl,
+          myLocation.latitude, myLocation.longitude);
     } else {
-      addImageFromNetWork(username, myLoc.latitude, myLoc.longitude,
-          Common.getAvatarUrl(imageUrl));
+      await addImageFromNetWork(username, myLocation.latitude,
+          myLocation.longitude, Common.getAvatarUrl(imageUrl));
     }
-    addImageFromNetWork(
+    await addImageFromNetWork(
         "admin",
         20.98622634635928,
         105.79820509950514,
@@ -311,18 +311,22 @@ class _MapState extends State<MapWidget> {
                         onPlaceCardClose: () {
                           // print("Place Card closed");
                         },
-                        onStyleLoadedCallback: () {
-                          if (_myLocation != null) {
-                            mapController.moveCamera(
-                              CameraUpdate.newCameraPosition(
-                                CameraPosition(
-                                  target: _myLocation,
-                                  zoom: 16.0,
-                                ),
+                        onStyleLoadedCallback: () async {
+                          locationLib.LocationData myLocation;
+                          locationLib.Location location =
+                              new locationLib.Location();
+                          myLocation = await location.getLocation();
+                          mapController.moveCamera(
+                            CameraUpdate.newCameraPosition(
+                              CameraPosition(
+                                target: new LatLng(
+                                    myLocation.latitude, myLocation.longitude),
+                                zoom: 16.0,
                               ),
-                            );
-                            _onStyleLoaded(_myLocation);
-                          }
+                            ),
+                          );
+                          _onStyleLoaded(new LatLng(
+                              myLocation.latitude, myLocation.longitude));
                         },
                         gestureRecognizers:
                             <Factory<OneSequenceGestureRecognizer>>[
