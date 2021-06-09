@@ -135,12 +135,22 @@ class _MapState extends State<MapWidget> {
       await addImageFromNetWork(username, myLocation.latitude,
           myLocation.longitude, Common.getAvatarUrl(imageUrl));
     }
+    List<ProfileUserModel> friends =
+        BlocProvider.of<FriendBloc>(context).state.listFriend;
+    List<List<double>> listLocationFake = [
+      [20.98622634635928, 105.79820509950514],
+      [21.037822548248954, 105.78901873129766]
+    ];
+    var i = 0;
+
     await addImageFromNetWork(
         "admin",
         20.98622634635928,
         105.79820509950514,
         Common.getAvatarUrl(
-            "https://raw.githubusercontent.com/quannguyent/LocatingApp.BE/master/Avatar/Screenshot_20210213-014516.png"));
+            "https://raw.githubusercontent.com/quannguyent/LocatingApp.BE/master/Avatar/Hollow_Knight.png"));
+    await addImageFromAsset("assetImage2", _defaultAvatarUrl,
+        21.037822548248954, 105.78901873129766);
   }
 
   cameraFocus() async {
@@ -394,7 +404,8 @@ class _MapState extends State<MapWidget> {
                   iconColor: Colors.white,
                   padding: 8,
                   onTap: () {
-                    Navigator.pushNamed(context, Routes.listFriendRequestScreen);
+                    Navigator.pushNamed(
+                        context, Routes.listFriendRequestScreen);
                   },
                 ),
                 Positioned(
