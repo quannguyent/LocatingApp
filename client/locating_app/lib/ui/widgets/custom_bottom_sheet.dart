@@ -38,7 +38,7 @@ class CustomBottomSheet extends StatefulWidget {
 
 class _CustomBottomSheetState extends State<CustomBottomSheet> {
   String addressCurrent;
-
+  String fakeLocation;
   Future<String> getAddressMeCurrent() async {
     LatLng myLocation;
     myLocation = await Common.getCoordinates();
@@ -50,8 +50,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
     var addresses =
         await Geocoder.local.findAddressesFromCoordinates(coordinates);
     var first = addresses.first;
+    final coordinatesFake =
+        new Coordinates(20.986296466428882, 105.79811926882346);
+    var fake2 = await Geocoder.local.findAddressesFromCoordinates(coordinates);
+
     setState(() {
       addressCurrent = first.addressLine;
+      fakeLocation = fake2.first.addressLine;
     });
     return addressCurrent;
   }
@@ -99,7 +104,8 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                                   backgroundColor: AppTheme.white,
                                   backgroundImage: widget.linkImage == null
                                       ? AssetImage(AppImages.DEFAULT_AVATAR)
-                                      : NetworkImage(widget.linkImage),
+                                      : NetworkImage(Common.getAvatarUrl(
+                                          widget.linkImage)),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(left: 5, top: 5),
@@ -316,6 +322,14 @@ class CustomBottomSheetFriend extends StatelessWidget {
     this.isCloseFriend,
     this.user,
   });
+  // Future<String> fakeLocation() async {
+  //   final coordinatesFake =
+  //       new Coordinates(20.986296466428882, 105.79811926882346);
+  //   var fake2 =
+  //       await Geocoder.local.findAddressesFromCoordinates(coordinatesFake);
+
+  //   return fake2.first.addressLine;
+  // }
 
   Widget itemIcon(
       String title, IconData icon, BuildContext context, Function onPress,
@@ -410,7 +424,7 @@ class CustomBottomSheetFriend extends StatelessWidget {
                   Navigator.pushNamed(
                     context,
                     Routes.historyUserScreen,
-                    arguments: user.uuid,
+                    arguments: user.id.toString(),
                   );
                 }),
                 itemIcon("home.address", Icons.location_on_outlined, context,
@@ -460,7 +474,8 @@ class CustomBottomSheetFriend extends StatelessWidget {
                               backgroundColor: AppTheme.white,
                               backgroundImage: linkImage == null
                                   ? AssetImage(AppImages.DEFAULT_AVATAR)
-                                  : NetworkImage(linkImage),
+                                  : NetworkImage(
+                                      Common.getAvatarUrl(linkImage)),
                             ),
                             Container(
                               margin: EdgeInsets.only(left: 5, top: 5),
@@ -495,7 +510,7 @@ class CustomBottomSheetFriend extends StatelessWidget {
                           margin: EdgeInsets.only(right: 10),
                         ),
                         Text(
-                          "30 Trieu Khuc Ha Dong Ha Noi",
+                          "123123312",
                           style: TextStyle(
                             fontWeight: FontWeight.w100,
                             fontSize: 12,

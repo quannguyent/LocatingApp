@@ -1,32 +1,33 @@
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
-import 'package:locaing_app/localizations.dart';
-import 'package:locaing_app/res/colors.dart';
-import 'package:locaing_app/res/images.dart';
-import 'package:locaing_app/ui/widgets/widgets.dart';
 import 'package:locaing_app/utils/common.dart';
-import 'package:locaing_app/utils/device.dart';
+import 'package:locaing_app/utils/utils.dart';
+import '../../localizations.dart';
+import '../../res/resources.dart';
+import '../widgets/widgets.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-class ListFriendsScreen extends StatefulWidget {
+class ListFriendRequestScreen extends StatefulWidget {
   bool iconBack;
 
-  ListFriendsScreen({this.iconBack});
+  ListFriendRequestScreen({this.iconBack});
 
   @override
-  _ListFriendsScreenState createState() => _ListFriendsScreenState();
+  _ListFriendRequestScreenState createState() => _ListFriendRequestScreenState();
 }
 
-class _ListFriendsScreenState extends State<ListFriendsScreen> {
+class _ListFriendRequestScreenState extends State<ListFriendRequestScreen> {
   TextEditingController _textEditingController = new TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    BlocProvider.of<FriendBloc>(context).add(GetListFriend());
+    BlocProvider.of<FriendBloc>(context).add(GetListFriendRequest());
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -35,7 +36,7 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
   Widget build(BuildContext context) {
     return BaseScreenMethod(
       iconBack: widget.iconBack == null ? true : false,
-      title: 'list_friend.friends',
+      title: 'list_friend.request_friends',
       body: BlocConsumer<FriendBloc, FriendState>(
         listener: (context, state) {
           if (state is RequestSuccessFriend) {
@@ -127,10 +128,10 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
             child: Text(
               listFriend != null
                   ? listFriend.length.toString() +
-                      " " +
-                      Language.of(context)
-                          .getText("list_friend.friends")
-                          .toLowerCase()
+                  " " +
+                  Language.of(context)
+                      .getText("list_friend.request_friends")
+                      .toLowerCase()
                   : "",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
@@ -143,24 +144,24 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
             //height:double.infinity,
             child: listFriend != null
                 ? ListView.builder(
-                    padding: EdgeInsets.all(0),
-                    shrinkWrap: true,
-                    itemCount: listFriend.length,
-                    itemBuilder: (context, i) {
-                      return (Column(
-                        children: [
-                          itemFriend(
-                            listFriend[i],
-                          ),
-                        ],
-                      ));
-                    },
-                  )
-                : Container(
-                    child: Text(
-                      Language.of(context).getText("list_friend.empty_friend"),
+              padding: EdgeInsets.all(0),
+              shrinkWrap: true,
+              itemCount: listFriend.length,
+              itemBuilder: (context, i) {
+                return (Column(
+                  children: [
+                    itemFriend(
+                      listFriend[i],
                     ),
-                  ),
+                  ],
+                ));
+              },
+            )
+                : Container(
+              child: Text(
+                Language.of(context).getText("list_friend.empty_friend"),
+              ),
+            ),
           ),
         ],
       ),
@@ -184,7 +185,7 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
                 margin: EdgeInsets.only(right: 16),
                 child: CircleAvatar(
                   radius: 25,
-                  backgroundImage: 
+                  backgroundImage:
                   user.avatar != null
                       ? NetworkImage(Common.getAvatarUrl(user.avatar))
                       : AssetImage(
@@ -228,7 +229,7 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
       backgroundColor: Colors.transparent,
       context: context,
       builder: (builder) {
-        return BottomOptionFriend(user);
+        return BottomOptionFriendRequest(user);
       },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -240,14 +241,14 @@ class _ListFriendsScreenState extends State<ListFriendsScreen> {
   }
 }
 
-class BottomOptionFriend extends StatelessWidget {
+class BottomOptionFriendRequest extends StatelessWidget {
   final ProfileUserModel user;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(10),topRight: Radius.circular(10)),
+        color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(10),topRight: Radius.circular(10)),
       ),
       child: Wrap(
         children: [
@@ -258,7 +259,9 @@ class BottomOptionFriend extends StatelessWidget {
                 Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: AssetImage(AppImages.INTRO_2),
+                      backgroundImage: user.avatar != null
+                          ? NetworkImage(Common.getAvatarUrl(user.avatar))
+                          :AssetImage(AppImages.INTRO_2),
                     ),
                     Container(
                       margin: EdgeInsets.only(left: 10),
@@ -277,45 +280,46 @@ class BottomOptionFriend extends StatelessWidget {
           ),
           Container(
               child: Divider(
-            thickness: 1,
-          )),
+                thickness: 1,
+              )),
           Container(
             padding: EdgeInsets.only(left: 16, right: 18),
             child: Column(
               children: [
                 Container(
                   margin: EdgeInsets.only(top: 10),
-                  child: item(context,
+                  child:
+                  item(context,
                       icon: Icons.person_remove_outlined,
-                      title: "list_friend.un_friend",
-                      description: "list_friend.des_unfriend", function: () {
-                    String uuidMe = BlocProvider.of<ProfileBloc>(context)
-                        .state
-                        .profileUser
-                        .uuid;
-                    BlocProvider.of<FriendBloc>(context).add(
-                      DeleteFriend(uuidMe, user.uuid),
-                    );
-                    BlocProvider.of<FriendBloc>(context).add(GetListFriend());
-                    Navigator.pop(context);
-                  }),
+                      title: "list_friend.un_friend_request",
+                      description: "list_friend.des_unfriend_request", function: () {
+                        String uuidMe = BlocProvider.of<ProfileBloc>(context)
+                            .state
+                            .profileUser
+                            .uuid;
+                        BlocProvider.of<FriendBloc>(context).add(
+                          DeleteFriend(uuidMe, user.uuid),
+                        );
+                        BlocProvider.of<FriendBloc>(context).add(GetListFriendRequest());
+                        Navigator.pop(context);
+                      }),
                 ),
                 item(context,
-                    icon: Icons.star,
-                    title: "list_friend.remove_best_friend",
-                    description: "list_friend.des_remove_best_friend",
+                    icon: Icons.person_add_rounded ,
+                    title: "list_friend.accept_friend_request",
+                    description: "list_friend.des_accept_friend_request",
                     color: user.friendship == 0 ? null : AppTheme.yellowRed,
                     function: () {
-                  String uuidMe = BlocProvider.of<ProfileBloc>(context)
-                      .state
-                      .profileUser
-                      .uuid;
-                  BlocProvider.of<FriendBloc>(context).add(
-                    SetCloseFriend(uuidMe, user.uuid),
-                  );
-                  BlocProvider.of<FriendBloc>(context).add(GetListFriend());
-                  Navigator.pop(context);
-                })
+                      String uuidMe = BlocProvider.of<ProfileBloc>(context)
+                          .state
+                          .profileUser
+                          .uuid;
+                      BlocProvider.of<FriendBloc>(context).add(
+                        AcceptFriendRequest(user.id),
+                      );
+                      BlocProvider.of<FriendBloc>(context).add(GetListFriendRequest());
+                      Navigator.pop(context);
+                    })
               ],
             ),
           )
@@ -324,13 +328,13 @@ class BottomOptionFriend extends StatelessWidget {
     );
   }
 
-  BottomOptionFriend(this.user);
+  BottomOptionFriendRequest(this.user);
   Widget item(BuildContext context,
       {String title,
-      String description,
-      IconData icon,
-      Color color,
-      Function function}) {
+        String description,
+        IconData icon,
+        Color color,
+        Function function}) {
     return InkWell(
       onTap: () {
         function();
@@ -356,7 +360,7 @@ class BottomOptionFriend extends StatelessWidget {
                     child: Text(
                       Language.of(context).getText(title),
                       style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     ),
                   ),
                   Container(
@@ -378,3 +382,4 @@ class BottomOptionFriend extends StatelessWidget {
     );
   }
 }
+

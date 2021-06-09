@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:locaing_app/blocs/blocs.dart';
 import 'package:locaing_app/data/model/model.dart';
+import 'package:locaing_app/utils/common.dart';
 import 'package:locaing_app/utils/utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../localizations.dart';
@@ -28,7 +29,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   final int maxLength = 80;
 
   Future<List<String>> getContacts() async {
-    List<String> phones = [];
+    List<String> phones = ['0365065527'];
     // Load without thumbnails initially.
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
@@ -104,7 +105,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       }
       BlocProvider.of<FriendBloc>(context).add(GetListFriend());
       BlocProvider.of<FriendBloc>(context).add(PhoneExistRequested(
-        phones: [phones[67]],
+        phones: phones,
         uuidMe: BlocProvider.of<ProfileBloc>(context).state.profileUser.uuid,
         isSearch: false,
       ));
@@ -236,7 +237,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   phones.add(_phones[i]);
                 }
                 BlocProvider.of<FriendBloc>(context).add(PhoneExistRequested(
-                  phones: [phones[67]],
+                  phones: phones,
                   uuidMe: BlocProvider.of<ProfileBloc>(context)
                       .state
                       .profileUser
@@ -269,7 +270,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
       {String displayName, String usernanameme, ProfileUserModel profile}) {
     if (profile != null) {
       if (profile.avatar != null) {
-        avatar = NetworkImage(profile.avatar);
+        avatar = NetworkImage(Common.getAvatarUrl(profile.avatar));
       } else {
         avatar = AssetImage(AppImages.DEFAULT_AVATAR);
       }
@@ -346,7 +347,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       );
                       BlocProvider.of<FriendBloc>(context).add(GetListFriend());
                       BlocProvider.of<FriendBloc>(context).add(
-                        PhoneExistRequested(phones: [_phones[67]]),
+                        PhoneExistRequested(phones: _phones),
                       );
                     },
                     child: Container(

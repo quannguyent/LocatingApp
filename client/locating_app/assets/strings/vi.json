@@ -219,7 +219,12 @@
     "remove_best_friend": "Thân thiết",
     "des_remove_best_friend": "Bạn bè sẽ được hiển thị ưu tiên ",
     "empty_friend": "Danh sách bạn bè trống",
-    "add_friend_success": "Bạn bè đã được thêm"
+    "add_friend_success": "Bạn bè đã được thêm",
+    "un_friend_request": "Hủy lời mời kết bạn",
+    "des_unfriend_request": "Xóa khỏi danh sách lời mời kết bạn",
+    "accept_friend_request": "Chấp nhận kết bạn",
+    "des_accept_friend_request": "Chấp nhận lời mời kết bạn",
+    "request_friends": "Lời mời kết bạn"
   },
   "history_location": {
     "Monday": "Thứ 2",

@@ -25,3 +25,4 @@ export 'list_friends_screen.dart';
 export 'add_phone_number.dart';
 export 'place_screen.dart';
 export 'list_place_screen.dart';
+export 'list_friend_request_screen.dart';

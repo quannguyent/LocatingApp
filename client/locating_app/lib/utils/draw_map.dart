@@ -6,9 +6,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:locaing_app/res/resources.dart';
+import 'package:locaing_app/utils/common.dart';
 
 class DrawMap {
   final double sides = 3.0;
+  Future<Uint8List> resizeAndCircle(String imageURL, int size) async {
+    ByteData bytes =
+        (await NetworkAssetBundle(Uri.parse(imageURL)).load(imageURL));
+    ui.Codec codec = await ui.instantiateImageCodec(bytes.buffer.asUint8List(),
+        targetWidth: size, targetHeight: size);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    ui.Image image = fi.image;
+    final pictureRecorder = ui.PictureRecorder();
+    final canvas = Canvas(pictureRecorder);
+    final paint = Paint();
+    paint.isAntiAlias = true;
+
+    _performCircleCrop(image, Size.zero, canvas);
+
+    final recordedPicture = pictureRecorder.endRecording();
+    ui.Image img = await recordedPicture.toImage(image.width, image.height);
+    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+    final buffer = byteData.buffer.asUint8List();
+    return buffer;
+  }
+
+  Canvas _performCircleCrop(ui.Image image, Size size, Canvas canvas) {
+    Paint paint = Paint();
+    canvas.drawCircle(Offset(0, 0), 0, paint);
+
+    double drawImageWidth = 0;
+    double drawImageHeight = 0;
+
+    Path path = Path()
+      ..addOval(Rect.fromLTWH(drawImageWidth, drawImageHeight,
+          image.width.toDouble(), image.height.toDouble()));
+
+    canvas.clipPath(path);
+    canvas.drawImage(image, Offset(drawImageWidth, drawImageHeight), Paint());
+    return canvas;
+  }
 
   Future<Uint8List> loadAvatarUser(String imageUrl, int width,
       {int widthStatus, int status}) async {
@@ -65,7 +102,8 @@ class DrawMap {
 
     canvas.clipPath(Path()..addOval(oval));
 
-    var markerImageFile = await DefaultCacheManager().getSingleFile(imageUrl);
+    var markerImageFile = await DefaultCacheManager()
+        .getSingleFile(Common.getAvatarUrl(imageUrl));
     final Uint8List markerImageBytes = await markerImageFile.readAsBytes();
 
     final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
@@ -94,6 +132,17 @@ class DrawMap {
       String path, int width, int height) async {
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width, targetHeight: height);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))
+        .buffer
+        .asUint8List();
+  }
+
+  Future<Uint8List> getBytesFromNetwork(
+      String url, int width, int height) async {
+    ByteData bytes = (await NetworkAssetBundle(Uri.parse(url)).load(url));
+    ui.Codec codec = await ui.instantiateImageCodec(bytes.buffer.asUint8List(),
         targetWidth: width, targetHeight: height);
     ui.FrameInfo fi = await codec.getNextFrame();
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))

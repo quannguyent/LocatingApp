@@ -54,6 +54,15 @@ class FindFriendByPhone extends FriendEvent {
   FindFriendByPhone({this.search});
 }
 
+class GetListFriendRequest extends FriendEvent {
+  String idMe;
+}
+
+class AcceptFriendRequest extends FriendEvent {
+  int idFriend;
+  AcceptFriendRequest(this.idFriend);
+}
+
 class FriendState {
   List<ProfileUserModel> listFriend;
   List<ProfileUserModel> listCloseFriend;
@@ -188,13 +197,11 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
       yield LoadingFriend.fromOldState(state);
       try {
         ApiResponse response = await ServiceRepository().getListFriend();
-        print("xxxx response listfriend ${response.data}");
         if (response.resultCode == 1) {
           List<ProfileUserModel> listFriend = (response.data as List)
               .map((e) => ProfileUserModel.fromJson(e))
               .toList();
           listFriendAll = listFriend;
-          print("xxxxx friendListall $listFriendAll");
           List<ProfileUserModel> listCloseFriend = (response.data as List)
               .map((e) => ProfileUserModel.fromJson(e))
               .toList();
@@ -308,6 +315,40 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
         if (response.resultCode == 1) {
           yield RequestSuccessFriend.fromOldState(state,
               success: "add_friend_success");
+        }
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+    if (event is GetListFriendRequest) {
+      yield LoadingFriend.fromOldState(state);
+      try {
+        ApiResponse response = await ServiceRepository().getListFriendRequest();
+        if (response.resultCode == 1) {
+          List<ProfileUserModel> listFriend = (response.data as List)
+              .map((e) => ProfileUserModel.fromJson(e))
+              .toList();
+          listFriendAll = listFriend;
+          List<ProfileUserModel> listCloseFriend = (response.data as List)
+              .map((e) => ProfileUserModel.fromJson(e))
+              .toList();
+          listCloseFriend.removeWhere((item) => item.friendship == 0);
+          yield RequestSuccessFriend.fromOldState(state,
+              listFriend: listFriend, listCloseFriend: listCloseFriend);
+        }
+      } catch (e) {}
+    }
+    if (event is AcceptFriendRequest) {
+      yield LoadingFriend.fromOldState(state);
+      try {
+        ApiResponse response = await ServiceRepository()
+            .acceptFriendRequest(event.idFriend);
+        if (response.resultCode == 1) {
+          String success = response.message;
+          yield RequestSuccessFriend.fromOldState(state, success: success);
+        } else {
+          String error = response.message;
+          yield RequestSuccessFriend.fromOldState(state, error: error);
         }
       } catch (e) {
         print(e.toString());

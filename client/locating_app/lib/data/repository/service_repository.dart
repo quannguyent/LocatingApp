@@ -153,13 +153,25 @@ class ServiceRepository {
     return response.data;
   }
 
+  Future<ApiResponse> acceptFriendRequest(int idFriend) async {
+    String idMe = await Common.getUserId();
+    var myID = int.parse("$idMe");
+    // var friendID = int.parse("$idFriend") is int;
+    var body = {"appUserId": "$idFriend", "friendId": "$myID"};
+    Response<ApiResponse> response = await Network.instance.post(
+        url: ApiConstant.APIHOST + ApiConstant.ACCEPT_FRIEND_REQUEST,
+        body: jsonEncode(body)
+    );
+    return response.data;
+  }
+
   Future<ApiResponse> getUsers(List<String> phones) async {
-    var body = phones.map((phone) => {
-      'phone': '$phone'
-    }).toList();
+    var body = {
+      "Phones": phones
+    };
     var response = await Network.instance.post(
       url: ApiConstant.APIHOST + ApiConstant.GET_USER_BY_PHONE,
-      body: body,
+      body: jsonEncode(body),
     );
     return response.data;
   }
