@@ -37,14 +37,14 @@ class TabIconData {
     ),
     TabIconData(
       imagePath: Icon(
-        Icons.ac_unit,
+        Icons.bar_chart,
         color: AppTheme.grey.withOpacity(0.6),
-        size: 35,
+        size: 45,
       ),
       selectedImagePath: Icon(
-        Icons.ac_unit,
+        Icons.bar_chart,
         color: AppTheme.nearlyDarkBlue.withOpacity(0.6),
-        size: 35,
+        size: 55,
       ),
       index: 1,
       isSelected: true,
