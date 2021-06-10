@@ -4,6 +4,7 @@ import 'package:locaing_app/blocs/blocs.dart';
 import '../../res/resources.dart';
 import '../widgets/widgets.dart';
 import 'screens.dart';
+import 'package:locaing_app/ui/screens/statistics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -99,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen>
                       return;
                     }
                     setState(() {
-                      tabBody = Container();
+                      tabBody = StatisicsScreen();
                     });
                   });
                 }
